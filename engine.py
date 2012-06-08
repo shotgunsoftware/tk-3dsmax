@@ -2,7 +2,7 @@
 Copyright (c) 2012 Shotgun Software, Inc
 ----------------------------------------------------
 
-A Houdini engine for Tank.
+A 3ds Max engine for Tank.
 
 """
 
@@ -33,7 +33,7 @@ class MaxEngine(tank.platform.Engine):
             self.tank.create_filesystem_structure(self.context.entity["type"], self.context.entity["id"])
             
             if len(self.context.entity_locations) == 0:
-                raise tank.TankError("No folders on disk are associated with the current context. The Houdini "
+                raise tank.TankError("No folders on disk are associated with the current context. The 3ds Max "
                     "engine requires a context which exists on disk in order to run correctly.")
 
     def destroy_engine(self):
