@@ -5,13 +5,6 @@
 # Metadata defining the behaviour and requirements for this engine
 
 
-# General items
-display_name: The 3ds Max Engine
-author: Shotgun Software
-description: Enables the integration of Tank Apps inside of 3ds Max.
-version: 0.1.0
-maturity: testing # dev, beta, testing, mature
-
 # expected fields in the configuration file for this engine
 configuration:
     
