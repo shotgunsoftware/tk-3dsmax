@@ -13,6 +13,7 @@ import sys
 import tank
 
 # application libs
+from Py3dsMax import mxs
 
 
 CONSOLE_OUTPUT_WIDTH = 120
@@ -37,7 +38,7 @@ class MaxEngine(tank.platform.Engine):
         sys.stdout.write(str(msg)+'\n')
 
     def log_error(self, msg):
-        sys.stdout.write(str(msg)+'\n')
+        mxs.messageBox(str(msg))
         
     def log_warning(self, msg):
         sys.stdout.write(str(msg)+'\n')
