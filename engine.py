@@ -1,7 +1,9 @@
-"""
-Copyright (c) 2012 Shotgun Software, Inc
-----------------------------------------------------
+#
+# Copyright (c) 2012 Shotgun Software, Inc
+# ----------------------------------------------------
+#
 
+"""
 A 3ds Max engine for Tank.
 
 """
@@ -21,7 +23,7 @@ CONSOLE_OUTPUT_WIDTH = 120
 class MaxEngine(tank.platform.Engine):
     def init_engine(self):
         self.log_debug("%s: Initializing..." % self)
-        
+
         # now check that there is a location on disk which corresponds to the context
         # for the 3ds Max engine (because it for example sets the 3ds Max project)
         if len(self.context.entity_locations) == 0:
@@ -39,6 +41,6 @@ class MaxEngine(tank.platform.Engine):
 
     def log_error(self, msg):
         mxs.messageBox(str(msg))
-        
+
     def log_warning(self, msg):
         sys.stdout.write(str(msg)+'\n')
