@@ -15,7 +15,16 @@ configuration:
 
     template_context:
         type: template
-        description: Template to use to determine where to set the houdini project location
+        description: Template to use to determine where to set the 3dsmax project location
 
 # the Shotgun fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
+
+# More verbose description of this item 
+display_name: "3ds Max Engine"
+description: "Tank Integration in 3ds Max"
+
+# Required minimum versions for this item to run
+requires_shotgun_version:
+requires_core_verson: "v0.10.0"
+
