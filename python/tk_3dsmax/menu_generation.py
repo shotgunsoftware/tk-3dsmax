@@ -7,14 +7,10 @@ Menu handling for Nuke
 """
 
 import tank
-import platform
 import sys
 import os
 import unicodedata
-from Py3dsMax import mxs
 
-
-TANK_MENU_NAME = "Tank"
 
 
 class MenuGenerator(object):
@@ -22,9 +18,9 @@ class MenuGenerator(object):
     Menu generation functionality for 3dsmax
     """
 
-    def __init__(self, engine):
+    def __init__(self, engine, menu_adapter):
         self._engine = engine
-        self._dialogs = []
+        self._adapter = menu_adapter
 
     ##########################################################################################
     # public methods
@@ -34,69 +30,42 @@ class MenuGenerator(object):
         Render the entire Tank menu.
         """
         # create main menu
-        tank_menu = self._create_tank_menu()
-        
-        item = mxs.menuMan.createSeparatorItem()
-        
-        tank_menu.addItem(item, -1)
-        
-        
-        
-        return
+        tank_menu = self._adapter.create_tank_menu()
         
         # now add the context item on top of the main menu
-        self._context_menu = self._add_context_menu()
-        self._menu_handle.addSeparator()
-
+        context_menu = self._add_context_menu(tank_menu)
+        
+        # add a separator
+        self._adapter.create_divider(tank_menu)
+        
         # now enumerate all items and create menu objects for them
         menu_items = []
         for (cmd_name, cmd_details) in self._engine.commands.items():
-             menu_items.append( AppCommand(cmd_name, cmd_details) )
-
+            menu_items.append( AppCommand(self._adapter, cmd_name, cmd_details) )
 
         # now add favourites
-        for fav in self._engine.get_setting("menu_favourites"):
+        for fav in self._engine.get_setting("menu_favourites", []):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
             
             # scan through all menu items
             for cmd in menu_items:                 
-                 if cmd.get_app_instance_name() == app_instance_name and cmd.name == menu_name:
-                     # found our match!
-                     cmd.add_command_to_menu(self._menu_handle)
-                     # mark as a favourite item
-                     cmd.favourite = True            
+                if cmd.get_app_instance_name() == app_instance_name and cmd.name == menu_name:
+                    # found our match!
+                    cmd.add_command_to_menu(tank_menu)
+                    # mark as a favourite item
+                    cmd.favourite = True
 
-        self._menu_handle.addSeparator()
-        
+        self._adapter.create_divider(tank_menu)
         
         # now go through all of the menu items.
         # separate them out into various sections
         commands_by_app = {}
         
         for cmd in menu_items:
-                        
-            if cmd.get_type() == "node":
-                # add to the node menu
-                # get icon if specified - default to tank icon if not specified
-                icon = cmd.properties.get("icon", self.tank_logo)
-                self._node_menu_handle.addCommand(cmd.name, cmd.callback, icon=icon)
-                
-            elif cmd.get_type() == "custom_pane":
-                # custom pane
-                # add to the std pane menu in nuke
-                icon = cmd.properties.get("icon")
-                self._pane_menu.addCommand(cmd.name, cmd.callback, icon=icon)
-                # also register the panel so that a panel restore command will
-                # properly register it on startup or panel profile restore.
-                nukescripts.registerPanel(cmd.properties.get("panel_id", "undefined"), cmd.callback)
-                
-            elif cmd.get_type() == "context_menu":
-                # context menu!
-                cmd.add_command_to_menu(self._context_menu)
-                
-            else:
-                # normal menu
+            
+            if cmd.get_type() == "default":
+                # normal menu item
                 app_name = cmd.get_app_name()
                 if app_name is None:
                     # un-parented app
@@ -104,43 +73,42 @@ class MenuGenerator(object):
                 if not app_name in commands_by_app:
                     commands_by_app[app_name] = []
                 commands_by_app[app_name].append(cmd)
+
+            elif cmd.get_type() == "context_menu":
+                # context menu!
+                cmd.add_command_to_menu(context_menu)
+
+            else:
+                # special, engine specific menu item.
+                self._adapter.create_other( cmd.get_type(), cmd.name, cmd.callback, cmd.properties)           
         
         # now add all apps to main menu
-        self._add_app_menu(commands_by_app)
+        for app_name in sorted(commands_by_app.keys()):
             
-            
+            if len(commands_by_app[app_name]) > 1:
+                # more than one menu entry for his app
+                # make a sub menu and put all items in the sub menu
+                m = self._adapter.create_submenu(tank_menu, app_name)
+                for cmd in commands_by_app[app_name]:
+                    cmd.add_command_to_menu(m)
+            else:
+                # this app only has a single entry. 
+                # display that on the menu
+                cmd_obj = commands_by_app[app_name][0]
+                if not cmd_obj.favourite:
+                    # skip favourites since they are already on the menu
+                    cmd_obj.add_command_to_menu(tank_menu)
+                    
+        # finally request the creation of this menu
+        self._adapter.render_menu()
+        
     def destroy_menu(self):
         pass
-            # todo!
         
     ##########################################################################################
     # context menu and UI
 
-    def _create_tank_menu(self):
-        # create the tank menu
-        if mxs.menuMan.findMenu(TANK_MENU_NAME) is None:
-            # no tank menu - so create it!
-            menu_item = mxs.menuMan.createMenu(TANK_MENU_NAME)
-            sub_menu = mxs.menuMan.createSubMenuItem(TANK_MENU_NAME, menu_item)
-            
-            # figure out the menu index - place after MAXScript menu
-            main_menu = mxs.menuMan.getMainMenuBar()
-            tank_menu_idx = 1
-            for idx in range(main_menu.numItems()):
-                # indices are one based
-                menu_idx = idx+1
-                if main_menu.getItem(menu_idx).getTitle() == "&MAXScript":
-                    tank_menu_index = menu_idx+1
-                    break
-            
-            main_menu.addItem(sub_menu, tank_menu_index)
-            mxs.menuMan.updateMenuBar()
-        
-        return mxs.menuMan.findMenu(TANK_MENU_NAME)
-    
-    
-    
-    def _add_context_menu(self):
+    def _add_context_menu(self, tank_menu):
         """
         Adds a context menu which displays the current context
         """        
@@ -167,15 +135,14 @@ class MenuGenerator(object):
             # e.g. [Lighting, Shot ABC_123]
             ctx_name = "%s, %s %s" % (task_step, ctx.entity["type"], ctx.entity["name"])
         
-        # create the menu object        
-        ctx_menu = self._menu_handle.addMenu(ctx_name)
-        ctx_menu.addCommand("Jump to Shotgun", self._jump_to_sg)
-        ctx_menu.addCommand("Jump to File System", self._jump_to_fs)
-        ctx_menu.addSeparator()
+        # create the menu object
+        ctx_menu = self._adapter.create_submenu(tank_menu, ctx_name)
+        self._adapter.create_item(ctx_menu, "Jump to Shotgun", self._jump_to_sg)
+        self._adapter.create_item(ctx_menu, "Jump to File System", self._jump_to_fs)
+        self._adapter.create_divider(ctx_menu)
         
         return ctx_menu
                         
-    
     def _jump_to_sg(self):
 
         if self._engine.context.entity is None:
@@ -189,11 +156,7 @@ class MenuGenerator(object):
                                        self._engine.context.entity["type"], 
                                        self._engine.context.entity["id"])
         
-        # deal with fucked up nuke unicode handling
-        if url.__class__ == unicode:
-            url = unicodedata.normalize('NFKD', url).encode('ascii', 'ignore')
-        nukescripts.openurl.start(url)
-        
+        self._adapter.launch_web_browser(url)
         
     def _jump_to_fs(self):
         
@@ -213,14 +176,14 @@ class MenuGenerator(object):
         for disk_location in paths:
                 
             # get the setting        
-            system = platform.system()
+            system = sys.platform
             
             # run the app
-            if system == "Linux":
+            if system == "linux2":
                 cmd = 'xdg-open "%s"' % disk_location
-            elif system == "Darwin":
+            elif system == "darwin":
                 cmd = 'open "%s"' % disk_location
-            elif system == "Windows":
+            elif system == "win32":
                 cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
             else:
                 raise Exception("Platform '%s' is not supported." % system)
@@ -230,44 +193,14 @@ class MenuGenerator(object):
                 self._engine.log_error("Failed to launch '%s'!" % cmd)
         
             
-    ##########################################################################################
-    # app menus
-        
-        
-    def _add_app_menu(self, commands_by_app):
-        """
-        Add all apps to the main menu, process them one by one.
-        """
-        for app_name in sorted(commands_by_app.keys()):
-            
-            
-            if len(commands_by_app[app_name]) > 1:
-                # more than one menu entry fort his app
-                # make a sub menu and put all items in the sub menu
-                app_menu = self._menu_handle.addMenu(app_name)
-                for cmd in commands_by_app[app_name]:
-                    cmd.add_command_to_menu(app_menu)
-            
-            else:
-                # this app only has a single entry. 
-                # display that on the menu
-                # todo: Should this be labelled with the name of the app 
-                # or the name of the menu item? Not sure.
-                cmd_obj = commands_by_app[app_name][0]
-                if not cmd_obj.favourite:
-                    # skip favourites since they are alreay on the menu
-                    cmd_obj.add_command_to_menu(self._menu_handle)
                                 
-        
-        
-    
-            
 class AppCommand(object):
     """
     Wraps around a single command that you get from engine.commands
     """
     
-    def __init__(self, name, command_dict):        
+    def __init__(self, adapter, name, command_dict):        
+        self._adapter = adapter
         self.name = name
         self.properties = command_dict["properties"]
         self.callback = command_dict["callback"]
@@ -299,21 +232,7 @@ class AppCommand(object):
                 return app_instance_name
             
         return None
-        
-    def get_documentation_url_str(self):
-        """
-        Returns the documentation as a str
-        """
-        if "app" in self.properties:
-            app = self.properties["app"]
-            doc_url = app.documentation_url
-            # deal with nuke's inability to handle unicode. #fail
-            if doc_url.__class__ == unicode:
-                doc_url = unicodedata.normalize('NFKD', doc_url).encode('ascii', 'ignore')
-            return doc_url
-
-        return None
-        
+                
     def get_type(self):
         """
         returns the command type. Returns node, custom_pane or default
@@ -324,21 +243,6 @@ class AppCommand(object):
         """
         Adds an app command to the menu
         """
-        # std shotgun menu
         icon = self.properties.get("icon")
-        menu.addCommand(self.name, self.callback, icon=icon) 
+        self._adapter.create_item(menu, self.name, self.callback, icon)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
