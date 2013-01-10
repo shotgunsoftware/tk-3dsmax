@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'app_menu.ui'
 #
-# Created: Thu Jan 10 14:37:15 2013
+# Created: Thu Jan 10 16:43:31 2013
 #      by: pyside-uic 0.2.13 running on PySide 1.1.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,10 +29,9 @@ class Ui_AppMenu(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.browser_header)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label = QtGui.QLabel(self.browser_header)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout.addWidget(self.browser_header)
         self.scroll_area = QtGui.QScrollArea(AppMenu)
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -49,8 +48,8 @@ class Ui_AppMenu(object):
         self.scroll_area_layout.setSpacing(0)
         self.scroll_area_layout.setObjectName("scroll_area_layout")
         self.verticalLayout_4.addLayout(self.scroll_area_layout)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_4.addItem(spacerItem1)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem)
         self.scroll_area.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scroll_area)
 
