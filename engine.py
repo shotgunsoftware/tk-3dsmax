@@ -76,8 +76,12 @@ class MaxEngine(tank.platform.Engine):
         menu_script = os.path.join(self.disk_location, "resources", "destroy_menu_bar.ms")
         mxs.fileIn(menu_script)
         
+    def max_callback_work_area_menu(self, pos):
+        self.log_debug("CALLBACK! %s" % str(pos))
         
-        
+    def max_callback_apps_menu(self, pos):
+        self.log_debug("APPS CALLBACK! %s" % str(pos))
+
 
     def _define_qt_base(self):
         self.log_debug("Hooking up QT classes...")

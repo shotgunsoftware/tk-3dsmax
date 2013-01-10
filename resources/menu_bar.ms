@@ -11,13 +11,21 @@ rollout TankMenuBar "Tank"
 
     on btn_work_area pressed do
     (   
-        messageBox "Hello Work area!"
+        -- get the coordinates for our window
         dialog_pos = GetDialogPos TankMenuBar
-        messageBox dialog_pos
+        -- call home to python
+        tank = python.import "tank"
+        current_engine = tank.platform.current_engine()
+        current_engine.max_callback_work_area_menu dialog_pos
     )
     on btn_apps pressed do
     (   
-        messageBox "Hello Apps!"
+        -- get the coordinates for our window
+        dialog_pos = GetDialogPos TankMenuBar
+        -- call home to python
+        tank = python.import "tank"
+        current_engine = tank.platform.current_engine()
+        current_engine.max_callback_apps_menu dialog_pos
     )
 
 )
