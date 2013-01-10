@@ -91,7 +91,6 @@ class MenuAdapter3dsmax(BaseMenuAdapter):
             
             # figure out the menu index - place after MAXScript menu
             main_menu = mxs.menuMan.getMainMenuBar()
-            tank_menu_idx = 1
             for idx in range(main_menu.numItems()):
                 # indices are one based
                 menu_idx = idx+1
