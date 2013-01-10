@@ -38,7 +38,7 @@ class MenuGenerator(object):
         
         self._dialog = tank.platform.qt.create_dialog(menu_ui.WorkAreaMenu)
         self._dialog.move(dialog_x, dialog_y)
-        self._dialog.resize(height, width)
+        self._dialog.resize(width, height)
         
         
         
@@ -53,8 +53,8 @@ class MenuGenerator(object):
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
         
-        self._dialog = tank.platform.qt.create_dialog(menu_ui.WorkAreaMenu)
+        self._dialog = tank.platform.qt.create_dialog(menu_ui.AppsMenu)
         self._dialog.move(dialog_x, dialog_y)
         
-        self._dialog.resize(height, width)
+        self._dialog.resize(width, height)
 
