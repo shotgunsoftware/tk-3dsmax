@@ -52,10 +52,8 @@ class MaxEngine(tank.platform.Engine):
         
 #        # todo: detect if in batch mode
 #        # create our menu handler
-#        tk_3dsmax = self.import_module("tk_3dsmax")
-#        adapter = tk_3dsmax.MenuAdapter3dsmax(self)
-#        m = tk_3dsmax.MenuGenerator(self, adapter)
-#        m.create_menu()
+        tk_3dsmax = self.import_module("tk_3dsmax")
+        self._menu_generator = tk_3dsmax.MenuGenerator(self)
 
         # set up a qt style sheet
         try:
@@ -77,11 +75,35 @@ class MaxEngine(tank.platform.Engine):
         mxs.fileIn(menu_script)
         
     def max_callback_work_area_menu(self, pos):
-        self.log_debug("CALLBACK! %s" % str(pos))
+        
+        # get the coords for the whole widget        
+        pos_str = str(pos)
+        # '[12344,344233]'
+        left_str, top_str = pos_str[1:-1].split(",")
+        left = int(left_str)
+        top = int(top_str)
+        
+        # now the center of our button is located 165 pixels to the left
+        button_center_from_left = left + 165
+        button_center_from_top = top + 28
+        
+        self._menu_generator.render_work_area_menu(button_center_from_left, button_center_from_top)
+        
         
     def max_callback_apps_menu(self, pos):
-        self.log_debug("APPS CALLBACK! %s" % str(pos))
+        
+        # get the coords for the whole widget        
+        pos_str = str(pos)
+        # '[12344,344233]'
+        left_str, top_str = pos_str[1:-1].split(",")
+        left = int(left_str)
+        top = int(top_str)
+        
+        # now the center of our button is located 165 pixels to the left
+        button_center_from_left = left + 285
+        button_center_from_top = top + 28
 
+        self._menu_generator.render_apps_menu(button_center_from_left, button_center_from_top)
 
     def _define_qt_base(self):
         self.log_debug("Hooking up QT classes...")
