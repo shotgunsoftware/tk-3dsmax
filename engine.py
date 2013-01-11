@@ -7,35 +7,29 @@ A 3ds Max engine for Tank.
 
 """
 
-# std libs
 import os
 import sys
 import time
-
-# tank libs
 import tank
 
-from Py3dsMax import mxs
+try:
+    from Py3dsMax import mxs
+except:
+    raise Exception("Could not import Py3dsMax - in order to run this engine, "
+                    "you need to have the blur python extensions installed. "
+                    "For more information, see http://code.google.com/p/blur-dev/wiki/Py3dsMax")
 
-# global constant keeping the time when the 
-# engine was init-ed
+# global constant keeping the time when the engine was init-ed
 g_engine_start_time = time.time()
 
+
 class MaxEngine(tank.platform.Engine):
-    
-    
+        
     def init_engine(self):
         """
         constructor
         """
-        global g_engine_start_time
-        self.log_debug("%s: Initializing..." % self)
-         
-        # now check that there is a location on disk which corresponds to the context
-        # for the 3ds Max engine (because it for example sets the 3ds Max project)
-        if len(self.context.entity_locations) == 0:
-            raise tank.TankError("No folders on disk are associated with the current context. The 3ds Max "
-                "engine requires a context which exists on disk in order to run correctly.")
+        self.log_debug("%s: Initializing..." % self)         
                 
     def post_app_init(self):
         """
@@ -45,13 +39,11 @@ class MaxEngine(tank.platform.Engine):
         # set TANK_MENU_BG_LOCATION needed by the maxscript
         os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", "menu_bg.png")
         
-        # now execute the max script
+        # now execute the max script to create a menu bar
         menu_script = os.path.join(self.disk_location, "resources", "menu_bar.ms")
         mxs.fileIn(menu_script)
         
-        
-#        # todo: detect if in batch mode
-#        # create our menu handler
+        # set up menu handler
         tk_3dsmax = self.import_module("tk_3dsmax")
         self._menu_generator = tk_3dsmax.MenuGenerator(self)
 
@@ -68,6 +60,9 @@ class MaxEngine(tank.platform.Engine):
                 
 
     def destroy_engine(self):
+        """
+        Called when the engine is shutting down
+        """
         self.log_debug('%s: Destroying...' % self)
         
         # remove menu bar
@@ -75,7 +70,9 @@ class MaxEngine(tank.platform.Engine):
         mxs.fileIn(menu_script)
         
     def max_callback_work_area_menu(self, pos):
-        
+        """
+        Callback called from the maxscript when the work area button is pressed
+        """
         # get the coords for the whole widget        
         pos_str = str(pos)
         # '[12344,344233]'
@@ -87,11 +84,14 @@ class MaxEngine(tank.platform.Engine):
         button_center_from_left = left + 165
         button_center_from_top = top + 28
         
+        # call out to render the menu bar
         self._menu_generator.render_work_area_menu(button_center_from_left, button_center_from_top)
         
         
     def max_callback_apps_menu(self, pos):
-        
+        """
+        Callback called from the maxscript when the apps button is pressed
+        """
         # get the coords for the whole widget        
         pos_str = str(pos)
         # '[12344,344233]'
@@ -103,18 +103,26 @@ class MaxEngine(tank.platform.Engine):
         button_center_from_left = left + 285
         button_center_from_top = top + 28
 
+        # call out to render the menu bar
         self._menu_generator.render_apps_menu(button_center_from_left, button_center_from_top)
 
     def _define_qt_base(self):
+        """
+        Re-implemented in order to force tank to use PyQt rather than PySide.
+        """
         self.log_debug("Hooking up QT classes...")
+        # import QT
         from PyQt4 import QtCore, QtGui
-        
-        # hot patching 
+        # hot patch the library to make it work with pyside code
         QtCore.Signal = QtCore.pyqtSignal
-        
+        # return QT classes back to the engine base class
         return (QtCore, QtGui)        
     
     def _define_qt_tankdialog(self):
+        """
+        Re-implemented dialog construction to hook up blur python's
+        widget factories to the tank QT window creation functions.
+        """
         self.log_debug("Hooking up QT Dialog classes...")
         tk_3dsmax = self.import_module("tk_3dsmax")
         return (tk_3dsmax.tankqdialog.TankQDialog, tk_3dsmax.tankqdialog.create_dialog) 

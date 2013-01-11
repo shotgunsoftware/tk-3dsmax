@@ -2,8 +2,7 @@
 Copyright (c) 2012 Shotgun Software, Inc
 ----------------------------------------------------
 
-Menu handling for Nuke
-
+Menu handling
 """
 
 import tank
@@ -17,7 +16,9 @@ from .ui.app_menu import Ui_AppMenu
 from .ui.context_menu import Ui_ContextMenu
 
 class WorkAreaMenu(TankQDialog):
-
+    """
+    Represents the current work area menu
+    """
     def __init__(self, parent=None):
         TankQDialog.__init__(self, parent)
         self.ui = Ui_ContextMenu() 
@@ -32,6 +33,9 @@ class WorkAreaMenu(TankQDialog):
         self.accept()
 
     def set_work_area_text(self, msg):
+        """
+        Sets the top text
+        """
         self.ui.label.setText(msg)
 
     def __click_and_close_wrapper(self, callback):
@@ -54,6 +58,9 @@ class WorkAreaMenu(TankQDialog):
 
 
 class AppsMenu(TankQDialog):
+    """
+    Represents the current apps menu
+    """
 
     def __init__(self, parent=None):
         TankQDialog.__init__(self, parent)
