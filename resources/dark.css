@@ -11,23 +11,25 @@ QWidget
 
 QFrame, QLineEdit, QComboBox, QSpinBox
 {
-    /*background-color: rgb(35, 35, 35)*/
+    background-color: rgb(35, 35, 35)
 }     
+
 QLabel
 {
     color:rgb(160, 160, 160);
-    /*background-color: rgb(42, 42, 42);*/
     background-color: none;
     border:none;
 }
+
 QComboBox:on  
 {
     padding-top: 3px;
     padding-left: 4px;
 }
+
 QScrollArea > QWidget
 {
-    /*background-color:  rgb(35, 35, 35);*/
+    background-color:  rgb(35, 35, 35);
 }
 
 
@@ -103,8 +105,8 @@ QTableView QTableCornerButton::section
 /*tabwidget*/
 QTabWidget QWidget
 {
-    background-color: rgb(35, 35, 35);
-    border: 1px solid rgb(30, 30, 30);
+    /*background-color: rgb(35, 35, 35);*/
+    /*border: 1px solid rgb(30, 30, 30);*/
 }
 QTabWidget > *
 {
