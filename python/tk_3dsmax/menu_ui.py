@@ -26,6 +26,17 @@ class WorkAreaMenu(TankQDialog):
         # no window border pls
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
         self._dynamic_widgets = []
+        self._ui_visible = True
+        
+    def accept(self):
+        """
+        closes the menu object. This may be called several times
+        and will do the right thing (e.g. if the actual UI object
+        has been destroyed, it will just do nothing
+        """
+        if self._ui_visible:
+            TankQDialog.accept(self)
+            self._ui_visible = False            
         
     def mousePressEvent(self, event):
         # if no other widgets accepts it, it means click is outside any button
@@ -70,6 +81,17 @@ class AppsMenu(TankQDialog):
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.FramelessWindowHint)
         self.ui.label.setText("Your Current Apps")
         self._dynamic_widgets = []
+        self._ui_visible = True
+        
+    def accept(self):
+        """
+        closes the menu object. This may be called several times
+        and will do the right thing (e.g. if the actual UI object
+        has been destroyed, it will just do nothing
+        """
+        if self._ui_visible:
+            TankQDialog.accept(self)
+            self._ui_visible = False
         
     def mousePressEvent(self, event):
         # if no other widgets accepts it, it means click is outside any button

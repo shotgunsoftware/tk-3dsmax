@@ -19,6 +19,9 @@ class MenuGenerator(object):
 
     def __init__(self, engine):
         self._engine = engine
+        
+        self._current_work_area_menu = None
+        self._current_app_menu = None
 
     ##########################################################################################
     # public methods
@@ -30,15 +33,18 @@ class MenuGenerator(object):
         
         from . import menu_ui
         
+        self._close_existing_menus()
+        
         height = 300
         width = 150
         
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
         
-        dialog = tank.platform.qt.create_dialog(menu_ui.WorkAreaMenu)
-        dialog.move(dialog_x, dialog_y)
-        dialog.resize(width, height)
+        self._current_work_area_menu = tank.platform.qt.create_dialog(menu_ui.WorkAreaMenu)
+        
+        self._current_work_area_menu.move(dialog_x, dialog_y)
+        self._current_work_area_menu.resize(width, height)
         
         
         # make the context name
@@ -64,18 +70,18 @@ class MenuGenerator(object):
             # e.g. [Lighting, Shot ABC_123]
             ctx_name = "%s, %s %s" % (task_step, ctx.entity["type"], ctx.entity["name"])
         
-        dialog.set_work_area_text(ctx_name)
+        self._current_work_area_menu.set_work_area_text(ctx_name)
         
         # link to UI
-        dialog.add_item("Jump to Shotgun", self._jump_to_sg)
-        dialog.add_item("Jump to File System", self._jump_to_fs)
+        self._current_work_area_menu.add_item("Jump to Shotgun", self._jump_to_sg)
+        self._current_work_area_menu.add_item("Jump to File System", self._jump_to_fs)
 
         # add context apps
         for (cmd_name, cmd_details) in self._engine.commands.items():
             properties = cmd_details["properties"]
             callback = cmd_details["callback"]
             if properties.get("type", "default") == "context_menu":
-                dialog.add_item(cmd_name, callback)
+                self._current_work_area_menu.add_item(cmd_name, callback)
 
         
         
@@ -85,28 +91,45 @@ class MenuGenerator(object):
         
         from . import menu_ui
         
+        self._close_existing_menus()
+        
         height = 300
         width = 150
         
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
         
-        dialog = tank.platform.qt.create_dialog(menu_ui.AppsMenu)
-        dialog.move(dialog_x, dialog_y)
+        self._current_app_menu = tank.platform.qt.create_dialog(menu_ui.AppsMenu)
+        self._current_app_menu.move(dialog_x, dialog_y)
         
-        dialog.resize(width, height)
+        self._current_app_menu.resize(width, height)
 
         for (cmd_name, cmd_details) in self._engine.commands.items():
             properties = cmd_details["properties"]
             callback = cmd_details["callback"]
             if properties.get("type", "default") == "default":
-                dialog.add_item(cmd_name, callback)
+                self._current_app_menu.add_item(cmd_name, callback)
 
 
+    ##########################################################################################
+    # private methods
 
-
+    def _close_existing_menus(self):
+        """
+        Close any open menus
+        """
+        if self._current_work_area_menu:
+            self._current_work_area_menu.accept()
+            self._current_work_area_menu = None
+        
+        if self._current_app_menu:
+            self._current_app_menu.accept()
+            self._current_app_menu = None
 
     def _jump_to_sg(self):
+        """
+        Jump to shotgun, launch web browser
+        """
         from tank.platform.qt import QtCore, QtGui
         
         if self._engine.context.entity is None:
