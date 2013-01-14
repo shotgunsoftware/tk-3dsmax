@@ -14,6 +14,7 @@ import tank
 
 try:
     from Py3dsMax import mxs
+    import blurdev
 except:
     raise Exception("Could not import Py3dsMax - in order to run this engine, "
                     "you need to have the blur python extensions installed. "
@@ -130,7 +131,60 @@ class MaxEngine(tank.platform.Engine):
         """
         self.log_debug("Hooking up QT Dialog classes...")
         tk_3dsmax = self.import_module("tk_3dsmax")
-        return (tk_3dsmax.tankqdialog.TankQDialog, tk_3dsmax.tankqdialog.create_dialog) 
+        return tk_3dsmax.tankqdialog.TankQDialog 
+
+    def show_dialog(self, dialog_class, *args, **kwargs):
+        """
+        Shows a dialog window in a way suitable for this engine. The engine will attempt to 
+        parent the dialog nicely to the host application.
+        
+        :param dialog_class: the class to instantiate. This must derive from tank.platform.qt.TankQDialog
+        
+        Additional parameters specified will be passed through to the dialog_class constructor.
+        
+        :returns: the created dialog object
+        """        
+        tk_3dsmax = self.import_module("tk_3dsmax")
+
+        if not issubclass(dialog_class, tk_3dsmax.tankqdialog.TankQDialog):
+            raise tank.TankError("Class %s must derive from TankQDialog in order to be displayed." % dialog_class)
+        
+        # temporary factory method which returns a dialog class instance
+        # this is what the blur library needs to construct the classes
+        def dialog_factory(parent):
+            return dialog_class(*args, **kwargs)
+        
+        return blurdev.launch(dialog_factory)
+        
+    
+    def show_modal(self, modal_class, *args, **kwargs):
+        """
+        Shows a modal dialog window in a way suitable for this engine. The engine will attempt to
+        integrate it as seamlessly as possible into the host application. This call is blocking 
+        until the user closes the dialog.
+        
+        :param dialog_class: the class to instantiate. This must derive from tank.platform.qt.TankQDialog
+        
+        Additional parameters specified will be passed through to the dialog_class constructor.
+
+        :returns: (a standard QT dialog status return code, the dialog object)
+        """
+        tk_3dsmax = self.import_module("tk_3dsmax")
+
+        if not issubclass(modal_class, tk_3dsmax.tankqdialog.TankQDialog):
+            raise tank.TankError("Class %s must derive from TankQDialog in order to be displayed." % modal_class)
+        
+        # temporary factory method which returns a dialog class instance
+        # this is what the blur library needs to construct the classes
+        self._tmp_modal_dialog_obj = None
+        def dialog_factory(parent):
+            obj = modal_class(*args, **kwargs)
+            self._tmp_modal_dialog_obj = obj
+            return obj
+        
+        status = blurdev.launch(dialog_factory, modal=True)
+        return (status, self._tmp_modal_dialog_obj)
+
 
     def log_debug(self, msg):
         global g_engine_start_time

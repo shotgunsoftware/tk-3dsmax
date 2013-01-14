@@ -19,8 +19,8 @@ class WorkAreaMenu(TankQDialog):
     """
     Represents the current work area menu
     """
-    def __init__(self, parent=None):
-        TankQDialog.__init__(self, parent)
+    def __init__(self):
+        TankQDialog.__init__(self)
         self.ui = Ui_ContextMenu() 
         self.ui.setupUi(self)        
         # no window border pls
@@ -73,8 +73,8 @@ class AppsMenu(TankQDialog):
     Represents the current apps menu
     """
 
-    def __init__(self, parent=None):
-        TankQDialog.__init__(self, parent)
+    def __init__(self):
+        TankQDialog.__init__(self)
         self.ui = Ui_AppMenu() 
         self.ui.setupUi(self)                
         # no window border pls
