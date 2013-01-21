@@ -117,73 +117,83 @@ class MaxEngine(tank.platform.Engine):
         Re-implemented in order to force tank to use PyQt rather than PySide.
         """
         self.log_debug("Hooking up QT classes...")
+        
+        base = {}
+
         # import QT
         from PyQt4 import QtCore, QtGui
+        from blurdev.gui import Dialog
         # hot patch the library to make it work with pyside code
         QtCore.Signal = QtCore.pyqtSignal
-        # return QT classes back to the engine base class
-        return (QtCore, QtGui)        
+        base["qt_core"] = QtCore
+        base["qt_gui"] = QtGui
+        # dialog wrapper needs to be the blurdev dialog 
+        base["dialog_base"] = Dialog
+        
+        return base
+        
     
-    def _define_qt_tankdialog(self):
-        """
-        Re-implemented dialog construction to hook up blur python's
-        widget factories to the tank QT window creation functions.
-        """
-        self.log_debug("Hooking up QT Dialog classes...")
-        tk_3dsmax = self.import_module("tk_3dsmax")
-        return tk_3dsmax.tankqdialog.TankQDialog 
 
-    def show_dialog(self, dialog_class, *args, **kwargs):
+    def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
-        Shows a dialog window in a way suitable for this engine. The engine will attempt to 
-        parent the dialog nicely to the host application.
+        Shows a non-modal dialog window in a way suitable for this engine. 
+        The engine will attempt to parent the dialog nicely to the host application.
         
-        :param dialog_class: the class to instantiate. This must derive from tank.platform.qt.TankQDialog
+        :param title: The title of the window
+        :param bundle: The app, engine or framework object that is associated with this window
+        :param widget_class: The class of the UI to be constructed. This must derive from QWidget.
         
-        Additional parameters specified will be passed through to the dialog_class constructor.
+        Additional parameters specified will be passed through to the widget_class constructor.
         
-        :returns: the created dialog object
-        """        
-        tk_3dsmax = self.import_module("tk_3dsmax")
-
-        if not issubclass(dialog_class, tk_3dsmax.tankqdialog.TankQDialog):
-            raise tank.TankError("Class %s must derive from TankQDialog in order to be displayed." % dialog_class)
+        :returns: the created widget_class instance
+        """
+        from tank.platform.qt import tankqdialog 
+        
+        # first construct the widget object 
+        obj = widget_class(*args, **kwargs)
         
         # temporary factory method which returns a dialog class instance
         # this is what the blur library needs to construct the classes
         def dialog_factory(parent):
-            return dialog_class(*args, **kwargs)
+            return tankqdialog.TankQDialog(title, bundle, obj, parent)
         
-        return blurdev.launch(dialog_factory)
+        blurdev.launch(dialog_factory)
+                
+        # lastly, return the instantiated class
+        return obj
+
+
         
     
-    def show_modal(self, modal_class, *args, **kwargs):
+    def show_modal(self, title, bundle, widget_class, *args, **kwargs):
         """
         Shows a modal dialog window in a way suitable for this engine. The engine will attempt to
         integrate it as seamlessly as possible into the host application. This call is blocking 
         until the user closes the dialog.
         
-        :param dialog_class: the class to instantiate. This must derive from tank.platform.qt.TankQDialog
+        :param title: The title of the window
+        :param bundle: The app, engine or framework object that is associated with this window
+        :param widget_class: The class of the UI to be constructed. This must derive from QWidget.
         
-        Additional parameters specified will be passed through to the dialog_class constructor.
+        Additional parameters specified will be passed through to the widget_class constructor.
 
-        :returns: (a standard QT dialog status return code, the dialog object)
+        :returns: (a standard QT dialog status return code, the created widget_class instance)
         """
-        tk_3dsmax = self.import_module("tk_3dsmax")
-
-        if not issubclass(modal_class, tk_3dsmax.tankqdialog.TankQDialog):
-            raise tank.TankError("Class %s must derive from TankQDialog in order to be displayed." % modal_class)
+        from tank.platform.qt import tankqdialog
+        
+        # first construct the widget object 
+        obj = widget_class(*args, **kwargs)
         
         # temporary factory method which returns a dialog class instance
         # this is what the blur library needs to construct the classes
-        self._tmp_modal_dialog_obj = None
         def dialog_factory(parent):
-            obj = modal_class(*args, **kwargs)
-            self._tmp_modal_dialog_obj = obj
-            return obj
-        
+            return tankqdialog.TankQDialog(title, bundle, obj, parent)
+                            
+        # this is now a blocking call since we use modal=true        
         status = blurdev.launch(dialog_factory, modal=True)
-        return (status, self._tmp_modal_dialog_obj)
+        
+        # lastly, return the instantiated class
+        return (status, obj)
 
 
     def log_debug(self, msg):

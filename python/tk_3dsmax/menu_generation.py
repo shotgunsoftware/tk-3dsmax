@@ -10,6 +10,7 @@ import tank
 import sys
 import os
 import unicodedata
+import blurdev
 
 
 class MenuGenerator(object):
@@ -41,7 +42,7 @@ class MenuGenerator(object):
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
         
-        self._current_work_area_menu = self._engine.show_dialog(menu_ui.WorkAreaMenu)
+        self._current_work_area_menu = blurdev.launch(menu_ui.WorkAreaMenu)
         
         self._current_work_area_menu.move(dialog_x, dialog_y)
         self._current_work_area_menu.resize(width, height)
@@ -99,7 +100,7 @@ class MenuGenerator(object):
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
         
-        self._current_app_menu = self._engine.show_dialog(menu_ui.AppsMenu)
+        self._current_app_menu = blurdev.launch(menu_ui.AppsMenu)
         self._current_app_menu.move(dialog_x, dialog_y)
         
         self._current_app_menu.resize(width, height)

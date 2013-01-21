@@ -10,17 +10,18 @@ import sys
 import os
 import unicodedata
 
-from tank.platform.qt import QtCore, QtGui, TankQDialog
+from tank.platform.qt import QtCore, QtGui
+from blurdev.gui import Dialog
 
 from .ui.app_menu import Ui_AppMenu
 from .ui.context_menu import Ui_ContextMenu
 
-class WorkAreaMenu(TankQDialog):
+class WorkAreaMenu(Dialog):
     """
     Represents the current work area menu
     """
-    def __init__(self):
-        TankQDialog.__init__(self)
+    def __init__(self, parent=None):
+        Dialog.__init__(self, parent)
         self.ui = Ui_ContextMenu() 
         self.ui.setupUi(self)        
         # no window border pls
@@ -35,7 +36,7 @@ class WorkAreaMenu(TankQDialog):
         has been destroyed, it will just do nothing
         """
         if self._ui_visible:
-            TankQDialog.accept(self)
+            Dialog.accept(self)
             self._ui_visible = False            
         
     def mousePressEvent(self, event):
@@ -68,13 +69,13 @@ class WorkAreaMenu(TankQDialog):
         return widget  
 
 
-class AppsMenu(TankQDialog):
+class AppsMenu(Dialog):
     """
     Represents the current apps menu
     """
 
-    def __init__(self):
-        TankQDialog.__init__(self)
+    def __init__(self, parent=None):
+        Dialog.__init__(self, parent)
         self.ui = Ui_AppMenu() 
         self.ui.setupUi(self)                
         # no window border pls
@@ -90,7 +91,7 @@ class AppsMenu(TankQDialog):
         has been destroyed, it will just do nothing
         """
         if self._ui_visible:
-            TankQDialog.accept(self)
+            Dialog.accept(self)
             self._ui_visible = False
         
     def mousePressEvent(self, event):
