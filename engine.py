@@ -33,9 +33,11 @@ class MaxEngine(tank.platform.Engine):
         self.log_debug("%s: Initializing..." % self)         
         
         # check max version
-        if mxs.maxVersion()[0] != 14000:
+        max_major_version = mxs.maxVersion()[0]
+        # 14000 means 2012, 13000 means 2011 
+        if max_major_version not in (14000, 13000):
             raise tank.TankError("Unsupported version of Max! The tank engine only works with "
-                                 "3dsmax version 2012.")
+                                 "3dsmax version 2012 and 2011.")
                 
     def post_app_init(self):
         """
