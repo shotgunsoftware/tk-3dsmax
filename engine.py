@@ -127,6 +127,7 @@ class MaxEngine(tank.platform.Engine):
         from blurdev.gui import Dialog
         # hot patch the library to make it work with pyside code
         QtCore.Signal = QtCore.pyqtSignal
+        QtCore.Property = QtCore.pyqtProperty
         base["qt_core"] = QtCore
         base["qt_gui"] = QtGui
         # dialog wrapper needs to be the blurdev dialog 
@@ -134,8 +135,6 @@ class MaxEngine(tank.platform.Engine):
         
         return base
         
-    
-
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
         Shows a non-modal dialog window in a way suitable for this engine. 
