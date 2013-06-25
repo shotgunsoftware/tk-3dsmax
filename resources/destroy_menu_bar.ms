@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
 
-cui.UnRegisterDialogBar TankMenuBar
-DestroyDialog TankMenuBar
-removeRollout TankMenuBar
+cui.UnRegisterDialogBar SgtkMenuBar
+DestroyDialog SgtkMenuBar
+removeRollout SgtkMenuBar
 

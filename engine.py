@@ -36,8 +36,8 @@ class MaxEngine(tank.platform.Engine):
         max_major_version = mxs.maxVersion()[0]
         # 14000 means 2012, 13000 means 2011 
         if max_major_version not in (14000, 13000):
-            raise tank.TankError("Unsupported version of Max! The tank engine only works with "
-                                 "3dsmax version 2012 and 2011.")
+            raise tank.TankError("Unsupported version of 3ds Max! The engine only works with "
+                                 "versions 2011 and 2012.")
                 
     def post_app_init(self):
         """
@@ -88,9 +88,9 @@ class MaxEngine(tank.platform.Engine):
         left = int(left_str)
         top = int(top_str)
         
-        # now the center of our button is located 165 pixels to the left
-        button_center_from_left = left + 165
-        button_center_from_top = top + 28
+        # now the center of our button is located 91 pixels from the left hand side
+        button_center_from_left = left + 91
+        button_center_from_top = top + 16
         
         # call out to render the menu bar
         self._menu_generator.render_work_area_menu(button_center_from_left, button_center_from_top)
@@ -107,9 +107,9 @@ class MaxEngine(tank.platform.Engine):
         left = int(left_str)
         top = int(top_str)
         
-        # now the center of our button is located 165 pixels to the left
-        button_center_from_left = left + 285
-        button_center_from_top = top + 28
+        # now the center of our button is located 197 pixels from the left hand side
+        button_center_from_left = left + 197
+        button_center_from_top = top + 16
 
         # call out to render the menu bar
         self._menu_generator.render_apps_menu(button_center_from_left, button_center_from_top)
@@ -200,19 +200,19 @@ class MaxEngine(tank.platform.Engine):
     def log_debug(self, msg):
         global g_engine_start_time
         td = time.time() - g_engine_start_time
-        sys.stdout.write("%04fs DEBUG: %s\n" % (td, msg))
+        sys.stdout.write("%04fs Shotgun Debug: %s\n" % (td, msg))
 
     def log_info(self, msg):
         global g_engine_start_time
         td = time.time() - g_engine_start_time
-        sys.stdout.write("%04fs INFO: %s\n" % (td, msg))
+        sys.stdout.write("%04fs Shotgun: %s\n" % (td, msg))
 
     def log_error(self, msg):
         global g_engine_start_time
         td = time.time() - g_engine_start_time
-        sys.stdout.write("%04fs ERROR: %s\n" % (td, msg))
+        sys.stdout.write("%04fs Shotgun Error: %s\n" % (td, msg))
         
     def log_warning(self, msg):
         global g_engine_start_time
         td = time.time() - g_engine_start_time
-        sys.stdout.write("%04fs WARNING: %s\n" % (td, msg))
+        sys.stdout.write("%04fs Shotgun Warning: %s\n" % (td, msg))

@@ -2,7 +2,7 @@
 Copyright (c) 2012 Shotgun Software, Inc
 ----------------------------------------------------
 
-Menu handling for Nuke
+Menu handling for 3ds Max
 
 """
 
