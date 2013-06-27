@@ -1,4 +1,4 @@
 tk-3dsmax
 =======
 
-Tank: 3ds Max Engine
+Shotgun Pipeline Toolkit: 3ds Max Engine
