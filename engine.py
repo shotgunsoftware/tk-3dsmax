@@ -141,6 +141,29 @@ class MaxEngine(tank.platform.Engine):
         
         return base
         
+    def __launch_blur_dialog(self, title, bundle, widget_class, is_modal, *args, **kwargs):
+        """
+        Handle launching a TankQDialog using the blur library
+        """
+        if not self.has_ui:
+            self.log_error("Sorry, this environment does not support UI display! Cannot show "
+                           "the requested window '%s'." % title)
+            return        
+        
+        from tank.platform.qt import tankqdialog 
+        
+        # first construct the widget object
+        widget = self._create_widget(widget_class, *args, **kwargs)
+        
+        # temporary factory method which returns a dialog class instance
+        # this is what the blur library needs to construct the classes
+        def dialog_factory(parent):
+            dlg = self._create_dialog(title, bundle, widget, parent)
+            return dlg
+        
+        status = blurdev.launch(dialog_factory, modal=is_modal)
+        return (status, widget)
+        
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
         Shows a non-modal dialog window in a way suitable for this engine. 
@@ -154,23 +177,11 @@ class MaxEngine(tank.platform.Engine):
         
         :returns: the created widget_class instance
         """
-        from tank.platform.qt import tankqdialog 
-        
-        # first construct the widget object 
-        obj = widget_class(*args, **kwargs)
-        
-        # temporary factory method which returns a dialog class instance
-        # this is what the blur library needs to construct the classes
-        def dialog_factory(parent):
-            return tankqdialog.TankQDialog(title, bundle, obj, parent)
-        
-        blurdev.launch(dialog_factory)
-                
-        # lastly, return the instantiated class
-        return obj
-
-
-        
+        res = self.__launch_blur_dialog(title, bundle, widget_class, False, *args, **kwargs)
+        if not res:
+            return
+        status, widget = res
+        return widget
     
     def show_modal(self, title, bundle, widget_class, *args, **kwargs):
         """
@@ -186,22 +197,7 @@ class MaxEngine(tank.platform.Engine):
 
         :returns: (a standard QT dialog status return code, the created widget_class instance)
         """
-        from tank.platform.qt import tankqdialog
-        
-        # first construct the widget object 
-        obj = widget_class(*args, **kwargs)
-        
-        # temporary factory method which returns a dialog class instance
-        # this is what the blur library needs to construct the classes
-        def dialog_factory(parent):
-            return tankqdialog.TankQDialog(title, bundle, obj, parent)
-                            
-        # this is now a blocking call since we use modal=true        
-        status = blurdev.launch(dialog_factory, modal=True)
-        
-        # lastly, return the instantiated class
-        return (status, obj)
-
+        return self.__launch_blur_dialog(title, bundle, widget_class, True, *args, **kwargs)
 
     def log_debug(self, msg):
         global g_engine_start_time
