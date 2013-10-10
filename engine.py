@@ -64,11 +64,7 @@ class MaxEngine(tank.platform.Engine):
         # set up a qt style sheet
         try:
             qt_app_obj = tank.platform.qt.QtCore.QCoreApplication.instance()
-            css_file = os.path.join(self.disk_location, "resources", "dark.css")
-            f = open(css_file)
-            css = f.read()
-            f.close()
-            qt_app_obj.setStyleSheet(css)        
+            qt_app_obj.setStyleSheet( self._get_standard_qt_stylesheet() )        
         except Exception, e:
             self.log_warning("Could not set QT style sheet: %s" % e )
                 
