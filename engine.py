@@ -41,9 +41,9 @@ class MaxEngine(tank.platform.Engine):
         # check max version
         max_major_version = mxs.maxVersion()[0]
         # 14000 means 2012, 13000 means 2011 
-        if max_major_version not in (14000, 13000):
+        if max_major_version not in (15000, 14000, 13000):
             raise tank.TankError("Unsupported version of 3ds Max! The engine only works with "
-                                 "versions 2011 and 2012.")
+                                 "versions 2011, 2012 & 2013.")
                 
     def post_app_init(self):
         """
@@ -136,7 +136,7 @@ class MaxEngine(tank.platform.Engine):
         base["dialog_base"] = Dialog
         
         return base
-        
+
     def __launch_blur_dialog(self, title, bundle, widget_class, is_modal, *args, **kwargs):
         """
         Handle launching a TankQDialog using the blur library
@@ -156,9 +156,25 @@ class MaxEngine(tank.platform.Engine):
         def dialog_factory(parent):
             dlg = self._create_dialog(title, bundle, widget, parent)
             return dlg
+
+        blur_result = blurdev.launch(dialog_factory, modal=is_modal) 
+
+        # get the dialog result from the returned blur result:
+        dlg_res = None
         
-        status = blurdev.launch(dialog_factory, modal=is_modal)
-        return (status, widget)
+        from tank.platform.qt import QtGui
+        if isinstance(blur_result, QtGui.QDialog):
+            # As of Blur 13312, the result returned from launching a dialog
+            # using Blur seems to be the dialog iteslf rather than the dialog
+            # code as was previously returned!
+            dlg_res = blur_result.result()
+        elif isinstance(blur_result, int):
+            # the result is the dialog return code
+            dlg_res = blur_result
+        else:
+            raise TankError("Blur returned an unexpected result when launching a dialog: %s" % blur_result)
+        
+        return (dlg_res, widget)
         
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
