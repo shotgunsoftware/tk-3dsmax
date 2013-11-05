@@ -44,7 +44,7 @@ class MenuGenerator(object):
         self._close_existing_menus()
         
         height = 300
-        width = 150
+        width = 200
         
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
@@ -82,7 +82,7 @@ class MenuGenerator(object):
         self._close_existing_menus()
         
         height = 300
-        width = 150
+        width = 200
         
         dialog_x = button_center_from_left - (width/2)
         dialog_y = button_center_from_top - height + 10
