@@ -56,11 +56,11 @@ class MaxEngine(tank.platform.Engine):
         Called when all apps have initialized
         """
         
-        # set TANK_MENU_BG_LOCATION needed by the maxscript.  For versions >= 2014 they
-        # changed the gamma adjustment to something different so there are two versions
-        # of the background!
+        # set TANK_MENU_BG_LOCATION needed by the maxscript.  The gamma correction applied to the
+        # background images seems to have changed for 2012 & 2013 and then reverted back for 2014
+        # which is why there are two versions!
         max_major_version = mxs.maxVersion()[0]
-        menu_bg_name = "menu_bg.png" if max_major_version < 16000 else "menu_bg_2014.png"
+        menu_bg_name = "menu_bg_light.png" if max_major_version in [14000, 15000] else "menu_bg.png"
         os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", menu_bg_name)
         
         # now execute the max script to create a menu bar
