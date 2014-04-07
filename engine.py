@@ -40,18 +40,28 @@ class MaxEngine(tank.platform.Engine):
         
         # check max version
         max_major_version = mxs.maxVersion()[0]
-        # 14000 means 2012, 13000 means 2011 
-        if max_major_version not in (15000, 14000, 13000):
+        # 13000 means 2011, 14000 means 2012, etc. 
+        if max_major_version not in (13000, 14000, 15000, 16000):
             raise tank.TankError("Unsupported version of 3ds Max! The engine only works with "
-                                 "versions 2011, 2012 & 2013.")
+                                 "versions 2011, 2012, 2013* & 2014. (* Please see the engine "
+                                 "documentation for more details regarding 2013)")
+        elif max_major_version == 15000:
+            # specifically for 2013 which is not officially supported but may work, output a warning:
+            self.log_warning("This version of 3ds Max is not officially supported by Toolkit and you may "
+                             "experience instability.  Please contact toolkitsupport@shotgunsoftware.com "
+                             "if you do have any issues.")
                 
     def post_app_init(self):
         """
         Called when all apps have initialized
         """
         
-        # set TANK_MENU_BG_LOCATION needed by the maxscript
-        os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", "menu_bg.png")
+        # set TANK_MENU_BG_LOCATION needed by the maxscript.  The gamma correction applied to the
+        # background images seems to have changed for 2012 & 2013 and then reverted back for 2014
+        # which is why there are two versions!
+        max_major_version = mxs.maxVersion()[0]
+        menu_bg_name = "menu_bg_light.png" if max_major_version in [14000, 15000] else "menu_bg.png"
+        os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", menu_bg_name)
         
         # now execute the max script to create a menu bar
         menu_script = os.path.join(self.disk_location, "resources", "menu_bar.ms")
@@ -213,9 +223,13 @@ class MaxEngine(tank.platform.Engine):
         return self.__launch_blur_dialog(title, bundle, widget_class, True, *args, **kwargs)
 
     def log_debug(self, msg):
-        global g_engine_start_time
-        td = time.time() - g_engine_start_time
-        sys.stdout.write("%04fs Shotgun Debug: %s\n" % (td, msg))
+        if not hasattr(self, "_debug_logging"):
+            self._debug_logging = self.get_setting("debug_logging", False)
+            
+        if self._debug_logging:
+            global g_engine_start_time
+            td = time.time() - g_engine_start_time
+            sys.stdout.write("%04fs Shotgun Debug: %s\n" % (td, msg))
 
     def log_info(self, msg):
         global g_engine_start_time
