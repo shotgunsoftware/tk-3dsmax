@@ -72,11 +72,7 @@ class MaxEngine(tank.platform.Engine):
         self._menu_generator = tk_3dsmax.MenuGenerator(self)
 
         # set up a qt style sheet
-        try:
-            qt_app_obj = tank.platform.qt.QtCore.QCoreApplication.instance()
-            qt_app_obj.setStyleSheet( self._get_standard_qt_stylesheet() )        
-        except Exception, e:
-            self.log_warning("Could not set QT style sheet: %s" % e )
+        self._initialize_dark_look_and_feel()
                 
 
     def destroy_engine(self):
