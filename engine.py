@@ -73,6 +73,17 @@ class MaxEngine(tank.platform.Engine):
 
         # set up a qt style sheet
         self._initialize_dark_look_and_feel()
+        
+        # note! For some reason it looks like the widget background color isn't being set correctly
+        # on 3dsmax top level items. In order to mitigate this, apply a style to set the background
+        # color on the main app window area. The main app window area is typically a QWidget which 
+        # is a child of a QDialog (created by tk-core) with the name TankDialog. Based on this, 
+        # we can construct a style directive QDialog#TankDialog > QWidget which applies to the 
+        # immediate QWidget children only.
+        qt_app_obj = tank.platform.qt.QtCore.QCoreApplication.instance()
+        curr_stylesheet = qt_app_obj.styleSheet()
+        curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"
+        qt_app_obj.setStyleSheet( curr_stylesheet )
                 
 
     def destroy_engine(self):
