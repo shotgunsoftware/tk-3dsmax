@@ -72,18 +72,25 @@ class MaxEngine(tank.platform.Engine):
         self._menu_generator = tk_3dsmax.MenuGenerator(self)
 
         # set up a qt style sheet
-        self._initialize_dark_look_and_feel()
-        
-        # note! For some reason it looks like the widget background color isn't being set correctly
-        # on 3dsmax top level items. In order to mitigate this, apply a style to set the background
-        # color on the main app window area. The main app window area is typically a QWidget which 
-        # is a child of a QDialog (created by tk-core) with the name TankDialog. Based on this, 
-        # we can construct a style directive QDialog#TankDialog > QWidget which applies to the 
-        # immediate QWidget children only.
+        # note! - try to be smart about this and only run
+        # the style setup once per session - it looks like
+        # 3dsmax slows down if this is executed every engine restart. 
         qt_app_obj = tank.platform.qt.QtCore.QCoreApplication.instance()
         curr_stylesheet = qt_app_obj.styleSheet()
-        curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"
-        qt_app_obj.setStyleSheet( curr_stylesheet )
+        
+        if "toolkit 3dsmax style extension" not in curr_stylesheet:
+
+            self._initialize_dark_look_and_feel()
+            
+            # note! For some reason it looks like the widget background color isn't being set correctly
+            # on 3dsmax top level items. In order to mitigate this, apply a style to set the background
+            # color on the main app window area. The main app window area is typically a QWidget which 
+            # is a child of a QDialog (created by tk-core) with the name TankDialog. Based on this, 
+            # we can construct a style directive QDialog#TankDialog > QWidget which applies to the 
+            # immediate QWidget children only.
+            curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
+            curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"        
+            qt_app_obj.setStyleSheet(curr_stylesheet)
                 
 
     def destroy_engine(self):
