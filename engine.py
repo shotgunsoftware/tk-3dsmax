@@ -22,7 +22,7 @@ try:
     from Py3dsMax import mxs
     import blurdev
 except:
-    raise Exception("Could not import Py3dsMax - in order to run this engine, "
+    raise Exception("Shotgun: Could not import Py3dsMax - in order to run this engine, "
                     "you need to have the blur python extensions installed. "
                     "For more information, see http://code.google.com/p/blur-dev/wiki/Py3dsMax")
 
@@ -31,10 +31,13 @@ g_engine_start_time = time.time()
 
 
 class MaxEngine(tank.platform.Engine):
-        
-    def init_engine(self):
+    """
+    The main Toolkit engine for 3ds Max
+    """
+                
+    def pre_app_init(self):
         """
-        constructor
+        Do any additional initialization before the apps are loaded. 
         """
         self.log_debug("%s: Initializing..." % self)         
         
@@ -49,28 +52,8 @@ class MaxEngine(tank.platform.Engine):
             # specifically for 2013 which is not officially supported but may work, output a warning:
             self.log_warning("This version of 3ds Max is not officially supported by Toolkit and you may "
                              "experience instability.  Please contact toolkitsupport@shotgunsoftware.com "
-                             "if you do have any issues.")
-                
-    def post_app_init(self):
-        """
-        Called when all apps have initialized
-        """
+                             "if you do have any issues.")        
         
-        # set TANK_MENU_BG_LOCATION needed by the maxscript.  The gamma correction applied to the
-        # background images seems to have changed for 2012 & 2013 and then reverted back for 2014
-        # which is why there are two versions!
-        max_major_version = mxs.maxVersion()[0]
-        menu_bg_name = "menu_bg_light.png" if max_major_version in [14000, 15000] else "menu_bg.png"
-        os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", menu_bg_name)
-        
-        # now execute the max script to create a menu bar
-        menu_script = os.path.join(self.disk_location, "resources", "menu_bar.ms")
-        mxs.fileIn(menu_script)
-        
-        # set up menu handler
-        tk_3dsmax = self.import_module("tk_3dsmax")
-        self._menu_generator = tk_3dsmax.MenuGenerator(self)
-
         # set up a qt style sheet
         # note! - try to be smart about this and only run
         # the style setup once per session - it looks like
@@ -90,8 +73,26 @@ class MaxEngine(tank.platform.Engine):
             # immediate QWidget children only.
             curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
             curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"        
-            qt_app_obj.setStyleSheet(curr_stylesheet)
+            qt_app_obj.setStyleSheet(curr_stylesheet)        
                 
+    def post_app_init(self):
+        """
+        Called when all apps have initialized
+        """
+        # set TANK_MENU_BG_LOCATION needed by the maxscript.  The gamma correction applied to the
+        # background images seems to have changed for 2012 & 2013 and then reverted back for 2014
+        # which is why there are two versions!
+        max_major_version = mxs.maxVersion()[0]
+        menu_bg_name = "menu_bg_light.png" if max_major_version in [14000, 15000] else "menu_bg.png"
+        os.environ["TANK_MENU_BG_LOCATION"] = os.path.join(self.disk_location, "resources", menu_bg_name)
+        
+        # now execute the max script to create a menu bar
+        menu_script = os.path.join(self.disk_location, "resources", "menu_bar.ms")
+        mxs.fileIn(menu_script)
+        
+        # set up menu handler
+        tk_3dsmax = self.import_module("tk_3dsmax")
+        self._menu_generator = tk_3dsmax.MenuGenerator(self)
 
     def destroy_engine(self):
         """
