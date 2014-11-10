@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import tank
+import sgtk
 
 try:
     from Py3dsMax import mxs
