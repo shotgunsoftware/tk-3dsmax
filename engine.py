@@ -78,10 +78,10 @@ class MaxEngine(tank.platform.Engine):
         self._safe_dialog = []
 
         engine = self
-        class DialogEvents(QtCore.QObject):
+        class DialogEvents(tank.platform.qt.QtCore.QObject):
             def eventFilter(self, obj, event):
                 # Remove from tracked dialogs
-                if event.type() == QtCore.QEvent.Close:
+                if event.type() == tank.platform.qt.QtCore.QEvent.Close:
                     if obj in engine._safe_dialog: 
                         engine._safe_dialog.remove(obj)
 
