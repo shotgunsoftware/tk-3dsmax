@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import tank
+import sgtk
 
 try:
     from Py3dsMax import mxs
@@ -74,6 +75,20 @@ class MaxEngine(tank.platform.Engine):
             curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
             curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"        
             qt_app_obj.setStyleSheet(curr_stylesheet)        
+
+        self._safe_dialog = []
+
+        engine = self
+        class DialogEvents(tank.platform.qt.QtCore.QObject):
+            def eventFilter(self, obj, event):
+                # Remove from tracked dialogs
+                if event.type() == tank.platform.qt.QtCore.QEvent.Close:
+                    if obj in engine._safe_dialog: 
+                        engine._safe_dialog.remove(obj)
+
+                return False;
+
+        self.dialogEvents = DialogEvents()
                 
     def post_app_init(self):
         """
@@ -202,6 +217,20 @@ class MaxEngine(tank.platform.Engine):
         
         return (dlg_res, widget)
         
+    ##########################################################################################
+    # Engine
+    def _create_dialog(self, title, bundle, widget, parent):
+        """
+        Install event filtering in order to allow tracking dialogs
+        """
+        dialog = sgtk.platform.Engine._create_dialog(self, title, bundle, widget, parent)
+        dialog.installEventFilter(self.dialogEvents)
+
+        # Add to tracked dialogs (will be removed in eventFilter)
+        self._safe_dialog.append(dialog)
+
+        return dialog
+
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
         Shows a non-modal dialog window in a way suitable for this engine. 
@@ -260,3 +289,32 @@ class MaxEngine(tank.platform.Engine):
         global g_engine_start_time
         td = time.time() - g_engine_start_time
         sys.stdout.write("%04fs Shotgun Warning: %s\n" % (td, msg))
+
+    def set_safe_modal_dialog(self, dialog):
+        """
+        Sets the dialog to be used by safe_modal_maxscript_eval
+        :param dialog: Dialog to preserve
+        """
+        self._safe_dialog = dialog
+
+    def safe_dialog_exec(self, func):
+        """
+        If running a command from a dialog also creates a 3ds max window, this function tries to
+        ensure that the dialog will stay alive and that the max modal window becomes visible
+        and unobstructed.
+
+        :param script: Function to execute (partial/lambda)
+        """
+
+        # Merge operation can cause max dialogs to pop up, and closing the window results in a crash.
+        # So keep alive and hide all of our qt windows while this type of operations are occuring.
+        for dialog in self._safe_dialog:
+            dialog.hide()
+            dialog.lower()
+
+            func()
+
+            # Restore the window after the operation is completed
+            dialog.show()
+            dialog.activateWindow() # for Windows
+            dialog.raise_()  # for MacOS
