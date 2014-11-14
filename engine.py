@@ -75,16 +75,16 @@ class MaxEngine(tank.platform.Engine):
             curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
             curr_stylesheet += "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"        
             qt_app_obj.setStyleSheet(curr_stylesheet)        
-
-        self._safe_dialog = []
+                
+        self._safe_dialogs = []
 
         engine = self
         class DialogEvents(tank.platform.qt.QtCore.QObject):
             def eventFilter(self, obj, event):
                 # Remove from tracked dialogs
                 if event.type() == tank.platform.qt.QtCore.QEvent.Close:
-                    if obj in engine._safe_dialog: 
-                        engine._safe_dialog.remove(obj)
+                    if obj in engine._safe_dialogs: 
+                        engine._safe_dialogs.remove(obj)
 
                 return False;
 
@@ -227,7 +227,7 @@ class MaxEngine(tank.platform.Engine):
         dialog.installEventFilter(self.dialogEvents)
 
         # Add to tracked dialogs (will be removed in eventFilter)
-        self._safe_dialog.append(dialog)
+        self._safe_dialogs.append(dialog)
 
         return dialog
 
@@ -295,7 +295,7 @@ class MaxEngine(tank.platform.Engine):
         Sets the dialog to be used by safe_modal_maxscript_eval
         :param dialog: Dialog to preserve
         """
-        self._safe_dialog = dialog
+        self._safe_dialogs = dialog
 
     def safe_dialog_exec(self, func):
         """
@@ -308,13 +308,14 @@ class MaxEngine(tank.platform.Engine):
 
         # Merge operation can cause max dialogs to pop up, and closing the window results in a crash.
         # So keep alive and hide all of our qt windows while this type of operations are occuring.
-        for dialog in self._safe_dialog:
-            dialog.hide()
-            dialog.lower()
+        # Note: With Blur's Py3dsMax, hiding a window or changing its windowFlags to disable
+        #       closing the window actually causes the window to be destroyed. So the next best thing
+        #       is to at least not allow the user to interct with the dialog while a max modal is present.
+        for dialog in self._safe_dialogs:
+            dialog.setEnabled(False)
 
             func()
 
             # Restore the window after the operation is completed
-            dialog.show()
-            dialog.activateWindow() # for Windows
-            dialog.raise_()  # for MacOS
+        for dialog in self._safe_dialogs:
+            dialog.setEnabled(True)
