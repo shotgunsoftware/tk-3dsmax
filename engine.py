@@ -53,8 +53,11 @@ class MaxEngine(tank.platform.Engine):
             # specifically for 2013 which is not officially supported but may work, output a warning:
             self.log_warning("This version of 3ds Max is not officially supported by Toolkit and you may "
                              "experience instability.  Please contact support@shotgunsoftware.com "
-                             "if you do have any issues.")        
-        
+                             "if you do have any issues.")
+
+        max_ver_str = ".".join([str(v) for v in mxs.maxVersion()])
+        self.log_user_attribute_metric("3ds Max version", max_ver_str)
+
         # set up a qt style sheet
         # note! - try to be smart about this and only run
         # the style setup once per session - it looks like
