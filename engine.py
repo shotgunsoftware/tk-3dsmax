@@ -55,8 +55,12 @@ class MaxEngine(tank.platform.Engine):
                              "experience instability.  Please contact support@shotgunsoftware.com "
                              "if you do have any issues.")
 
-        max_ver_str = ".".join([str(v) for v in mxs.maxVersion()])
-        self.log_user_attribute_metric("3ds Max version", max_ver_str)
+        try:
+            max_ver_str = ".".join([str(v) for v in mxs.maxVersion()])
+            self.log_user_attribute_metric("3ds Max version", max_ver_str)
+        except:
+            # ignore all errors. ex: using a core that doesn't support metrics
+            pass
 
         # set up a qt style sheet
         # note! - try to be smart about this and only run
