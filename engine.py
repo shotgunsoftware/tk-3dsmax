@@ -13,6 +13,7 @@ A 3ds Max engine for Tank.
 
 """
 
+import math
 import os
 import sys
 import time
@@ -53,8 +54,17 @@ class MaxEngine(tank.platform.Engine):
             # specifically for 2013 which is not officially supported but may work, output a warning:
             self.log_warning("This version of 3ds Max is not officially supported by Toolkit and you may "
                              "experience instability.  Please contact support@shotgunsoftware.com "
-                             "if you do have any issues.")        
-        
+                             "if you do have any issues.")
+
+        try:
+            # translate the max version into a year. this line was pulled from
+            # the 3dsmaxplus engine's _max_version_to_ear() method.
+            ver_year = int(2000 + (math.ceil(mxs.maxVersion() / 1000.0) - 2))
+            self.log_user_attribute_metric("3ds Max version", ver_year)
+        except:
+            # ignore all errors. ex: using a core that doesn't support metrics
+            pass
+
         # set up a qt style sheet
         # note! - try to be smart about this and only run
         # the style setup once per session - it looks like
