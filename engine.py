@@ -13,6 +13,7 @@ A 3ds Max engine for Tank.
 
 """
 
+import math
 import os
 import sys
 import time
@@ -56,8 +57,10 @@ class MaxEngine(tank.platform.Engine):
                              "if you do have any issues.")
 
         try:
-            max_ver_str = ".".join([str(v) for v in mxs.maxVersion()])
-            self.log_user_attribute_metric("3ds Max version", max_ver_str)
+            # translate the max version into a year. this line was pulled from
+            # the 3dsmaxplus engine's _max_version_to_ear() method.
+            ver_year = int(2000 + (math.ceil(mxs.maxVersion() / 1000.0) - 2))
+            self.log_user_attribute_metric("3ds Max version", ver_year)
         except:
             # ignore all errors. ex: using a core that doesn't support metrics
             pass
