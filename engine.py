@@ -59,7 +59,7 @@ class MaxEngine(tank.platform.Engine):
         try:
             # translate the max version into a year. this line was pulled from
             # the 3dsmaxplus engine's _max_version_to_ear() method.
-            ver_year = int(2000 + (math.ceil(mxs.maxVersion() / 1000.0) - 2))
+            ver_year = int(2000 + (math.ceil(max_major_version / 1000.0) - 2))
             self.log_user_attribute_metric("3ds Max version", str(ver_year))
         except:
             # ignore all errors. ex: using a core that doesn't support metrics
