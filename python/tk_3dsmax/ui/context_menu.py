@@ -9,6 +9,7 @@
 
 from tank.platform.qt import QtCore, QtGui
 
+
 class Ui_ContextMenu(object):
     def setupUi(self, ContextMenu):
         ContextMenu.setObjectName("ContextMenu")
@@ -20,10 +21,12 @@ class Ui_ContextMenu(object):
         self.browser_header = QtGui.QGroupBox(ContextMenu)
         self.browser_header.setMinimumSize(QtCore.QSize(0, 44))
         self.browser_header.setMaximumSize(QtCore.QSize(16777215, 44))
-        self.browser_header.setStyleSheet("#browser_header {\n"
-"border: none;\n"
-"background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(97, 97, 97, 255), stop:1 rgba(49, 49, 49, 255))\n"
-"}")
+        self.browser_header.setStyleSheet(
+            "#browser_header {\n"
+            "border: none;\n"
+            "background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(97, 97, 97, 255), stop:1 rgba(49, 49, 49, 255))\n"
+            "}"
+        )
         self.browser_header.setTitle("")
         self.browser_header.setObjectName("browser_header")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.browser_header)
@@ -48,7 +51,9 @@ class Ui_ContextMenu(object):
         self.scroll_area_layout.setSpacing(0)
         self.scroll_area_layout.setObjectName("scroll_area_layout")
         self.verticalLayout_4.addLayout(self.scroll_area_layout)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding
+        )
         self.verticalLayout_4.addItem(spacerItem)
         self.scroll_area.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scroll_area)
@@ -57,7 +62,16 @@ class Ui_ContextMenu(object):
         QtCore.QMetaObject.connectSlotsByName(ContextMenu)
 
     def retranslateUi(self, ContextMenu):
-        ContextMenu.setWindowTitle(QtGui.QApplication.translate("ContextMenu", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("ContextMenu", "Browser Title", None, QtGui.QApplication.UnicodeUTF8))
+        ContextMenu.setWindowTitle(
+            QtGui.QApplication.translate(
+                "ContextMenu", "Form", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.label.setText(
+            QtGui.QApplication.translate(
+                "ContextMenu", "Browser Title", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+
 
 from . import resources_rc
