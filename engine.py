@@ -41,7 +41,7 @@ class MaxEngine(tank.platform.Engine):
 
     def pre_app_init(self):
         """
-        Do any additional initialization before the apps are loaded. 
+        Do any additional initialization before the apps are loaded.
         """
         self.log_debug("%s: Initializing..." % self)
 
@@ -274,15 +274,15 @@ class MaxEngine(tank.platform.Engine):
 
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
         """
-        Shows a non-modal dialog window in a way suitable for this engine. 
+        Shows a non-modal dialog window in a way suitable for this engine.
         The engine will attempt to parent the dialog nicely to the host application.
-        
+
         :param title: The title of the window
         :param bundle: The app, engine or framework object that is associated with this window
         :param widget_class: The class of the UI to be constructed. This must derive from QWidget.
-        
+
         Additional parameters specified will be passed through to the widget_class constructor.
-        
+
         :returns: the created widget_class instance
         """
         res = self.__launch_blur_dialog(
@@ -296,13 +296,13 @@ class MaxEngine(tank.platform.Engine):
     def show_modal(self, title, bundle, widget_class, *args, **kwargs):
         """
         Shows a modal dialog window in a way suitable for this engine. The engine will attempt to
-        integrate it as seamlessly as possible into the host application. This call is blocking 
+        integrate it as seamlessly as possible into the host application. This call is blocking
         until the user closes the dialog.
-        
+
         :param title: The title of the window
         :param bundle: The app, engine or framework object that is associated with this window
         :param widget_class: The class of the UI to be constructed. This must derive from QWidget.
-        
+
         Additional parameters specified will be passed through to the widget_class constructor.
 
         :returns: (a standard QT dialog status return code, the created widget_class instance)
