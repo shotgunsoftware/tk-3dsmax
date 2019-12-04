@@ -413,9 +413,9 @@ class MaxEngine(sgtk.platform.Engine):
         # Older versions of Max make use of special logic in _create_dialog
         # to handle window parenting. If we can, though, we should go with
         # the more standard approach to getting the main window.
-        if self._max_version_to_year(self._get_max_version()) > 2018:
+        if self._max_version_to_year(self._get_max_version()) > 2019:
             # getMAXHWND returned a float instead of a long, which was completely
-            # unusable with PySide in 2017 and 2018, but starting 2019
+            # unusable with PySide in 2017 to 2019, but starting 2020
             # we can start using it properly.
             from sgtk.platform.qt import QtGui
 
