@@ -1,11 +1,11 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
@@ -51,11 +51,11 @@ class MaxSessionCollector(HookBaseClass):
                 "type": "template",
                 "default": None,
                 "description": "Template path for artist work files. Should "
-                               "correspond to a template defined in "
-                               "templates.yml. If configured, is made available"
-                               "to publish plugins via the collected item's "
-                               "properties. ",
-            },
+                "correspond to a template defined in "
+                "templates.yml. If configured, is made available"
+                "to publish plugins via the collected item's "
+                "properties. ",
+            }
         }
 
         # update the base settings with these settings
@@ -84,9 +84,9 @@ class MaxSessionCollector(HookBaseClass):
                     "action_button": {
                         "label": "Change Project",
                         "tooltip": "Change to a different Max project",
-                        "callback": _set_project
+                        "callback": _set_project,
                     }
-                }
+                },
             )
 
             self.collect_previews(item, project_root)
@@ -100,9 +100,9 @@ class MaxSessionCollector(HookBaseClass):
                     "action_button": {
                         "label": "Set Project",
                         "tooltip": "Set the Max project",
-                        "callback": _set_project
+                        "callback": _set_project,
                     }
-                }
+                },
             )
 
         self.collect_session_geometry(item)
@@ -128,18 +128,11 @@ class MaxSessionCollector(HookBaseClass):
 
         # create the session item for the publish hierarchy
         session_item = parent_item.create_item(
-            "3dsmax.session",
-            "3dsmax Session",
-            display_name
+            "3dsmax.session", "3dsmax Session", display_name
         )
 
         # get the icon path to display for this item
-        icon_path = os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "3dsmax.png"
-        )
+        icon_path = os.path.join(self.disk_location, os.pardir, "icons", "3dsmax.png")
         session_item.set_icon_from_path(icon_path)
 
         # discover the project root which helps in discovery of other
@@ -152,7 +145,8 @@ class MaxSessionCollector(HookBaseClass):
         work_template_setting = settings.get("Work Template")
         if work_template_setting:
             work_template = publisher.engine.get_template_by_name(
-                work_template_setting.value)
+                work_template_setting.value
+            )
 
             # store the template on the item for use by publish plugins. we
             # can't evaluate the fields here because there's no guarantee the
@@ -181,11 +175,7 @@ class MaxSessionCollector(HookBaseClass):
 
         self.logger.info(
             "Processing export folder: %s" % (cache_dir,),
-            extra={
-                "action_show_folder": {
-                    "path": cache_dir
-                }
-            }
+            extra={"action_show_folder": {"path": cache_dir}},
         )
 
         # look for alembic files in the cache folder
@@ -194,10 +184,7 @@ class MaxSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle various files
-            super(MaxSessionCollector, self)._collect_file(
-                parent_item,
-                export_path
-            )
+            super(MaxSessionCollector, self)._collect_file(parent_item, export_path)
 
     def collect_previews(self, parent_item, project_root):
         """
@@ -217,11 +204,7 @@ class MaxSessionCollector(HookBaseClass):
 
         self.logger.info(
             "Processing movies folder: %s" % (movies_dir,),
-            extra={
-                "action_show_folder": {
-                    "path": movies_dir
-                }
-            }
+            extra={"action_show_folder": {"path": movies_dir}},
         )
 
         # look for movie files in the movies folder
@@ -239,8 +222,7 @@ class MaxSessionCollector(HookBaseClass):
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
             item = super(MaxSessionCollector, self)._collect_file(
-                parent_item,
-                movie_path
+                parent_item, movie_path
             )
 
             # the item has been created. update the display name to include
@@ -263,18 +245,11 @@ class MaxSessionCollector(HookBaseClass):
             return
 
         geo_item = parent_item.create_item(
-            "3dsmax.session.geometry",
-            "Geometry",
-            "All Session Geometry"
+            "3dsmax.session.geometry", "Geometry", "All Session Geometry"
         )
 
         # get the icon path to display for this item
-        icon_path = os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "geometry.png"
-        )
+        icon_path = os.path.join(self.disk_location, os.pardir, "icons", "geometry.png")
 
         geo_item.set_icon_from_path(icon_path)
 
@@ -290,7 +265,7 @@ def _set_project():
         parent=QtGui.QApplication.activeWindow(),
         caption="Save As",
         directory=MaxPlus.PathManager.GetProjectFolderDir(),
-        filter="3dsMax Files (*.max)"
+        filter="3dsMax Files (*.max)",
     )
     file_dialog.setFileMode(QtGui.QFileDialog.DirectoryOnly)
     file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Set")
@@ -301,4 +276,3 @@ def _set_project():
         return
     path = file_dialog.selectedFiles()[0]
     MaxPlus.PathManager.SetProjectFolderDir(path)
-

@@ -58,6 +58,7 @@ def bootstrap_toolkit(root_path):
 
     try:
         from sgtk_plugin_basic_3dsmax import manifest
+
         PluginProperties.running_as_standalone_plugin = True
     except ImportError:
         PluginProperties.running_as_standalone_plugin = False
@@ -65,7 +66,9 @@ def bootstrap_toolkit(root_path):
     if PluginProperties.running_as_standalone_plugin:
         # Retrieve the Shotgun toolkit core included with the plug-in and
         # prepend its python package path to the python module search path.
-        tkcore_python_path = manifest.get_sgtk_pythonpath(PluginProperties.plugin_root_path)
+        tkcore_python_path = manifest.get_sgtk_pythonpath(
+            PluginProperties.plugin_root_path
+        )
         sys.path.insert(0, tkcore_python_path)
         import sgtk
 
@@ -100,7 +103,7 @@ def progress_callback(progress_value, message):
     :param message:        Progress message string
     """
 
-    print "Shotgun: %s" % message
+    print("Shotgun: %s" % message)
     # Display temporary message in prompt line for maximum 2 secs.
     MaxPlus.StatusPanel.DisplayTempPrompt("Shotgun: %s" % message, 2000)
 
@@ -114,12 +117,14 @@ def handle_bootstrap_completed(engine):
     :param engine: Launched :class:`sgtk.platform.Engine` instance.
     """
 
-    print "Shotgun: Bootstrap successfully."
+    print("Shotgun: Bootstrap successfully.")
 
     # Add a logout menu item to the engine context menu only when
     # running as standalone plugin.
     if PluginProperties.running_as_standalone_plugin:
-        engine.register_command("Log Out of Shotgun", _on_logout, {"type": "context_menu"})
+        engine.register_command(
+            "Log Out of Shotgun", _on_logout, {"type": "context_menu"}
+        )
         engine.update_shotgun_menu()
 
 
@@ -134,7 +139,7 @@ def handle_bootstrap_failed(phase, exception):
     :param exception: Python exception raised while bootstrapping.
     """
 
-    print "Shotgun: Bootstrap failed. %s" % exception
+    print("Shotgun: Bootstrap failed. %s" % exception)
     _create_login_menu()
 
 
@@ -143,6 +148,7 @@ def shutdown_toolkit():
     Shutdown the Shotgun toolkit and its 3dsMax engine.
     """
     import sgtk
+
     logger = sgtk.LogManager.get_logger(PLUGIN_PACKAGE_NAME)
     engine = sgtk.platform.current_engine()
 
@@ -183,6 +189,7 @@ def _login_user():
     Logs in the user to Shotgun and starts the engine.
     """
     import sgtk
+
     sgtk_logger = sgtk.LogManager.get_logger(PLUGIN_PACKAGE_NAME)
 
     try:
@@ -206,7 +213,9 @@ def _login_user():
     toolkit_mgr = sgtk.bootstrap.ToolkitManager(user)
     toolkit_mgr.base_configuration = plugin_info["base_configuration"]
     toolkit_mgr.plugin_id = plugin_info["plugin_id"]
-    toolkit_mgr.bundle_cache_fallback_paths = [os.path.join(PluginProperties.plugin_root_path, "bundle_cache")]
+    toolkit_mgr.bundle_cache_fallback_paths = [
+        os.path.join(PluginProperties.plugin_root_path, "bundle_cache")
+    ]
 
     # Retrieve the Shotgun entity type and id when they exist in the environment.
     # these are passed down through the app launcher when running in zero config
@@ -222,7 +231,7 @@ def _login_user():
         "tk-3dsmaxplus",
         entity,
         completed_callback=handle_bootstrap_completed,
-        failed_callback=handle_bootstrap_failed
+        failed_callback=handle_bootstrap_failed,
     )
 
 
@@ -235,16 +244,19 @@ def _create_login_menu():
 
     mb = MaxPlus.MenuBuilder(constants.SG_MENU_LABEL)
     login_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Log In to Shotgun...", _login_user)
+        constants.SG_MENU_ITEMS_CATEGORY, "Log In to Shotgun...", _login_user
+    )
     mb.AddItem(login_action)
     mb.AddSeparator()
 
     jump_to_website_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Learn about Shotgun...", _jump_to_website)
+        constants.SG_MENU_ITEMS_CATEGORY, "Learn about Shotgun...", _jump_to_website
+    )
     mb.AddItem(jump_to_website_action)
 
     jump_to_signup_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Try Shotgun for Free...", _jump_to_signup)
+        constants.SG_MENU_ITEMS_CATEGORY, "Try Shotgun for Free...", _jump_to_signup
+    )
     mb.AddItem(jump_to_signup_action)
 
     main_menu = MaxPlus.MenuManager.GetMainMenu()
@@ -272,6 +284,7 @@ def _jump_to_website():
     # At this point, the engine is not launched, so "QtCore" and
     # "QtGui" variables are not defined in sgtk.platform.qt yet.
     from sgtk.util.qt_importer import QtImporter
+
     qt_importer = QtImporter()
     QtCore = qt_importer.QtCore
     QtGui = qt_importer.QtGui
@@ -287,11 +300,14 @@ def _jump_to_signup():
     # At this point, the engine is not launched, so "QtCore" and
     # "QtGui" variables are not defined in sgtk.platform.qt yet.
     from sgtk.util.qt_importer import QtImporter
+
     qt_importer = QtImporter()
     QtCore = qt_importer.QtCore
     QtGui = qt_importer.QtGui
 
-    QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.shotgunsoftware.com/signup"))
+    QtGui.QDesktopServices.openUrl(
+        QtCore.QUrl("https://www.shotgunsoftware.com/signup")
+    )
 
 
 def _get_plugin_info():
@@ -308,6 +324,7 @@ def _get_plugin_info():
         # first, see if we can get the info from the manifest. if we can, no
         # need to parse info.yml
         from sgtk_plugin_basic_3dsmax import manifest
+
         plugin_id = manifest.plugin_id
         base_configuration = manifest.base_configuration
     except ImportError:
@@ -319,13 +336,7 @@ def _get_plugin_info():
 
         # build the path to the info.yml file
         plugin_info_yml = os.path.abspath(
-            os.path.join(
-                __file__,
-                "..",
-                "..",
-                "..",
-                "info.yml"
-            )
+            os.path.join(__file__, "..", "..", "..", "info.yml")
         )
 
         # open the yaml file and read the data
@@ -335,7 +346,4 @@ def _get_plugin_info():
             base_configuration = info_yml["base_configuration"]
 
     # return a dictionary with the required info
-    return dict(
-        plugin_id=plugin_id,
-        base_configuration=base_configuration,
-    )
+    return dict(plugin_id=plugin_id, base_configuration=base_configuration)

@@ -1,11 +1,11 @@
 # Copyright (c) 2013 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 """
@@ -22,14 +22,16 @@ from .maxscript import MaxScript
 
 MENU_LABEL = "Shotgun"
 
+
 class MenuGenerator(object):
     """
     Menu generation functionality for 3dsmax
-    
+
     Actual menu creation is done through MaxScript to prevent a crash with modal dialogs.
-    The crash happens if a modal dialog is open and a user clicks on a menu with action items 
+    The crash happens if a modal dialog is open and a user clicks on a menu with action items
     that directly call python code
     """
+
     def __init__(self, engine):
         """
         Initialize Menu Generator.
@@ -38,10 +40,10 @@ class MenuGenerator(object):
         self._engine = engine
 
         # Maxscript variable name for context menu
-        self._ctx_var = 'sgtk_menu_ctx'
+        self._ctx_var = "sgtk_menu_ctx"
         # Mascript variable name for Shotgun main menu
-        self._menu_var = 'sgtk_menu_main'
-        
+        self._menu_var = "sgtk_menu_main"
+
         # Need a globally available object for maxscript action callbacks to be able to refer to python objects
         self._engine.maxscript_objects = {}
 
@@ -70,21 +72,24 @@ class MenuGenerator(object):
             menu_name = fav["name"]
             # scan through all menu items
             for cmd in cmd_items:
-                if cmd.get_app_instance_name() == app_instance_name and cmd.name == menu_name:
+                if (
+                    cmd.get_app_instance_name() == app_instance_name
+                    and cmd.name == menu_name
+                ):
                     # found our match!
                     cmd.add_to_menu(self._menu_var, self._engine)
                     # mark as a favourite item
                     cmd.favourite = True
 
         MaxScript.add_separator(self._menu_var)
-        
+
         # now go through all of the menu items.
         # separate them out into various sections
         commands_by_app = {}
 
         for cmd in cmd_items:
             if cmd.get_type() != "context_menu":
-            # normal menu
+                # normal menu
                 app_name = cmd.get_app_name()
                 if app_name is None:
                     # un-parented app
@@ -111,11 +116,15 @@ class MenuGenerator(object):
         ctx_name = str(ctx)
 
         MaxScript.create_menu(ctx_name, self._ctx_var)
-        MaxScript.add_action_to_menu(self._jump_to_sg, 'Jump to Shotgun', self._ctx_var, self._engine)
+        MaxScript.add_action_to_menu(
+            self._jump_to_sg, "Jump to Shotgun", self._ctx_var, self._engine
+        )
 
         # Add the menu item only when there are some file system locations.
         if ctx.filesystem_locations:
-            MaxScript.add_action_to_menu(self._jump_to_fs, 'Jump to File System', self._ctx_var, self._engine)
+            MaxScript.add_action_to_menu(
+                self._jump_to_fs, "Jump to File System", self._ctx_var, self._engine
+            )
 
         MaxScript.add_separator(self._menu_var)
         MaxScript.add_to_menu(self._ctx_var, self._menu_var, "ctx_builder")
@@ -161,9 +170,9 @@ class MenuGenerator(object):
             if len(commands_by_app[app_name]) > 1:
                 # more than one menu entry fort his app
                 # make a sub menu and put all items in the sub menu
-                menu_var = 'sgtk_menu_builder'
+                menu_var = "sgtk_menu_builder"
                 MaxScript.create_menu(app_name, menu_var)
-                
+
                 for cmd in commands_by_app[app_name]:
                     cmd.add_to_menu(menu_var, self._engine)
 
@@ -181,6 +190,7 @@ class AppCommand(object):
     """
     Wraps around a single command that you get from engine.commands
     """
+
     def __init__(self, name, command_dict):
         """
         Initialize AppCommand object.
@@ -230,7 +240,9 @@ class AppCommand(object):
             doc_url = app.documentation_url
             # deal with nuke's inability to handle unicode. #fail
             if doc_url.__class__ == unicode:
-                doc_url = unicodedata.normalize('NFKD', doc_url).encode('ascii', 'ignore')
+                doc_url = unicodedata.normalize("NFKD", doc_url).encode(
+                    "ascii", "ignore"
+                )
             return doc_url
 
         return None
