@@ -10,7 +10,7 @@
 
 import os
 
-import MaxPlus
+import pymxs
 
 import tank
 from tank import Hook
@@ -41,13 +41,32 @@ class SceneOperation(Hook):
         """
         if operation == "current_path":
             # return the current scene path
-            file_path = MaxPlus.FileManager.GetFileNameAndPath()
+            file_path = _session_path()
             if not file_path:
                 return ""
             return file_path
         elif operation == "open":
             # open the specified scene
-            MaxPlus.FileManager.Open(file_path)
+            _open_file(file_path)
         elif operation == "save":
             # save the current scene:
-            MaxPlus.FileManager.Save()
+            _save_file()
+
+
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+    if pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
+        return os.path.join(pymxs.runtime.maxFilePath, pymxs.runtime.maxFileName)
+    else:
+        return None
+
+
+def _open_file(file_path):
+    pymxs.runtime.loadMaxFile(file_path)
+
+
+def _save_file(file_path=None):
+    pymxs.runtime.saveMaxFile(_session_path())

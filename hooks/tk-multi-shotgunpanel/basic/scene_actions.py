@@ -11,15 +11,7 @@
 import os
 import sgtk
 
-try:
-    import MaxPlus
-except ImportError:
-    pass
-
-try:
-    import pymxs
-except ImportError:
-    pass
+import pymxs
 
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -185,9 +177,10 @@ class MaxActions(HookBaseClass):
 
         app = self.parent
 
-        # Note: MaxPlus.FileManager.Merge() is not equivalent as it opens a dialog.
         app.engine.safe_dialog_exec(
-            lambda: _execute_script('mergeMAXFile("' + path.replace("\\", "/") + '")')
+            lambda: pymxs.runtime.execute(
+                'mergeMAXFile("' + path.replace("\\", "/") + '")'
+            )
         )
 
     def _xref_scene(self, path, sg_publish_data):
@@ -212,9 +205,8 @@ class MaxActions(HookBaseClass):
 
         app = self.parent
 
-        # No direct equivalent found in MaxPlus. Would potentially need to get scene root node (INode) and use addNewXRef on that otherwise.
         app.engine.safe_dialog_exec(
-            lambda: _execute_script(
+            lambda: pymxs.runtime.execute(
                 'xrefs.addNewXRefFile("' + path.replace("\\", "/") + '")'
             )
         )
@@ -229,14 +221,7 @@ class MaxActions(HookBaseClass):
         """
 
         max_script = CREATE_TEXTURE_NODE_MAXSCRIPT % (path,)
-        _execute_script(max_script)
-
-
-def _execute_script(script):
-    if sgtk.platform.current_engine().supports_max_plus:
-        MaxPlus.Core.EvalMAXScript(script)
-    else:
-        pymxs.runtime.execute(script)
+        pymxs.runtime.execute(max_script)
 
 
 # This maxscript creates a bitmap texture node and attaches it to a standard

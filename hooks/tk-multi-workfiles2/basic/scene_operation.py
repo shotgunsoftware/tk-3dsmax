@@ -8,16 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-
-try:
-    import MaxPlus
-except ImportError:
-    pass
-
-try:
-    import pymxs
-except ImportError:
-    pass
+import pymxs
 
 import sgtk
 
@@ -97,36 +88,22 @@ def _session_path():
     Return the path to the current session
     :return:
     """
-    if sgtk.platform.current_engine().supports_max_plus:
-        return MaxPlus.FileManager.GetFileNameAndPath()
-    elif pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
+    if pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
         return os.path.join(pymxs.runtime.maxFilePath, pymxs.runtime.maxFileName)
     else:
         return None
 
 
 def _open_file(file_path):
-    if sgtk.platform.current_engine().supports_max_plus:
-        MaxPlus.FileManager.Open(file_path)
-    else:
-        pymxs.runtime.loadMaxFile(file_path)
+    pymxs.runtime.loadMaxFile(file_path)
 
 
 def _save_file(file_path=None):
-    if sgtk.platform.current_engine().supports_max_plus:
-        if file_path is None:
-            MaxPlus.FileManager.Save()
-        else:
-            MaxPlus.FileManager.Save(file_path)
+    if file_path is None:
+        pymxs.runtime.execute("max file saveas")
     else:
-        if file_path is None:
-            pymxs.runtime.execute("max file saveas")
-        else:
-            pymxs.runtime.saveMaxFile(file_path)
+        pymxs.runtime.saveMaxFile(file_path)
 
 
 def _reset_scene():
-    if sgtk.platform.current_engine().supports_max_plus:
-        MaxPlus.FileManager.Reset(True)
-    else:
-        pymxs.runtime.resetMaxFile(pymxs.runtime.Name("noprompt"))
+    pymxs.runtime.resetMaxFile(pymxs.runtime.Name("noprompt"))
