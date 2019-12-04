@@ -8,13 +8,21 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 """
-A 3ds Max (2015+) engine for Toolkit that uses MaxPlus.
+A 3ds Max (2017+) engine for Toolkit based mostly on pymxs and also uses MaxPlus for certain features
+on older Max releases.
 """
+from __future__ import print_function
 import os
 import time
 import math
 import sgtk
-import MaxPlus
+
+import pymxs
+
+try:
+    import MaxPlus
+except ImportError:
+    pass
 
 
 class MaxEngine(sgtk.platform.Engine):
@@ -67,8 +75,9 @@ class MaxEngine(sgtk.platform.Engine):
         # __init__() because the initialization may need those
         # variables.
         self._parent_to_max = True
-        self._on_menus_loaded_handler = None
         self._dock_widgets = []
+
+        self._max_version = None
 
         # proceed about your business
         sgtk.platform.Engine.__init__(self, *args, **kwargs)
@@ -90,7 +99,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Called before all apps have initialized
         """
-        from sgtk.platform.qt import QtCore
+        from sgtk.platform.qt import QtCore, QtGui
 
         self.log_debug("%s: Initializing..." % self)
 
@@ -115,10 +124,9 @@ class MaxEngine(sgtk.platform.Engine):
             if max_year >= self.get_setting(
                 "compatibility_dialog_min_version", max_next_year
             ):
-                MaxPlus.Core.EvalMAXScript(
-                    'messagebox "Warning - ' + msg + '" title: "Shotgun Warning"'
+                QtGui.QMessageBox.warning(
+                    None, "Shotgun Warning", "Warning - {0}".format(msg)
                 )
-
             # and log the warning
             self.log_warning(msg)
 
@@ -130,8 +138,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
 
             # Display warning dialog
-            MaxPlus.Core.EvalMAXScript(
-                'messagebox "Warning - ' + msg + '" title: "Shotgun Warning"'
+            QtGui.QMessageBox.warning(
+                None, "Shotgun Warning", "Warning - {0}".format(msg)
             )
 
             # and log the warning
@@ -150,10 +158,9 @@ class MaxEngine(sgtk.platform.Engine):
         class DialogEvents(QtCore.QObject):
             def eventFilter(self, obj, event):
                 if event.type() == QtCore.QEvent.WindowActivate:
-                    MaxPlus.CUI.DisableAccelerators()
+                    pymxs.runtime.enableAccelerators = False
                 elif event.type() == QtCore.QEvent.WindowDeactivate:
-                    MaxPlus.CUI.EnableAccelerators()
-
+                    pymxs.runtime.enableAccelerators = True
                 # Remove from tracked dialogs
                 if event.type() == QtCore.QEvent.Close:
                     if obj in engine._safe_dialog:
@@ -238,20 +245,31 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Called when all apps have initialized
         """
+        # Make sure this gets executed from the main thread because pymxs can't be used
+        # from a background thread.
+        self.execute_in_main_thread(self._post_app_init)
+
+    def _post_app_init(self):
+        """
+        Called from the main thread when all apps have initialized
+        """
         # set up menu handler
         self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
         self._add_shotgun_menu()
 
-        try:
-            # Listen to the CuiMenusPostLoad notification in order to add
-            # our shotgun menu after workspace reset/switch.
-            self._on_menus_loaded_handler = MaxPlus.NotificationManager.Register(
-                MaxPlus.NotificationCodes.CuiMenusPostLoad, self._on_menus_loaded
-            )
-        except AttributeError:
-            self.log_debug(
-                "CuiMenusPostLoad notification code is not available in this version of MaxPlus."
-            )
+        python_code = "\n".join(
+            [
+                "import sgtk",
+                "engine = sgtk.platform.current_engine()",
+                "engine._on_menus_loaded()",
+            ]
+        )
+
+        pymxs.runtime.callbacks.addScript(
+            pymxs.runtime.Name("postLoadingMenus"),
+            'python.execute "{0}"'.format(python_code),
+            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+        )
 
         # Run a series of app instance commands at startup.
         self._run_app_instance_commands()
@@ -338,8 +356,10 @@ class MaxEngine(sgtk.platform.Engine):
         """
         self.log_debug("%s: Destroying..." % self)
 
-        if self._on_menus_loaded_handler is not None:
-            MaxPlus.NotificationManager.Unregister(self._on_menus_loaded_handler)
+        pymxs.runtime.callbacks.removeScripts(
+            pymxs.runtime.Name("postLoadingMenus"),
+            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+        )
         self._remove_shotgun_menu()
 
     def update_shotgun_menu(self):
@@ -357,45 +377,19 @@ class MaxEngine(sgtk.platform.Engine):
     #                         Python commands are always executed in the main 3ds Max thread.
     #                         You should not attempt to spawn separate threads in your scripts
     #                         (for example, by using the Python threading module).
-    def log_debug(self, msg):
+    def _emit_log_message(self, handler, record):
         """
-        Debug logging.
-        :param msg: The message string to log
+        Emits a log message.
         """
-        if self.get_setting("debug_logging", False):
-            self.async_execute_in_main_thread(
-                self._print_output, "Shotgun Debug: %s" % msg
-            )
-
-    def log_info(self, msg):
-        """
-        Info logging.
-        :param msg: The message string to log
-        """
-        self.async_execute_in_main_thread(self._print_output, "Shotgun Info: %s" % msg)
-
-    def log_warning(self, msg):
-        """
-        Warning logging.
-        :param msg: The message string to log
-        """
-        self.async_execute_in_main_thread(
-            self._print_output, "Shotgun Warning: %s" % msg
-        )
-
-    def log_error(self, msg):
-        """
-        Error logging.
-        :param msg: The message string to log
-        """
-        self.async_execute_in_main_thread(self._print_output, "Shotgun Error: %s" % msg)
+        msg_str = handler.format(record)
+        self.async_execute_in_main_thread(self._print_output, msg_str)
 
     def _print_output(self, msg):
         """
         Print the specified message to the maxscript listener
         :param msg: The message string to print
         """
-        print("[%-13s] %s" % (str(time.time()), msg))
+        print(msg)
 
     ##########################################################################################
     # Engine
@@ -409,7 +403,15 @@ class MaxEngine(sgtk.platform.Engine):
         # Older versions of Max make use of special logic in _create_dialog
         # to handle window parenting. If we can, though, we should go with
         # the more standard approach to getting the main window.
-        if self._max_version_to_year(self._get_max_version()) > 2017:
+        if self._max_version_to_year(self._get_max_version()) > 2018:
+            # getMAXHWND returned a float instead of a long, which was completely
+            # unusable with PySide in 2017 and 2018, but starting 2019
+            # we can start using it properly.
+            from sgtk.platform.qt import QtGui
+
+            return QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
+        elif self._max_version_to_year(self._get_max_version()) > 2017:
+            #
             return MaxPlus.GetQMaxMainWindow()
         else:
             return super(MaxEngine, self)._get_dialog_parent()
@@ -442,7 +444,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
 
         dock_widget_id = "sgtk_dock_widget_" + panel_id
-        main_window = MaxPlus.GetQMaxMainWindow()
+
+        main_window = self._get_dialog_parent()
         # Check if the dock widget wrapper already exists.
         dock_widget = main_window.findChild(QtGui.QDockWidget, dock_widget_id)
 
@@ -508,7 +511,7 @@ class MaxEngine(sgtk.platform.Engine):
             # Keep MaxPlus.GetQMaxMainWindow() inside for-loop
             # This will be executed only in version > 2017
             # which supports Qt-docking.
-            MaxPlus.GetQMaxMainWindow().removeDockWidget(dock_widget)
+            self._get_dialog_parent().removeDockWidget(dock_widget)
             dock_widget.deleteLater()
 
     def _create_dialog(self, title, bundle, widget, parent):
@@ -531,8 +534,8 @@ class MaxEngine(sgtk.platform.Engine):
             previous_parent = dialog.parent()
             try:
                 self.log_debug("Attempting to attach dialog to 3ds Max...")
-                # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
                 dialog.setParent(None)
+                # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
                 MaxPlus.AttachQWidgetToMax(dialog)
                 self.log_debug("AttachQWidgetToMax successful.")
             except AttributeError:
@@ -645,7 +648,7 @@ class MaxEngine(sgtk.platform.Engine):
     MAX_RELEASE_R18 = 18000
 
     # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 22000
+    MAXIMUM_SUPPORTED_VERSION = 22900
 
     def _max_version_to_year(self, version):
         """
@@ -659,14 +662,14 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Returns Version integer of max release number.
         """
+        if self._max_version is None:
+            # Make sure this gets executed from the main thread because pymxs can't be used
+            # from a background thread.
+            self._max_version = self.execute_in_main_thread(
+                lambda: pymxs.runtime.maxVersion()[0]
+            )
         # 3dsMax Version returns a number which contains max version, sdk version, etc...
-        version_id = MaxPlus.Application.Get3DSMAXVersion()
-
-        # Transform it to a version id
-        # (Macro to get 3ds max release from version id)
-        version_number = (version_id >> 16) & 0xFFFF
-
-        return version_number
+        return self._max_version
 
     def _is_at_least_max_2016(self):
         """
