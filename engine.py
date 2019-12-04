@@ -201,7 +201,7 @@ class MaxEngine(sgtk.platform.Engine):
 
         # This needs to be present for apps as it will be used in show_dialog when perforce asks for login
         # info very early on.
-        self.tk_3dsmax = self.import_module("tk_3dsmaxplus")
+        self.tk_3dsmax = self.import_module("tk_3dsmax")
 
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
@@ -273,6 +273,16 @@ class MaxEngine(sgtk.platform.Engine):
 
         # Run a series of app instance commands at startup.
         self._run_app_instance_commands()
+
+        # if a file was specified, load it now
+        file_to_open = os.environ.get("SGTK_FILE_TO_OPEN")
+        if file_to_open:
+            try:
+                pymxs.runtime.loadMaxFile(file_to_open)
+            except Exception:
+                self.logger.exception(
+                    "Couldn't not open the requested file: {}".format(file_to_open)
+                )
 
     def post_context_change(self, old_context, new_context):
         """

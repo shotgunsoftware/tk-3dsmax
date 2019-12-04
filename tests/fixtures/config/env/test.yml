@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 engines:
-  tk-3dsmaxplus:
+  tk-3dsmax:
     location:
       path: $SHOTGUN_CURRENT_REPO_ROOT
       type: path

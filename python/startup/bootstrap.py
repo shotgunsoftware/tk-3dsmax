@@ -11,7 +11,7 @@ from __future__ import print_function
 import os
 import sys
 
-import MaxPlus
+import pymxs
 
 # the version of max when a working SSL python
 # started to be distributed with it.
@@ -30,7 +30,7 @@ def bootstrap_sgtk_classic():
     """
     Parse environment variables for an engine name and
     serialized Context to use to startup Toolkit and
-    the tk-3dsmaxplus engine and environment.
+    the tk-3dsmax engine and environment.
     """
 
     try:
@@ -39,7 +39,7 @@ def bootstrap_sgtk_classic():
         error("Could not import sgtk! Disabling for now: %s" % e)
         return
 
-    sgtk.LogManager().initialize_base_file_handler("tk-3dsmaxplus")
+    sgtk.LogManager().initialize_base_file_handler("tk-3dsmax")
     logger = sgtk.LogManager.get_logger(__name__)
 
     if not "TANK_ENGINE" in os.environ:
@@ -68,7 +68,7 @@ def bootstrap_sgtk_classic():
 def bootstrap_sgtk_with_plugins():
     """
     Parse environment variables for a list of plugins to load that will
-    ultimately startup Toolkit and the tk-3dsmaxplus engine and environment.
+    ultimately startup Toolkit and the tk-3dsmax engine and environment.
     """
     import sgtk
 
@@ -97,9 +97,8 @@ def bootstrap_sgtk():
     """
     if sys.platform == "win32":
 
-        # get the version id from max
-        version_id = MaxPlus.Application.Get3DSMAXVersion()
-        version_number = (version_id >> 16) & 0xFFFF
+        # get the version number from max
+        version_number = pymxs.runtime.maxVersion()[0]
 
         if version_number < SSL_INCLUDED_VERSION:
             # our version of 3dsmax does not have ssl included.
@@ -118,11 +117,6 @@ def bootstrap_sgtk():
         bootstrap_sgtk_with_plugins()
     else:
         bootstrap_sgtk_classic()
-
-    # if a file was specified, load it now
-    file_to_open = os.environ.get("SGTK_FILE_TO_OPEN")
-    if file_to_open:
-        MaxPlus.FileManager.Open(file_to_open)
 
     # clean up temp env vars
     for var in [

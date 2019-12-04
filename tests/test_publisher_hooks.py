@@ -51,7 +51,7 @@ class TestPublisherHooks(TankTestBase):
 
         # Start the engine and ensure it is destroyed
         self.context = self.tk.context_from_entity("Project", self.project["id"])
-        self.engine = sgtk.platform.start_engine("tk-3dsmaxplus", self.tk, self.context)
+        self.engine = sgtk.platform.start_engine("tk-3dsmax", self.tk, self.context)
         self.addCleanup(self.engine.destroy)
 
         # Capture all logs emitted by the engine!

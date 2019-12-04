@@ -19,7 +19,7 @@ from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 class MaxLauncher(SoftwareLauncher):
     """
     Handles launching 3dsMax executables. Automatically starts up
-    a tk-3dsmaxplus engine with the current context in the new session
+    a tk-3dsmax engine with the current context in the new session
     of 3dsMax.
     """
 
@@ -28,7 +28,7 @@ class MaxLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2016"
+        return "2017"
 
     def scan_software(self):
         """
@@ -58,7 +58,7 @@ class MaxLauncher(SoftwareLauncher):
     def prepare_launch(self, exec_path, args, file_to_open=None):
         """
         Prepares an environment to launch 3dsMax in that will automatically
-        load Toolkit and the tk-3dsmaxplus engine when 3dsMax starts.
+        load Toolkit and the tk-3dsmax engine when 3dsMax starts.
 
         :param str exec_path: Path to 3dsMax executable to launch.
         :param str args: Command line arguments as strings.
