@@ -1,11 +1,11 @@
 # Copyright (c) 2013 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 """
@@ -13,6 +13,7 @@ MaxScript handling for 3ds Max
 """
 import hashlib
 import MaxPlus
+
 
 class MaxScript:
     """
@@ -28,10 +29,16 @@ class MaxScript:
         :param from_menu_name: Name of menu item to give to MaxScript
         """
 
-        MaxPlus.Core.EvalMAXScript('''
+        MaxPlus.Core.EvalMAXScript(
+            """
             sgtk_menu_sub_item = menuMan.createSubMenuItem "{from_menu_name}" {from_menu_var}
             {to_menu_var}.addItem sgtk_menu_sub_item -1
-        '''.format(from_menu_var=from_menu_var, to_menu_var=to_menu_var, from_menu_name=from_menu_name))
+        """.format(
+                from_menu_var=from_menu_var,
+                to_menu_var=to_menu_var,
+                from_menu_name=from_menu_name,
+            )
+        )
 
     @staticmethod
     def create_menu(menu_name, menu_var):
@@ -41,14 +48,18 @@ class MaxScript:
         :param menu_var: MaxScript variable name in which the menu will be created
         """
 
-        MaxPlus.Core.EvalMAXScript('''
+        MaxPlus.Core.EvalMAXScript(
+            """
             -- clear the old menu
             sgtk_oldMenu = menuMan.findMenu "{menu_name}"
             if sgtk_oldMenu != undefined then menuMan.unregisterMenu sgtk_oldMenu
 
             -- create the main menu
             {menu_var} = menuMan.createMenu "{menu_name}"
-        '''.format(menu_var=menu_var, menu_name=menu_name))
+        """.format(
+                menu_var=menu_var, menu_name=menu_name
+            )
+        )
 
     @staticmethod
     def add_separator(menu_var):
@@ -57,10 +68,14 @@ class MaxScript:
         :param menu_var: MaxScript variable name of the menu to add separator into
         """
 
-        MaxPlus.Core.EvalMAXScript('''
+        MaxPlus.Core.EvalMAXScript(
+            """
             sgtk_menu_separator = menuMan.createSeparatorItem()
             {menu_var}.addItem sgtk_menu_separator -1
-        '''.format(menu_var=menu_var))
+        """.format(
+                menu_var=menu_var
+            )
+        )
 
     @staticmethod
     def add_to_main_menu_bar(menu_var, menu_name):
@@ -70,14 +85,18 @@ class MaxScript:
         :param menu_name: String name of the menu to add
         """
 
-        MaxPlus.Core.EvalMAXScript('''
+        MaxPlus.Core.EvalMAXScript(
+            """
             -- Add main menu to Max, second to last which should be before Help
             sgtk_main_menu_bar = menuMan.getMainMenuBar()
             sgtk_sub_menu_index = sgtk_main_menu_bar.numItems() - 1
             sgtk_sub_menu_item = menuMan.createSubMenuItem "{menu_name}" {menu_var}
             sgtk_main_menu_bar.addItem sgtk_sub_menu_item sgtk_sub_menu_index
             menuMan.updateMenuBar()
-        '''.format(menu_var=menu_var, menu_name=menu_name))
+        """.format(
+                menu_var=menu_var, menu_name=menu_name
+            )
+        )
 
     @staticmethod
     def add_action_to_menu(callback, action_name, menu_var, engine):
@@ -114,7 +133,6 @@ class MaxScript:
             hash_name += "_"
 
         engine.maxscript_objects[hash_name] = obj
-        
 
         """
         Macro name must not have any strange characters (spaces, dash, etc..)
@@ -123,7 +141,7 @@ class MaxScript:
         with new macro for the same action every time shotgun is reloaded.
         eg: 'Publish...' action will always re-use the same MacroScript.
         """
-        macro_name = 'sg_' + hashlib.md5(action_name).hexdigest()
+        macro_name = "sg_" + hashlib.md5(action_name).hexdigest()
 
         # Creating python code separately as it needs to have no indentation in the macroscript
         python_code = (
@@ -136,15 +154,16 @@ class MaxScript:
             "    engine.log_error('Shotgun Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
         ).format(hash_name=hash_name, command_name=method_name, action_name=action_name)
 
-        MaxPlus.Core.EvalMAXScript('''
+        MaxPlus.Core.EvalMAXScript(
+            """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
             category: "Shotgun Menu Actions"
             tooltip: "{action_name}"
             (
-	            on execute do 
+	            on execute do
 	            (
-                    /* 
+                    /*
                         This is a workaround to prevent any menu item from being used while there is a modal window.
                         Calling any python code from maxscript while there is a modal window (even 'a = 1') results in
                         an exception.
@@ -163,7 +182,13 @@ class MaxScript:
             sgtk_menu_action.setUseCustomTitle true
             sgtk_menu_action.setTitle("{action_name}")
             {menu_var}.addItem sgtk_menu_action -1
-        '''.format(macro_name=macro_name, menu_var=menu_var, action_name=action_name, python_code=python_code))
+        """.format(
+                macro_name=macro_name,
+                menu_var=menu_var,
+                action_name=action_name,
+                python_code=python_code,
+            )
+        )
 
     @staticmethod
     def disable_menu():

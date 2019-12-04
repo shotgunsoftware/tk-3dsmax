@@ -1,11 +1,11 @@
 ﻿# Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
@@ -63,8 +63,8 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
                 "type": "template",
                 "default": None,
                 "description": "Template path for published work files. Should"
-                               "correspond to a template defined in "
-                               "templates.yml.",
+                "correspond to a template defined in "
+                "templates.yml.",
             }
         }
 
@@ -141,10 +141,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
         # natively.
         item.context_change_allowed = False
 
-        return {
-            "accepted": accepted,
-            "checked": True
-        }
+        return {"accepted": accepted, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -166,10 +163,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             error_msg = "The 3ds Max session has not been saved."
-            self.logger.error(
-                error_msg,
-                extra=_get_save_as_action()
-            )
+            self.logger.error(error_msg, extra=_get_save_as_action())
             raise Exception(error_msg)
 
         # get the normalized path
@@ -196,8 +190,10 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
         # ensure the fields work for the publish template
         missing_keys = publish_template.missing_keys(work_fields)
         if missing_keys:
-            error_msg = "Work file '%s' missing keys required for the " \
-                        "publish template: %s" % (path, missing_keys)
+            error_msg = (
+                "Work file '%s' missing keys required for the "
+                "publish template: %s" % (path, missing_keys)
+            )
             self.logger.error(error_msg)
             raise Exception(error_msg)
 
@@ -212,8 +208,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
             item.properties["publish_version"] = work_fields["version"]
 
         # run the base class validation
-        return super(MaxSessionGeometryPublishPlugin, self).validate(
-            settings, item)
+        return super(MaxSessionGeometryPublishPlugin, self).validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -234,10 +229,12 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
 
         # export the alembic cache
         try:
-            abc_export_cmd = "exportFile @\"%s\" #noPrompt using:AlembicExport" % publish_path
+            abc_export_cmd = (
+                'exportFile @"%s" #noPrompt using:AlembicExport' % publish_path
+            )
             self.parent.log_debug("Executing command: %s" % abc_export_cmd)
             MaxPlus.Core.EvalMAXScript(abc_export_cmd)
-        except Exception, e:
+        except Exception as e:
             raise Exception("Failed to export Alembic Cache: %s" % e)
 
         # Now that the path has been generated, hand it off to the base publish
@@ -274,6 +271,6 @@ def _get_save_as_action():
         "action_button": {
             "label": "Save As...",
             "tooltip": "Save the current session",
-            "callback": callback
+            "callback": callback,
         }
     }

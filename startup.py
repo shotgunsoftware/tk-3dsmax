@@ -50,8 +50,7 @@ class MaxLauncher(SoftwareLauncher):
                 supported_sw_versions.append(sw_version)
             else:
                 self.logger.debug(
-                    "SoftwareVersion %s is not supported: %s" %
-                    (sw_version, reason)
+                    "SoftwareVersion %s is not supported: %s" % (sw_version, reason)
                 )
 
         return supported_sw_versions
@@ -76,8 +75,10 @@ class MaxLauncher(SoftwareLauncher):
 
         required_env = {}
 
-        startup_file = os.path.join(self.disk_location, "python", "startup", "bootstrap.py")
-        new_args = "-U PythonHost \"%s\"" % startup_file
+        startup_file = os.path.join(
+            self.disk_location, "python", "startup", "bootstrap.py"
+        )
+        new_args = '-U PythonHost "%s"' % startup_file
 
         if args:
             args = "%s %s" % (args, new_args)
@@ -88,7 +89,9 @@ class MaxLauncher(SoftwareLauncher):
         # specified to load.
         find_plugins = self.get_setting("launch_builtin_plugins")
         if find_plugins:
-            self.logger.debug("Plugins found from 'launch_builtin_plugins': %s" % find_plugins)
+            self.logger.debug(
+                "Plugins found from 'launch_builtin_plugins': %s" % find_plugins
+            )
 
             # Keep track of the specific list of Toolkit plugins to load when
             # launching 3dsMax. This list is passed through the environment and
@@ -98,11 +101,15 @@ class MaxLauncher(SoftwareLauncher):
             for find_plugin in find_plugins:
                 load_plugin = os.path.join(self.disk_location, "plugins", find_plugin)
                 if os.path.exists(load_plugin):
-                    self.logger.debug("Preparing to launch builtin plugin '%s'" % load_plugin)
+                    self.logger.debug(
+                        "Preparing to launch builtin plugin '%s'" % load_plugin
+                    )
                     load_max_plugins.append(load_plugin)
                 else:
                     # Report the missing plugin directory
-                    self.logger.warning("Resolved plugin path '%s' does not exist!" % load_plugin)
+                    self.logger.warning(
+                        "Resolved plugin path '%s' does not exist!" % load_plugin
+                    )
 
             required_env["SGTK_LOAD_MAX_PLUGINS"] = os.pathsep.join(load_max_plugins)
 
@@ -113,7 +120,9 @@ class MaxLauncher(SoftwareLauncher):
         else:
             # Prepare the launch environment with variables required by the
             # classic bootstrap approach.
-            self.logger.debug("Preparing 3dsMax Launch via Toolkit Classic methodology ...")
+            self.logger.debug(
+                "Preparing 3dsMax Launch via Toolkit Classic methodology ..."
+            )
             required_env["TANK_ENGINE"] = self.engine_name
             required_env["TANK_CONTEXT"] = sgtk.context.serialize(self.context)
 
@@ -140,33 +149,41 @@ class MaxLauncher(SoftwareLauncher):
             exec_path = os.path.join(search_path, "3dsmax.exe")
 
             if os.path.exists(exec_path):
-                self.logger.debug("found version in default installation path %s" % exec_path)
+                self.logger.debug(
+                    "found version in default installation path %s" % exec_path
+                )
                 exec_paths.append(exec_path)
 
         sw_versions = []
         for exec_path in exec_paths:
             # Check to see if the version number can be parsed from the path name.
-            path_sw_versions = [p.lower() for p in exec_path.split(os.path.sep)
-                                if re.match("3ds max [0-9]+[.0-9]*$", p.lower()) is not None
-                                ]
+            path_sw_versions = [
+                p.lower()
+                for p in exec_path.split(os.path.sep)
+                if re.match("3ds max [0-9]+[.0-9]*$", p.lower()) is not None
+            ]
             if path_sw_versions:
                 # Use this sub dir to determine the default display name
                 # and version for the SoftwareVersion to be created.
                 executable_version = path_sw_versions[0].replace("3ds max ", "")
                 self.logger.debug(
-                    "Resolved version '%s' from executable '%s'." %
-                    (executable_version, exec_path)
+                    "Resolved version '%s' from executable '%s'."
+                    % (executable_version, exec_path)
                 )
 
             # Create a SoftwareVersion using the information from executable
             # path(s) found in default locations.
-            self.logger.debug("Creating SoftwareVersion for executable '%s'." % exec_path)
-            sw_versions.append(SoftwareVersion(
-                executable_version,
-                "3ds Max",
-                exec_path,
-                os.path.join(self.disk_location, "icon_256.png")
-            ))
+            self.logger.debug(
+                "Creating SoftwareVersion for executable '%s'." % exec_path
+            )
+            sw_versions.append(
+                SoftwareVersion(
+                    executable_version,
+                    "3ds Max",
+                    exec_path,
+                    os.path.join(self.disk_location, "icon_256.png"),
+                )
+            )
 
         return sw_versions
 
@@ -179,7 +196,10 @@ def _get_installation_paths_from_registry(logger):
     """
     # import it locally so that
     import _winreg
-    logger.debug("Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax")
+
+    logger.debug(
+        "Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax"
+    )
 
     base_key_name = "SOFTWARE\\Autodesk\\3dsMax"
     sub_key_names = []
@@ -206,7 +226,9 @@ def _get_installation_paths_from_registry(logger):
                 install_paths.append(_winreg.QueryValueEx(key, "Installdir")[0])
                 logger.debug("found Installdir value for key %s" % key_name)
             except WindowsError:
-                logger.debug("value Installdir not found for key %s, skipping key" % key_name)
+                logger.debug(
+                    "value Installdir not found for key %s, skipping key" % key_name
+                )
             _winreg.CloseKey(key)
     except WindowsError:
         logger.error("error opening key %s" % key_name)
