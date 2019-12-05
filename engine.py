@@ -220,7 +220,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def _on_menus_loaded(self, code):
         """
-        Called when receiving CuiMenusPostLoad from 3dsMax.
+        Called when receiving postLoadingMenus from 3dsMax.
 
         :param code: Notification code received
         """
@@ -242,6 +242,7 @@ class MaxEngine(sgtk.platform.Engine):
         self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
         self._add_shotgun_menu()
 
+        # Register a callback for the postLoadingMenus event.
         python_code = "\n".join(
             [
                 "import sgtk",
@@ -249,7 +250,8 @@ class MaxEngine(sgtk.platform.Engine):
                 "engine._on_menus_loaded()",
             ]
         )
-
+        # Unfortunately we can't pass in a Python function as a callback,
+        # so we're passing in piece of MaxScript instead.
         pymxs.runtime.callbacks.addScript(
             pymxs.runtime.Name("postLoadingMenus"),
             'python.execute "{0}"'.format(python_code),

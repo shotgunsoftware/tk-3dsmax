@@ -145,7 +145,7 @@ class TestPublisherHooks(TankTestBase):
         """
         return [(error[0], str(error[1])) for error in self.manager.validate()]
 
-    def _test_publish_unsaved_scene(self):
+    def test_publish_unsaved_scene(self):
         """
         Publish item should be current max session, not named after
         file.
@@ -171,7 +171,7 @@ class TestPublisherHooks(TankTestBase):
 
         assert errors == [(tasks[1], "The Max session has not been saved.")]
 
-    def _test_publish_scene(self):
+    def test_publish_scene(self):
         """
         Try to publish a sphere.
         """
@@ -230,7 +230,7 @@ class TestPublisherHooks(TankTestBase):
 
         self.manager.finalize()
 
-    def _test_set_project_command(self):
+    def test_set_project_command(self):
         self.manager.collect_session()
 
         action = self._find_log_action("Current Max project is:")
