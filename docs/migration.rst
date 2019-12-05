@@ -46,7 +46,7 @@ If you omit to update these applications you will get the following errors in yo
         from Py3dsMax import mxs
     ImportError: No module named Py3dsMax
 
-In addition, the hooks for those applications are now located inside the engine. You need to update the hooks for the following applications:
+In addition, the hooks for those applications are now distributed with the engine instead of being distributed with the application. Therfore, you need to update the hooks for the following applications:
 
 tk-multi-loader2
 ****************
@@ -87,6 +87,11 @@ You need to update ``actions_hook`` accordingly:
 
     tk-multi-shotgunpanel:
         actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
+
+tk-multi-publish2
+*********************
+
+There is no need to edit the hooks for the publisher. The default hook setting for the publisher searches for the hooks in the engine's ``hooks`` folder and this engine includes them at the expected location.
 
 Updating your schema
 ====================

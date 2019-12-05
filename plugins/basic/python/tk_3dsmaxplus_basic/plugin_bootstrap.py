@@ -292,8 +292,18 @@ def _login_user():
 
 
 def _add_to_menu(menu, title, callback):
+    """
+    Add a new action item to the menu and invokes the given callback when selected.
+
+    :param menu: MaxScript menu object to add to.
+    :param str title: Name of the action item
+    :param callable callback: Method to call when the menu item is selected.
+    """
+    # Hash the macro name just like we do in the engine for consistency.
     macro_name = "sg_" + hashlib.md5(callback.__name__).hexdigest()
     category = "Shotgun Bootstrap Menu Actions"
+    # The createActionItem expects a macro and not some MaxScript, so create a
+    # macro first...
     rt.execute(
         """
         macroScript {macro_name}
@@ -312,6 +322,7 @@ def _add_to_menu(menu, title, callback):
             method_name=callback.__name__,
         )
     )
+    # ... and then pass its name down to the createActionItem menu.
     menu_action = rt.menuMan.createActionItem(macro_name, category)
     menu_action.setUseCustomTitle(True)
     menu_action.setTitle(title)
@@ -319,12 +330,22 @@ def _add_to_menu(menu, title, callback):
 
 
 def _add_separator(menu):
+    """
+    Add a separator at the bottom of the menu.
+
+    :param menu: MaxScript menu object to add to.
+    """
     sep = rt.menuMan.createSeparatorItem()
     menu.addItem(sep, -1)
 
 
 def _add_to_main_menu_bar(menu):
-    # Retrieve the menu into which we'll insert
+    """
+    Add the given menu to the main menu bar.
+
+    :param menu: MaxScript menu object to add to the main menu bar..
+    """
+    # Retrieve the main menu bar.
     main_menu = rt.menuMan.GetMainMenuBar()
 
     # Create an item that will be inserted right before the help menu.
