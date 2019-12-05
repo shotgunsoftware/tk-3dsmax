@@ -417,9 +417,15 @@ class MaxEngine(sgtk.platform.Engine):
             # getMAXHWND returned a float instead of a long, which was completely
             # unusable with PySide in 2017 to 2019, but starting 2020
             # we can start using it properly.
+            # This logic was taken from
+            # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
+            import shiboken2
             from sgtk.platform.qt import QtGui
 
-            return QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
+            widget = QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
+            return shiboken2.wrapInstance(
+                shiboken2.getCppPointer(widget)[0], QtGui.QMainWindow
+            )
         elif self._max_version_to_year(self._get_max_version()) > 2017:
             #
             return MaxPlus.GetQMaxMainWindow()
