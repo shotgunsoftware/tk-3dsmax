@@ -130,21 +130,6 @@ class MaxEngine(sgtk.platform.Engine):
             # and log the warning
             self.log_warning(msg)
 
-        elif not self._is_at_least_max_2016():
-            # Unsupported max version
-            msg = (
-                "Shotgun Pipeline Toolkit!\n\n"
-                "The Shotgun Pipeline Toolkit does not work with 3ds max versions prior to 2016."
-            )
-
-            # Display warning dialog
-            QtGui.QMessageBox.warning(
-                None, "Shotgun Warning", "Warning - {0}".format(msg)
-            )
-
-            # and log the warning
-            self.log_warning(msg)
-
         self._safe_dialog = []
 
         # Add image formats since max doesn't add the correct paths by default and jpeg won't be readable
@@ -199,8 +184,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
             parent_widget.setStyleSheet(curr_stylesheet)
 
-        # This needs to be present for apps as it will be used in show_dialog when perforce asks for login
-        # info very early on.
+        # This needs to be present for apps as it will be used in
+        # show_dialog when perforce asks for login info very early on.
         self.tk_3dsmax = self.import_module("tk_3dsmax")
 
         # The "qss_watcher" setting causes us to monitor the engine's
@@ -626,7 +611,7 @@ class MaxEngine(sgtk.platform.Engine):
         ensure that the dialog will stay alive and that the max modal window becomes visible
         and unobstructed.
 
-        :param script: Function to execute (partial/lambda)
+        :param callable script: Function to execute
         """
 
         # Merge operation can cause max dialogs to pop up, and closing the window results in a crash.
@@ -686,9 +671,3 @@ class MaxEngine(sgtk.platform.Engine):
             )
         # 3dsMax Version returns a number which contains max version, sdk version, etc...
         return self._max_version
-
-    def _is_at_least_max_2016(self):
-        """
-        Returns True if current Max version is equal or above 3ds max 2015
-        """
-        return self._get_max_version() >= MaxEngine.MAX_RELEASE_R18
