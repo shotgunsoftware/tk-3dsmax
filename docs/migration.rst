@@ -31,9 +31,9 @@ Updating the application hooks
 
 You need to update the versions of the following applications that originally shipped with the ``Blur Python`` version of the ``tk-3dsmax`` hooks.
 
-- ``tk-multi-loader2`` version ``v1.20.0`` or greater
-- ``tk-multi-snapshot`` version ``v0.8.0`` or greater
-- ``tk-multi-workfiles2`` version ``v0.12.0`` or greater
+- ``tk-multi-loader2`` version ``v1.19.5`` or greater
+- ``tk-multi-snapshot`` version ``v0.7.5`` or greater
+- ``tk-multi-workfiles2`` version ``v0.11.15`` or greater
 
 If you do not update these applications you will get the following errors in your Toolkit logs:
 
