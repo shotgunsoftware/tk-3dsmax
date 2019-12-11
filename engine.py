@@ -539,6 +539,8 @@ class MaxEngine(sgtk.platform.Engine):
                 self.log_debug("Attempting to attach dialog to 3ds Max...")
                 dialog.setParent(None)
                 # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
+                # Accessing MaxPlus here is safe because we're inside a
+                # a branch of code that can only be executed on Max 2019 and lower.
                 MaxPlus.AttachQWidgetToMax(dialog)
                 self.log_debug("AttachQWidgetToMax successful.")
             except AttributeError:

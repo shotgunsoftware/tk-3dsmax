@@ -9,12 +9,12 @@ A migration example
 
 You can view the pull request where ``tk-config-default2`` was updated to use the new engine `here <https://github.com/shotgunsoftware/tk-config-default2/pull/67>`_.
 
-To learn more about each changes, keep reading.
+To learn more about each of the required changes, continue reading below.
 
 Updating the engine location
 ============================
 
-You need update the ``location`` of the 3dsMax engine to point to the new engine named ``tk-3dsmax`` with a version of ``v1.0.0`` or greater.
+You need to update the ``location`` of the 3dsMax engine to point to the new engine named ``tk-3dsmax`` with a version of ``v1.0.0`` or greater.
 
 For example:
 
@@ -35,7 +35,7 @@ You need to update the versions of the following applications that originally sh
 - ``tk-multi-snapshot`` version ``v0.8.0`` or greater
 - ``tk-multi-workfiles2`` version ``v0.12.0`` or greater
 
-If you omit to update these applications you will get the following errors in your Toolkit logs:
+If you do not update these applications you will get the following errors in your Toolkit logs:
 
 .. code-block:: python
 
@@ -46,7 +46,7 @@ If you omit to update these applications you will get the following errors in yo
         from Py3dsMax import mxs
     ImportError: No module named Py3dsMax
 
-In addition, the hooks for those applications are now distributed with the engine instead of being distributed with the application. Therfore, you need to update the hooks for the following applications:
+In addition, the hooks for those applications are now distributed with the engine instead of being distributed with the application. Therefore, you need to update the hooks for the following applications:
 
 tk-multi-loader2
 ****************
@@ -96,11 +96,11 @@ There is no need to edit the hooks for the publisher. The default hook setting f
 Updating your schema
 ====================
 
-It is possible that your configuration uses ``defer_creation`` parameter. Make sure that any references to ``tk-3dsmaxplus`` are converted to ``tk-3dsmax``.
+It is possible that your configuration uses the ``defer_creation`` parameter. Make sure that any references to ``tk-3dsmaxplus`` are converted to ``tk-3dsmax``.
 
 Updating Shotgun
 ****************
 
-Visit the ``Software`` page on your Shotgun site. If you are a Shotgun administrator, you can access the page by clicking on the user icon at the top right on your site and selecting ``Software``. On this page, please make sure that there is a ``3ds Max`` software with the ``Engine`` column set to ``tk-3dsmax``.
+Visit the ``Software`` page on your Shotgun site. If you are a Shotgun administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. On this page, please make sure that there is a ``3ds Max`` software with the ``Engine`` column set to ``tk-3dsmax``.
 
 .. image:: _static/software-entity.png
