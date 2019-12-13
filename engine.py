@@ -400,9 +400,9 @@ class MaxEngine(sgtk.platform.Engine):
         # Older versions of Max make use of special logic in _create_dialog
         # to handle window parenting. If we can, though, we should go with
         # the more standard approach to getting the main window.
-        if self._max_version_to_year(self._get_max_version()) > 2019:
+        if self._max_version_to_year(self._get_max_version()) > 2020:
             # getMAXHWND returned a float instead of a long, which was completely
-            # unusable with PySide in 2017 to 2019, but starting 2020
+            # unusable with PySide in 2017 to 2020, but starting 2021
             # we can start using it properly.
             # This logic was taken from
             # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
