@@ -12,7 +12,9 @@
 MaxScript handling for 3ds Max
 """
 import hashlib
-import MaxPlus
+import sgtk
+
+import pymxs
 
 
 class MaxScript:
@@ -28,8 +30,7 @@ class MaxScript:
         :param to_menu_var: MaxScript variable name of menu to add to
         :param from_menu_name: Name of menu item to give to MaxScript
         """
-
-        MaxPlus.Core.EvalMAXScript(
+        pymxs.runtime.execute(
             """
             sgtk_menu_sub_item = menuMan.createSubMenuItem "{from_menu_name}" {from_menu_var}
             {to_menu_var}.addItem sgtk_menu_sub_item -1
@@ -47,17 +48,30 @@ class MaxScript:
         :param menu_name: String name of menu to create
         :param menu_var: MaxScript variable name in which the menu will be created
         """
-
-        MaxPlus.Core.EvalMAXScript(
+        MaxScript.unregister_menu(menu_name)
+        pymxs.runtime.execute(
             """
-            -- clear the old menu
-            sgtk_oldMenu = menuMan.findMenu "{menu_name}"
-            if sgtk_oldMenu != undefined then menuMan.unregisterMenu sgtk_oldMenu
-
             -- create the main menu
             {menu_var} = menuMan.createMenu "{menu_name}"
         """.format(
                 menu_var=menu_var, menu_name=menu_name
+            )
+        )
+
+    @staticmethod
+    def unregister_menu(menu_name):
+        """
+        Unregister a menu
+
+        :param str menu_name: Name of the menu in the menu bar.
+        """
+        pymxs.runtime.execute(
+            """
+            -- clear the menu
+            sgtk_oldMenu = menuMan.findMenu "{menu_name}"
+            if sgtk_oldMenu != undefined then menuMan.unregisterMenu sgtk_oldMenu
+        """.format(
+                menu_name=menu_name
             )
         )
 
@@ -68,7 +82,7 @@ class MaxScript:
         :param menu_var: MaxScript variable name of the menu to add separator into
         """
 
-        MaxPlus.Core.EvalMAXScript(
+        pymxs.runtime.execute(
             """
             sgtk_menu_separator = menuMan.createSeparatorItem()
             {menu_var}.addItem sgtk_menu_separator -1
@@ -85,7 +99,7 @@ class MaxScript:
         :param menu_name: String name of the menu to add
         """
 
-        MaxPlus.Core.EvalMAXScript(
+        pymxs.runtime.execute(
             """
             -- Add main menu to Max, second to last which should be before Help
             sgtk_main_menu_bar = menuMan.getMainMenuBar()
@@ -154,7 +168,7 @@ class MaxScript:
             "    engine.log_error('Shotgun Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
         ).format(hash_name=hash_name, command_name=method_name, action_name=action_name)
 
-        MaxPlus.Core.EvalMAXScript(
+        pymxs.runtime.execute(
             """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
@@ -198,7 +212,7 @@ class MaxScript:
 
         This is used to disable actions while a modal window is opened.
         """
-        MaxPlus.Core.EvalMAXScript("sgtk_main_menu_enabled = False")
+        pymxs.runtime.execute("sgtk_main_menu_enabled = False")
 
     @staticmethod
     def enable_menu():
@@ -206,4 +220,4 @@ class MaxScript:
         Sets a flag so that menu actions can be called.
         """
 
-        MaxPlus.Core.EvalMAXScript("sgtk_main_menu_enabled = True")
+        pymxs.runtime.execute("sgtk_main_menu_enabled = True")

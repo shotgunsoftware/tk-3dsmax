@@ -58,7 +58,7 @@ configuration:
 
     launch_builtin_plugins:
         type: list
-        description: Comma-separated list of tk-3dsmaxplus plugins to load when launching 3dsMax. Use
+        description: Comma-separated list of tk-3dsmax plugins to load when launching 3dsMax. Use
                      of this feature disables the classic mechanism for bootstrapping Toolkit
                      when 3dsMax is launched. Therefore, if any plugins are specified using this
                      setting, the first one in the list must be responsible for starting Toolkit
@@ -72,8 +72,8 @@ configuration:
 requires_shotgun_fields:
 
 # More verbose description of this item
-display_name: "Shotgun Engine for 3ds Max Plus"
-description: "Shotgun Integration in 3ds Max Plus"
+display_name: "Shotgun Engine for 3ds Max"
+description: "Shotgun Integration in 3ds Max"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:

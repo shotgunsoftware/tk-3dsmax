@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2017 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,7 +10,8 @@
 
 import os
 import sgtk
-import MaxPlus
+
+import pymxs
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -163,14 +164,14 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             error_msg = "The 3ds Max session has not been saved."
-            self.logger.error(error_msg, extra=_get_save_as_action())
+            self.logger.error(error_msg, extra=_get_save_as_action)
             raise Exception(error_msg)
 
         # get the normalized path
         path = sgtk.util.ShotgunPath.normalize(path)
 
         # check that there is still geometry in the scene:
-        if not list(MaxPlus.Core.GetRootNode().Children):
+        if _is_empty_scene():
             error_msg = (
                 "Validation failed because there is no geometry in the scene "
                 "to be exported. You can uncheck this plugin or create "
@@ -233,7 +234,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
                 'exportFile @"%s" #noPrompt using:AlembicExport' % publish_path
             )
             self.parent.log_debug("Executing command: %s" % abc_export_cmd)
-            MaxPlus.Core.EvalMAXScript(abc_export_cmd)
+            _execute_script(abc_export_cmd)
         except Exception as e:
             raise Exception("Failed to export Alembic Cache: %s" % e)
 
@@ -247,8 +248,18 @@ def _session_path():
     Return the path to the current session
     :return:
     """
+    if pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
+        return os.path.join(pymxs.runtime.maxFilePath, pymxs.runtime.maxFileName)
+    else:
+        return None
 
-    return MaxPlus.FileManager.GetFileNameAndPath()
+
+def _is_empty_scene():
+    return len(pymxs.runtime.rootNode.Children) == 0
+
+
+def _execute_script(script):
+    pymxs.runtime.execute(script)
 
 
 def _get_save_as_action():
@@ -259,7 +270,7 @@ def _get_save_as_action():
     engine = sgtk.platform.current_engine()
 
     # default save callback
-    callback = MaxPlus.FileManager.SaveAs
+    callback = lambda: pymxs.runtime.execute("max file saveas")
 
     # if workfiles2 is configured, use that for file save
     if "tk-multi-workfiles2" in engine.apps:

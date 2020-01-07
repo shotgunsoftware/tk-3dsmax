@@ -9,8 +9,10 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import MaxPlus
 import sgtk
+from sgtk.util.filesystem import ensure_folder_exists
+
+import pymxs
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -270,15 +272,20 @@ def _session_path():
     Return the path to the current session
     :return:
     """
-
-    return MaxPlus.FileManager.GetFileNameAndPath()
+    if pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
+        return os.path.join(pymxs.runtime.maxFilePath, pymxs.runtime.maxFileName)
+    else:
+        return None
 
 
 def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-    MaxPlus.FileManager.Save(path)
+    # max won't ensure that the folder is created when saving, so we must make sure it exists
+    folder = os.path.dirname(path)
+    ensure_folder_exists(folder)
+    pymxs.runtime.saveMaxFile(path)
 
 
 def _get_save_as_action():
@@ -288,7 +295,7 @@ def _get_save_as_action():
     engine = sgtk.platform.current_engine()
 
     # default save callback
-    callback = MaxPlus.FileManager.SaveAs
+    callback = lambda: pymxs.runtime.execute("max file saveas")
 
     # if workfiles2 is configured, use that for file save
     if "tk-multi-workfiles2" in engine.apps:

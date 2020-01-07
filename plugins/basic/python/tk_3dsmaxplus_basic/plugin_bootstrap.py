@@ -8,12 +8,20 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import MaxPlus
+from __future__ import print_function
+from pymxs import runtime as rt
 import os
 import sys
+import hashlib
 
 from . import constants
 from . import __name__ as PLUGIN_PACKAGE_NAME
+
+try:
+    from PySide2 import QtCore
+except ImportError:
+    # Max 2017 was PySide 1, so fallback on that
+    from PySide import QtCore
 
 
 class PluginProperties(object):
@@ -51,7 +59,7 @@ def bootstrap_toolkit(root_path):
     #   configuration, core already exists in the pythonpath.
 
     # Display temporary message in prompt line for maximum 5 secs.
-    MaxPlus.StatusPanel.DisplayTempPrompt("Loading Shotgun integration...", 5000)
+    rt.displayTempPrompt("Loading Shotgun integration...", 5000)
 
     # Remember path, to handle logout/login
     PluginProperties.plugin_root_path = root_path
@@ -79,7 +87,7 @@ def bootstrap_toolkit(root_path):
         import sgtk
 
     # start logging to log file
-    sgtk.LogManager().initialize_base_file_handler("tk-3dsmaxplus")
+    sgtk.LogManager().initialize_base_file_handler("tk-3dsmax")
 
     # get a logger for the plugin
     sgtk_logger = sgtk.LogManager.get_logger(PLUGIN_PACKAGE_NAME)
@@ -93,7 +101,7 @@ def bootstrap_toolkit(root_path):
         _create_login_menu()
 
 
-def progress_callback(progress_value, message):
+def progress_callback(invoker, progress_value, message):
     """
     Called whenever toolkit reports progress.
 
@@ -104,8 +112,10 @@ def progress_callback(progress_value, message):
     """
 
     print("Shotgun: %s" % message)
+    # Make sure this is invoked in the main thread, as pymxs can't be
+    # used from background threads.
     # Display temporary message in prompt line for maximum 2 secs.
-    MaxPlus.StatusPanel.DisplayTempPrompt("Shotgun: %s" % message, 2000)
+    invoker.invoke(rt.displayTempPrompt, "Shotgun: %s" % message, 2000)
 
 
 def handle_bootstrap_completed(engine):
@@ -184,6 +194,40 @@ def _logout_user():
     sgtk.authentication.ShotgunAuthenticator().clear_default_user()
 
 
+class AsyncInvoker(QtCore.QObject):
+    """
+    Invoker class - implements a mechanism to execute a function with arbitrary
+    args in the main thread asynchronously.
+
+    This was copied from tk-core and should probably be refactored into
+    a component that users could invoke.
+    """
+
+    __signal = QtCore.Signal(object)
+
+    def __init__(self):
+        """
+        Construction
+        """
+        QtCore.QObject.__init__(self)
+        self.__signal.connect(self.__execute_in_main_thread)
+
+    def invoke(self, fn, *args, **kwargs):
+        """
+        Invoke the specified function with the specified args in the main thread
+
+        :param fn:          The function to execute in the main thread
+        :param *args:       Args for the function
+        :param **kwargs:    Named arguments for the function
+        :returns:           The result returned by the function
+        """
+
+        self.__signal.emit(lambda: fn(*args, **kwargs))
+
+    def __execute_in_main_thread(self, fn):
+        fn()
+
+
 def _login_user():
     """
     Logs in the user to Shotgun and starts the engine.
@@ -222,58 +266,120 @@ def _login_user():
     entity = toolkit_mgr.get_entity_from_environment()
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
 
+    # This is getting instantiated from the main thread, so this is where
+    # emitted signals will get executed. This property is important
+    # as we need to update the Max status bar from a background thead,
+    # but pymxs can't be called anywhere else than the main thead.
+    #
+    # Note that we can't call engine.async_execute_in_main_thread because
+    # the engine is not started yet.
+    invoker = AsyncInvoker()
+
     # set up a simple progress reporter
-    toolkit_mgr.progress_callback = progress_callback
+    toolkit_mgr.progress_callback = lambda percent, msg: progress_callback(
+        invoker, percent, msg
+    )
 
     # start engine
-    sgtk_logger.info("Starting the 3dsmaxplus engine.")
+    sgtk_logger.info("Starting the 3dsmax engine.")
+
     toolkit_mgr.bootstrap_engine_async(
-        "tk-3dsmaxplus",
+        "tk-3dsmax",
         entity,
         completed_callback=handle_bootstrap_completed,
         failed_callback=handle_bootstrap_failed,
     )
 
 
+def _add_to_menu(menu, title, callback):
+    """
+    Add a new action item to the menu and invokes the given callback when selected.
+
+    :param menu: MaxScript menu object to add to.
+    :param str title: Name of the action item
+    :param callable callback: Method to call when the menu item is selected.
+    """
+    # Hash the macro name just like we do in the engine for consistency.
+    macro_name = "sg_" + hashlib.md5(callback.__name__).hexdigest()
+    category = "Shotgun Bootstrap Menu Actions"
+    # The createActionItem expects a macro and not some MaxScript, so create a
+    # macro first...
+    rt.execute(
+        """
+        macroScript {macro_name}
+        category: "{category}"
+        tooltip: "{title}"
+        (
+            on execute do
+            (
+                python.execute "from tk_3dsmax_basic import plugin_bootstrap; plugin_bootstrap.{method_name}()"
+            )
+        )
+    """.format(
+            macro_name=macro_name,
+            category=category,
+            title=title,
+            method_name=callback.__name__,
+        )
+    )
+    # ... and then pass its name down to the createActionItem menu.
+    menu_action = rt.menuMan.createActionItem(macro_name, category)
+    menu_action.setUseCustomTitle(True)
+    menu_action.setTitle(title)
+    menu.addItem(menu_action, -1)
+
+
+def _add_separator(menu):
+    """
+    Add a separator at the bottom of the menu.
+
+    :param menu: MaxScript menu object to add to.
+    """
+    sep = rt.menuMan.createSeparatorItem()
+    menu.addItem(sep, -1)
+
+
+def _add_to_main_menu_bar(menu):
+    """
+    Add the given menu to the main menu bar.
+
+    :param menu: MaxScript menu object to add to the main menu bar..
+    """
+    # Retrieve the main menu bar.
+    main_menu = rt.menuMan.GetMainMenuBar()
+
+    # Create an item that will be inserted right before the help menu.
+    sub_menu_index = main_menu.numItems() - 1
+    sub_menu_item = rt.menuMan.createSubMenuItem(constants.SG_MENU_LABEL, menu)
+
+    # Insert the item in the menu and refresh the menu bar.
+    main_menu.addItem(sub_menu_item, sub_menu_index)
+    rt.menuMan.updateMenuBar()
+
+
 def _create_login_menu():
     """
     Creates and displays a Shotgun user login menu.
     """
-
     _delete_login_menu()
 
-    mb = MaxPlus.MenuBuilder(constants.SG_MENU_LABEL)
-    login_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Log In to Shotgun...", _login_user
-    )
-    mb.AddItem(login_action)
-    mb.AddSeparator()
+    sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    jump_to_website_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Learn about Shotgun...", _jump_to_website
-    )
-    mb.AddItem(jump_to_website_action)
-
-    jump_to_signup_action = MaxPlus.ActionFactory.Create(
-        constants.SG_MENU_ITEMS_CATEGORY, "Try Shotgun for Free...", _jump_to_signup
-    )
-    mb.AddItem(jump_to_signup_action)
-
-    main_menu = MaxPlus.MenuManager.GetMainMenu()
-
-    # Add menu item at the second to last position,
-    # which should be before "Help"
-    menu_index = main_menu.GetNumItems() - 1
-    mb.Create(main_menu, menu_index)
+    _add_to_menu(sg_menu, "Log In to Shotgun...", _login_user)
+    _add_separator(sg_menu)
+    _add_to_menu(sg_menu, "Learn about Shotgun...", _jump_to_website)
+    _add_separator(sg_menu)
+    _add_to_menu(sg_menu, "Try Shotgun for Free...", _jump_to_signup)
+    _add_to_main_menu_bar(sg_menu)
 
 
 def _delete_login_menu():
     """
     Deletes the displayed Shotgun user login menu.
     """
-
-    if MaxPlus.MenuManager.MenuExists(constants.SG_MENU_LABEL):
-        MaxPlus.MenuManager.UnregisterMenu(constants.SG_MENU_LABEL)
+    old_menu = rt.menuMan.findMenu(constants.SG_MENU_LABEL)
+    if old_menu is not None:
+        rt.menuMan.unregisterMenu(old_menu)
 
 
 def _jump_to_website():

@@ -1,0 +1,50 @@
+# Copyright (c) 2019 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+
+engines:
+  tk-3dsmax:
+    location:
+      path: $SHOTGUN_CURRENT_REPO_ROOT
+      type: path
+
+    apps:
+      tk-multi-publish2:
+        collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
+        publish_plugins:
+        # Default hook 1: publish any file to SG
+        - name: Publish to Shotgun
+          hook: "{self}/publish_file.py"
+          settings: {}
+        # Default hook 2: upload known, reviewable types to SG
+        - name: Upload for review
+          hook: "{self}/upload_version.py"
+          settings: {}
+        - name: Begin file versioning
+          hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
+          settings: {}
+        - name: Publish to Shotgun
+          hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
+          settings: {}
+        location:
+          path: $SHOTGUN_REPOS_ROOT/tk-multi-publish2
+          type: path
+
+frameworks:
+  # We're enumerating all the frameworks here because it's easier to assume everything
+  # is required even if it might not be than doing introspection of what the actual
+  # dependencies are and generating the appropriate config on the fly.
+  tk-framework-qtwidgets_v2.x.x:
+    location:
+      type: path
+      path: $SHOTGUN_REPOS_ROOT/tk-framework-qtwidgets
+  tk-framework-shotgunutils_v5.x.x:
+    location:
+      type: path
+      path: $SHOTGUN_REPOS_ROOT/tk-framework-shotgunutils

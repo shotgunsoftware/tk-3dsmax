@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Shotgun Software Inc.
+# Copyright (c) 2018 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -8,4 +8,14 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-from . import tk_3dsmax
+"""
+Hook which chooses an environment file to use based on the current context.
+This file is almost always overridden by a configuration.
+"""
+
+from tank import get_hook_baseclass
+
+
+class PickEnvironment(get_hook_baseclass()):
+    def execute(self, context, **kwargs):
+        return "test"

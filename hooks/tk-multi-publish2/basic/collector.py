@@ -9,9 +9,11 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import MaxPlus
 import sgtk
 from sgtk.platform.qt import QtGui
+
+import pymxs
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -117,7 +119,7 @@ class MaxSessionCollector(HookBaseClass):
 
         publisher = self.parent
 
-        path = MaxPlus.FileManager.GetFileNameAndPath()
+        path = _session_path()
 
         # determine the display name for the item
         if path:
@@ -137,7 +139,7 @@ class MaxSessionCollector(HookBaseClass):
 
         # discover the project root which helps in discovery of other
         # publishable items
-        project_root = MaxPlus.PathManager.GetProjectFolderDir()
+        project_root = _get_project_folder_dir()
         session_item.properties["project_root"] = project_root
 
         # if a work template is defined, add it to the item properties so
@@ -198,7 +200,7 @@ class MaxSessionCollector(HookBaseClass):
         """
 
         # ensure the movies dir exists
-        movies_dir = MaxPlus.PathManager.GetPreviewDir()
+        movies_dir = _get_preview_dir()
         if not os.path.exists(movies_dir):
             return
 
@@ -241,7 +243,7 @@ class MaxSessionCollector(HookBaseClass):
         # to determining whether there's exportable data in the scene
         # that's useful when exported as an Alembic cache, but it will
         # work in most cases.
-        if not list(MaxPlus.Core.GetRootNode().Children):
+        if _is_empty_scene():
             return
 
         geo_item = parent_item.create_item(
@@ -254,6 +256,33 @@ class MaxSessionCollector(HookBaseClass):
         geo_item.set_icon_from_path(icon_path)
 
 
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+    if pymxs.runtime.maxFilePath and pymxs.runtime.maxFileName:
+        return os.path.join(pymxs.runtime.maxFilePath, pymxs.runtime.maxFileName)
+    else:
+        return None
+
+
+def _is_empty_scene():
+    return len(pymxs.runtime.rootNode.Children) == 0
+
+
+def _get_project_folder_dir():
+    return pymxs.runtime.pathConfig.getCurrentProjectFolder()
+
+
+def _set_project_folder_dir(path):
+    pymxs.runtime.pathConfig.setCurrentProjectFolder(path)
+
+
+def _get_preview_dir():
+    return pymxs.runtime.pathConfig.GetDir(pymxs.runtime.Name("preview"))
+
+
 def _set_project():
     """
     Pop up a Qt file browser to select a path. Then set that as the project root
@@ -264,7 +293,7 @@ def _set_project():
     file_dialog = QtGui.QFileDialog(
         parent=QtGui.QApplication.activeWindow(),
         caption="Save As",
-        directory=MaxPlus.PathManager.GetProjectFolderDir(),
+        directory=_get_project_folder_dir(),
         filter="3dsMax Files (*.max)",
     )
     file_dialog.setFileMode(QtGui.QFileDialog.DirectoryOnly)
@@ -275,4 +304,4 @@ def _set_project():
     if not file_dialog.exec_():
         return
     path = file_dialog.selectedFiles()[0]
-    MaxPlus.PathManager.SetProjectFolderDir(path)
+    _set_project_folder_dir(path)

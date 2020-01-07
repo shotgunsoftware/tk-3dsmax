@@ -32,7 +32,7 @@ fn bootstrapToolkit = (
     python_folder = substituteString python_folder "\\" "/"
 
     -- put together python bootstrap command
-    python_cmd = "import sys; sys.path.append('" + python_folder + "'); import tk_3dsmaxplus_basic; tk_3dsmaxplus_basic.bootstrap_toolkit('" + plugin_root_folder + "');"
+    python_cmd = "import sys; sys.path.append('" + python_folder + "'); import tk_3dsmax_basic; tk_3dsmax_basic.bootstrap_toolkit('" + plugin_root_folder + "');"
 
     -- execute python and off we go!
     python.Execute python_cmd

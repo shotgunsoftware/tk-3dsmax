@@ -1,8 +1,9 @@
-![3dsmax 2016-2020](https://img.shields.io/badge/3dsmax-2016--2020-blue)
+![3dsmax 2017-2021](https://img.shields.io/badge/3dsmax-2017--2021-blue)
 [![Build Status](https://dev.azure.com/shotgun-ecosystem/Toolkit/_apis/build/status/Engines/tk-3dsmax?branchName=master)](https://dev.azure.com/shotgun-ecosystem/Toolkit/_build/latest?definitionId=27&branchName=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Documentation
+
 This repository is a part of the Shotgun Pipeline Toolkit.
 
 - For more information about this app and for release notes, *see the wiki section*.

@@ -11,7 +11,6 @@
 """
 Menu handling for 3ds Max
 """
-import MaxPlus
 import os
 import sys
 import traceback
@@ -104,8 +103,7 @@ class MenuGenerator(object):
         MaxScript.add_to_main_menu_bar(self._menu_var, MENU_LABEL)
 
     def destroy_menu(self):
-        if MaxPlus.MenuManager.MenuExists(MENU_LABEL):
-            MaxPlus.MenuManager.UnregisterMenu(MENU_LABEL)
+        MaxScript.unregister_menu(MENU_LABEL)
 
     def _create_context_builder(self):
         """
