@@ -28,7 +28,7 @@ If you wish to use the new engine with a project, simply make sure that the proj
 Migrating when using customized integrations
 ============================================
 
-Migrating a configuration manually to use the ``tk-3dsmax`` is relatively straightforward. The following indicates which steps need to be taken to update your configuration.
+Migrating a configuration manually to use the ``tk-3dsmax`` engine is relatively straightforward. The following indicates which steps need to be taken to update your configuration.
 
 
 A migration example
@@ -42,7 +42,7 @@ To learn more about each of the required changes, continue reading below.
 Updating engine instance names
 ------------------------------
 
-In order for the automatic software detection to work, you need to rename the name of the ``tk-3dsmaxplus`` engine instances in your configuration to ``tk-3dsmax``.
+In order for the automatic software detection to work, you need to change the name of the ``tk-3dsmaxplus`` engine instances in your configuration to ``tk-3dsmax``.
 
 For example:
 
