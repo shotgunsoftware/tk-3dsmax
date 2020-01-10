@@ -141,19 +141,7 @@ class MenuGenerator(object):
         # launch one window for each location on disk
         paths = self._engine.context.filesystem_locations
         for disk_location in paths:
-            # get the setting
-            system = sys.platform
-
-            # run the app
-            if system == "linux2":
-                cmd = 'xdg-open "%s"' % disk_location
-            elif system == "darwin":
-                cmd = 'open "%s"' % disk_location
-            elif system == "win32":
-                cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
-            else:
-                raise Exception("Platform '%s' is not supported." % system)
-
+            cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
             exit_code = os.system(cmd)
             if exit_code != 0:
                 self._engine.log_error("Failed to launch '%s'!" % cmd)
@@ -235,13 +223,7 @@ class AppCommand(object):
         """
         if "app" in self.properties:
             app = self.properties["app"]
-            doc_url = app.documentation_url
-            # deal with nuke's inability to handle unicode. #fail
-            if doc_url.__class__ == unicode:
-                doc_url = unicodedata.normalize("NFKD", doc_url).encode(
-                    "ascii", "ignore"
-                )
-            return doc_url
+            return app.documentation_url
 
         return None
 
