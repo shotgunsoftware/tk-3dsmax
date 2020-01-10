@@ -19,6 +19,10 @@ import sgtk
 
 import pymxs
 
+# MaxPlus will be deprecated in a future release of Max, so tolerate the failure to import it.
+# The code in the engine that uses MaxPlus is for versions 2019 and below, which do ship
+# with MaxPlus, so we're in no danger of getting an error when MaxPlus eventually
+# goes away.
 try:
     import MaxPlus
 except ImportError:
