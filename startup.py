@@ -79,7 +79,7 @@ class MaxLauncher(SoftwareLauncher):
         startup_file = os.path.join(
             self.disk_location, "python", "startup", "bootstrap.py"
         )
-        new_args = '-u PythonHost "%s"' % startup_file
+        new_args = '-U PythonHost "%s"' % startup_file
 
         if args:
             args = "%s %s" % (args, new_args)
