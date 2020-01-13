@@ -125,7 +125,7 @@ class MaxLauncher(SoftwareLauncher):
                 "Preparing 3dsMax Launch via Toolkit Classic methodology ..."
             )
             required_env["TANK_ENGINE"] = self.engine_name
-            required_env["TANK_CONTEXT"] = sgtk.context.serialize(self.context)
+            required_env["TANK_CONTEXT"] = self.context.serialize(use_json=True)
 
         if file_to_open:
             # Add the file name to open to the launch environment
