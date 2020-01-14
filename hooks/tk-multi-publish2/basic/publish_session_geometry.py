@@ -234,7 +234,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
                 'exportFile @"%s" #noPrompt using:AlembicExport' % publish_path
             )
             self.parent.log_debug("Executing command: %s" % abc_export_cmd)
-            _execute_script(abc_export_cmd)
+            pymxs.runtime.execute(abc_export_cmd)
         except Exception as e:
             raise Exception("Failed to export Alembic Cache: %s" % e)
 
@@ -256,10 +256,6 @@ def _session_path():
 
 def _is_empty_scene():
     return len(pymxs.runtime.rootNode.Children) == 0
-
-
-def _execute_script(script):
-    pymxs.runtime.execute(script)
 
 
 def _get_save_as_action():
