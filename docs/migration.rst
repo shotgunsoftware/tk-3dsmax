@@ -10,7 +10,7 @@ You can easily update your existing Toolkit and Shotgun configurations to use th
 Updating Shotgun
 ================
 
-The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.4.0`` and up, include both 3ds Max engines. However, your Shotgun site still needs to be updated to activate the ``tk-3dsmax`` engine.
+The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.3.0`` and up, include both 3ds Max engines. However, your Shotgun site still needs to be updated to activate the ``tk-3dsmax`` engine.
 
 In order for the new engine to be usable from the Shotgun Desktop or the ``tank`` command, you need to make sure there is a ``Software`` entity in Shotgun configured for the ``tk-3dsmax`` engine. To do this, visit the ``Software`` page on your Shotgun site. If you are a Shotgun administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. You can then create a second software entity named ``3ds Max`` with the ``Engine`` field set to ``tk-3dsmax``.
 
@@ -22,7 +22,7 @@ However, doing this means that both engines will now be active for the out of th
 Updating the out of the box integrations
 ========================================
 
-If you wish to use the new engine with a project, simply make sure that the project is using version ``v1.4.0`` or greater of ``tk-config-basic`` or ``tk-config-default2``. If you have updated your Shotgun site by following the steps above , you are now ready to use 3ds Max with the new engine.
+If you wish to use the new engine with a project, simply make sure that the project is using version ``v1.3.0`` or greater of ``tk-config-basic`` or ``tk-config-default2``. If you have updated your Shotgun site by following the steps above , you are now ready to use 3ds Max with the new engine.
 
 
 Migrating when using customized integrations
