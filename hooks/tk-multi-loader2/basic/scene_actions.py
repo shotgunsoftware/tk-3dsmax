@@ -185,7 +185,7 @@ class MaxActions(HookBaseClass):
         # The fix for that would be to set AlembicImport.ZUp to false
         # via maxscript prior to running the importFile.
         self.parent.engine.safe_dialog_exec(
-            lambda: _execute_script('importFile @"%s" #noPrompt' % path)
+            lambda: pymxs.runtime.execute('importFile @"%s" #noPrompt' % path)
         )
 
     def _merge(self, path, sg_publish_data):
