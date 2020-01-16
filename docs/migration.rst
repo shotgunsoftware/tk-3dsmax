@@ -4,7 +4,7 @@ Migrating to the new ``tk-3dsmax`` engine
 You can easily update your existing Toolkit and Shotgun configurations to use the new ``tk-3dsmax`` engine.
 
 .. warning::
-    The new ``tk-3dsmax`` engine supports **3ds Max 2017 and up**, while the existing ``tk-3dsmaxplus`` supports **3ds Max 2016 and up**. Do not attempt to migrate to the new ``tk-3dsmax`` engine if you still rely on **3ds Max 2016**. The new engine uses an API that did not exist in that version of 3ds Max.
+    The new ``tk-3dsmax`` engine supports **3ds Max 2017 and up**, while the existing ``tk-3dsmaxplus`` supports **3ds Max 2016-2020**. Do not attempt to migrate to the new ``tk-3dsmax`` engine if you still rely on **3ds Max 2016**. The new engine uses an API that did not exist in that version of 3ds Max.
 
 
 Updating Shotgun
