@@ -95,7 +95,9 @@ def bootstrap_sgtk():
     """
     Bootstrap. This is called when preparing to launch by multi-launch.
     """
-    if sys.platform == "win32":
+    import sgtk
+
+    if sgtk.util.is_windows():
 
         # get the version number from max
         version_number = pymxs.runtime.maxVersion()[0]

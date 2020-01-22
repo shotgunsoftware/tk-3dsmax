@@ -299,8 +299,10 @@ def _add_to_menu(menu, title, callback):
     :param str title: Name of the action item
     :param callable callback: Method to call when the menu item is selected.
     """
+    from tank_vendor.shotgun_api3.lib import six
+
     # Hash the macro name just like we do in the engine for consistency.
-    macro_name = "sg_" + hashlib.md5(callback.__name__).hexdigest()
+    macro_name = "sg_" + hashlib.md5(six.ensure_binary(callback.__name__)).hexdigest()
     category = "Shotgun Bootstrap Menu Actions"
     # The createActionItem expects a macro and not some MaxScript, so create a
     # macro first...

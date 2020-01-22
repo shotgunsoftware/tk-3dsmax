@@ -19,6 +19,10 @@ import sgtk
 
 import pymxs
 
+# MaxPlus will be deprecated in a future release of Max, so tolerate the failure to import it.
+# The code in the engine that uses MaxPlus is for versions 2019 and below, which do ship
+# with MaxPlus, so we're in no danger of getting an error when MaxPlus eventually
+# goes away.
 try:
     import MaxPlus
 except ImportError:
@@ -291,7 +295,7 @@ class MaxEngine(sgtk.platform.Engine):
 
         # Build a dictionary mapping app instance names to dictionaries of commands they registered with the engine.
         app_instance_commands = {}
-        for (command_name, value) in self.commands.iteritems():
+        for (command_name, value) in self.commands.items():
             app_instance = value["properties"].get("app")
             if app_instance:
                 # Add entry 'command name: command function' to the command dictionary of this app instance.
@@ -317,7 +321,7 @@ class MaxEngine(sgtk.platform.Engine):
             else:
                 if not setting_command_name:
                     # Run all commands of the given app instance.
-                    for (command_name, command_function) in command_dict.iteritems():
+                    for (command_name, command_function) in command_dict.items():
                         self.log_debug(
                             "%s startup running app '%s' command '%s'."
                             % (self.name, app_instance_name, command_name)

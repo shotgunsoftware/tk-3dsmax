@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import sgtk
+from tank_vendor.shotgun_api3.lib import six
 
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
@@ -39,7 +40,7 @@ class MaxLauncher(SoftwareLauncher):
 
         self.logger.debug("Scanning for 3dsMax executables...")
 
-        if sys.platform != "win32":
+        if sgtk.util.is_windows() is False:
             # max only exists on windows
             return []
 
@@ -124,7 +125,7 @@ class MaxLauncher(SoftwareLauncher):
                 "Preparing 3dsMax Launch via Toolkit Classic methodology ..."
             )
             required_env["TANK_ENGINE"] = self.engine_name
-            required_env["TANK_CONTEXT"] = sgtk.context.serialize(self.context)
+            required_env["TANK_CONTEXT"] = self.context.serialize(use_json=True)
 
         if file_to_open:
             # Add the file name to open to the launch environment
@@ -194,8 +195,8 @@ def _get_installation_paths_from_registry(logger):
 
     :returns: List of paths where 3dsmax is installed,
     """
-    # import it locally so that
-    import _winreg
+
+    winreg = six.moves.winreg
 
     logger.debug(
         "Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax"
@@ -206,13 +207,13 @@ def _get_installation_paths_from_registry(logger):
 
     # find all subkeys in key HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk\3dsMax
     try:
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, base_key_name)
-        sub_key_count = _winreg.QueryInfoKey(key)[0]
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, base_key_name)
+        sub_key_count = winreg.QueryInfoKey(key)[0]
         i = 0
         while i < sub_key_count:
-            sub_key_names.append(_winreg.EnumKey(key, i))
+            sub_key_names.append(winreg.EnumKey(key, i))
             i += 1
-        _winreg.CloseKey(key)
+        winreg.CloseKey(key)
     except WindowsError:
         logger.error("error opening key %s" % base_key_name)
 
@@ -221,15 +222,15 @@ def _get_installation_paths_from_registry(logger):
     try:
         for name in sub_key_names:
             key_name = base_key_name + "\\" + name
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, key_name)
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_name)
             try:
-                install_paths.append(_winreg.QueryValueEx(key, "Installdir")[0])
+                install_paths.append(winreg.QueryValueEx(key, "Installdir")[0])
                 logger.debug("found Installdir value for key %s" % key_name)
             except WindowsError:
                 logger.debug(
                     "value Installdir not found for key %s, skipping key" % key_name
                 )
-            _winreg.CloseKey(key)
+            winreg.CloseKey(key)
     except WindowsError:
         logger.error("error opening key %s" % key_name)
 

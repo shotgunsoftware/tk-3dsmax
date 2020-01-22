@@ -16,6 +16,8 @@ import sgtk
 
 import pymxs
 
+from tank_vendor.shotgun_api3.lib import six
+
 
 class MaxScript:
     """
@@ -121,7 +123,7 @@ class MaxScript:
         :param menu_var: MaxScript menu variable name to add menu item to.
         :param engine: Current engine where the action can be globally linked back to.
         """
-        obj = callback.im_self
+        obj = callback.__self__
         method_name = callback.__name__
 
         # Note that we're using the action name because we need these
@@ -155,7 +157,7 @@ class MaxScript:
         with new macro for the same action every time shotgun is reloaded.
         eg: 'Publish...' action will always re-use the same MacroScript.
         """
-        macro_name = "sg_" + hashlib.md5(action_name).hexdigest()
+        macro_name = "sg_" + hashlib.md5(six.ensure_binary(action_name)).hexdigest()
 
         # Creating python code separately as it needs to have no indentation in the macroscript
         python_code = (
