@@ -28,7 +28,6 @@ class FrameOperation(HookBaseClass):
         :returns: Returns the frame range in the form (in_frame, out_frame)
         :rtype: tuple[int, int]
         """
-        ticks = pymxs.runtime.execute("ticksperframe")
         current_in = int(pymxs.runtime.animationRange.start.frame)
         current_out = int(pymxs.runtime.animationRange.end.frame)
         return (current_in, current_out)
