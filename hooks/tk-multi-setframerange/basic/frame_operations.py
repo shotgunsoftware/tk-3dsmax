@@ -28,9 +28,9 @@ class FrameOperation(HookBaseClass):
         :returns: Returns the frame range in the form (in_frame, out_frame)
         :rtype: tuple[int, int]
         """
-        ticks = pymxs.execute("ticksperframe")
-        current_in = pymxs.runtime.animationRange.start.ticks / ticks
-        current_out = pymxs.runtime.animationRange.end.ticks / ticks
+        ticks = pymxs.runtime.execute("ticksperframe")
+        current_in = int(pymxs.runtime.animationRange.start.frame)
+        current_out = int(pymxs.runtime.animationRange.end.frame)
         return (current_in, current_out)
 
     def set_frame_range(self, in_frame=None, out_frame=None, **kwargs):
@@ -44,6 +44,4 @@ class FrameOperation(HookBaseClass):
             (e.g. the current shot, current asset etc)
 
         """
-        ticks = pymxs.runtime.execute("ticksperframe")
-        interval = pymxs.runtime.interval(in_frame * ticks, out_frame * ticks)
-        pymxs.runtime.animationRange = interval
+        pymxs.runtime.animationRange = pymxs.runtime.interval(in_frame, out_frame)
