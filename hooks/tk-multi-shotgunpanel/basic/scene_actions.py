@@ -59,7 +59,7 @@ class MaxActions(HookBaseClass):
             action_instances += HookBaseClass.generate_actions(
                 self, sg_data, actions, ui_area
             )
-        except AttributeError as e:
+        except AttributeError:
             # base class doesn't have the method, so ignore and continue
             pass
 
@@ -140,7 +140,7 @@ class MaxActions(HookBaseClass):
 
         try:
             HookBaseClass.execute_action(self, name, params, sg_data)
-        except AttributeError as e:
+        except AttributeError:
             # base class doesn't have the method, so ignore and continue
             pass
 
