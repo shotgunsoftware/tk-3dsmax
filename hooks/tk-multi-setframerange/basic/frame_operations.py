@@ -8,7 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import MaxPlus
+import pymxs
 
 import sgtk
 
@@ -28,9 +28,9 @@ class FrameOperation(HookBaseClass):
         :returns: Returns the frame range in the form (in_frame, out_frame)
         :rtype: tuple[int, int]
         """
-        ticks = MaxPlus.Core.EvalMAXScript("ticksperframe").GetInt()
-        current_in = MaxPlus.Animation.GetAnimRange().Start() / ticks
-        current_out = MaxPlus.Animation.GetAnimRange().End() / ticks
+        ticks = pymxs.execute("ticksperframe")
+        current_in = pymxs.runtime.animationRange.start.ticks / ticks
+        current_out = pymxs.runtime.animationRange.end.ticks / ticks
         return (current_in, current_out)
 
     def set_frame_range(self, in_frame=None, out_frame=None, **kwargs):
@@ -44,7 +44,6 @@ class FrameOperation(HookBaseClass):
             (e.g. the current shot, current asset etc)
 
         """
-
-        ticks = MaxPlus.Core.EvalMAXScript("ticksperframe").GetInt()
-        range = MaxPlus.Interval(in_frame * ticks, out_frame * ticks)
-        MaxPlus.Animation.SetRange(range)
+        ticks = pymxs.runtime.execute("ticksperframe")
+        interval = pymxs.runtime.interval(in_frame * ticks, out_frame * ticks)
+        pymxs.runtime.animationRange = interval
