@@ -129,14 +129,11 @@ class MaxActions(HookBaseClass):
                     )
                 return
             elif name == "merge":
-                self._merge(path, sg_data)
-                return
+                return self._merge(path, sg_data)
             elif name == "xref_scene":
-                self._xref_scene(path, sg_data)
-                return
+                return self._xref_scene(path, sg_data)
             elif name == "texture_node":
-                self._create_texture_node(path, sg_data)
-                return
+                return self._create_texture_node(path, sg_data)
 
         try:
             HookBaseClass.execute_action(self, name, params, sg_data)
