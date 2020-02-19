@@ -251,7 +251,7 @@ class MaxEngine(sgtk.platform.Engine):
             [
                 "import sgtk",
                 "engine = sgtk.platform.current_engine()",
-                "engine._on_menus_loaded()",
+                "engine._on_menus_loaded(None)",
             ]
         )
         # Unfortunately we can't pass in a Python function as a callback,
@@ -460,12 +460,10 @@ class MaxEngine(sgtk.platform.Engine):
             # The dock widget wrapper cannot be found in the main window's
             # children list so that means it has not been created yet, so create it.
             widget_instance = widget_class(*args, **kwargs)
-            widget_instance.setParent(self._get_dialog_parent())
             widget_instance.setObjectName(panel_id)
 
             dock_widget = QtGui.QDockWidget(title, parent=main_window)
             dock_widget.setObjectName(dock_widget_id)
-            dock_widget.setWidget(widget_instance)
             self.log_debug("Created new dock widget %s" % dock_widget_id)
 
             # Disable 3dsMax accelerators, in order for QTextEdit and QLineEdit
@@ -477,16 +475,23 @@ class MaxEngine(sgtk.platform.Engine):
             widget_instance = dock_widget.widget()
             self.log_debug("Found existing dock widget %s" % dock_widget_id)
 
-        # apply external stylesheet
-        self._apply_external_stylesheet(bundle, widget_instance)
-
         if not main_window.restoreDockWidget(dock_widget):
             # The dock widget cannot be restored from the main window's state,
             # so dock it to the right dock area and make it float by default.
             main_window.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_widget)
             dock_widget.setFloating(True)
 
-        dock_widget.show()
+        def _finalize():
+            # apply external stylesheet
+            self._apply_external_stylesheet(bundle, widget_instance)
+            dock_widget.setWidget(widget_instance)
+            dock_widget.show()
+
+        self._timer = QtCore.QTimer(main_window)
+        self._timer.setSingleShot(True)
+        self._timer.timeout.connect(_finalize)
+        self._timer.start(0)
+
         # Remember the dock widget, so we can delete it later.
         self._dock_widgets.append(dock_widget)
 
