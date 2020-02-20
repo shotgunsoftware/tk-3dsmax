@@ -490,7 +490,7 @@ class MaxEngine(sgtk.platform.Engine):
         self._timer = QtCore.QTimer(main_window)
         self._timer.setSingleShot(True)
         self._timer.timeout.connect(_finalize)
-        self._timer.start(0)
+        self._timer.start(200)
 
         # Remember the dock widget, so we can delete it later.
         self._dock_widgets.append(dock_widget)
