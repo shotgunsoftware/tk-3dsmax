@@ -1,4 +1,4 @@
-![3dsmax 2017-2021](https://img.shields.io/badge/3dsmax-2017--2021-blue)
+![3ds Max 2017-2021](https://img.shields.io/badge/3ds-Max-2017--2021-blue)
 [![Build Status](https://dev.azure.com/shotgun-ecosystem/Toolkit/_apis/build/status/Engines/tk-3dsmax?branchName=master)](https://dev.azure.com/shotgun-ecosystem/Toolkit/_build/latest?definitionId=42&branchName=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Linting](https://img.shields.io/badge/PEP8%20by-Hound%20CI-a873d1.svg)](https://houndci.com)
