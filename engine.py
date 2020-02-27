@@ -222,7 +222,7 @@ class MaxEngine(sgtk.platform.Engine):
         self.log_debug("Removing the shotgun menu from the main menu bar.")
         self._menu_generator.destroy_menu()
 
-    def _on_menus_loaded(self, code=None):
+    def _on_menus_loaded(self):
         """
         Called when receiving postLoadingMenus from 3dsMax.
 
@@ -463,10 +463,13 @@ class MaxEngine(sgtk.platform.Engine):
             widget_instance.setParent(self._get_dialog_parent())
             widget_instance.setObjectName(panel_id)
 
-            # The widget contained in a QDockWidget must be closed in order for app/engine restart to work correctly.
-            # To accomplish this we need to use our own subclass of QDockWidget
             class DockWidget(QtGui.QDockWidget):
+                """
+                Widget used for docking app panels that ensures the widget is closed when the dock is closed
+                """
+
                 closed = QtCore.Signal(QtCore.QObject)
+
                 def closeEvent(self, event):
                     widget = self.widget()
                     if widget:
@@ -506,7 +509,9 @@ class MaxEngine(sgtk.platform.Engine):
         return widget_instance
 
     def _remove_dock_widget(self, dock_widget):
-        """ Removes a docked widget (panel) opened by the engine """
+        """
+        Removes a docked widget (panel) opened by the engine
+        """
         self._get_dialog_parent().removeDockWidget(dock_widget)
         self._dock_widgets.remove(dock_widget)
         dock_widget.deleteLater()
