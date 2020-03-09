@@ -191,6 +191,9 @@ class MaxEngine(sgtk.platform.Engine):
         # This needs to be present for apps as it will be used in
         # show_dialog when perforce asks for login info very early on.
         self.tk_3dsmax = self.import_module("tk_3dsmax")
+        
+        # include callbacks to ensure context is correct
+        #self.tk_3dsmax.tank_ensure_callbacks_registered(engine=self)
 
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
