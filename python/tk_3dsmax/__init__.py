@@ -187,6 +187,7 @@ def __engine_refresh(new_context):
         except sgtk.TankEngineInitError as e:
             # context was not sufficient! - disable tank!
             logger.exception("Engine could not be started.")
+            
             #TODO: replace with command that just remove tools requiring specific context (ie Publish)
             #but leave tools that can direct a user back to the correct context (ie Workfiles)
             
