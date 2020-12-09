@@ -118,8 +118,8 @@ class MaxEngine(sgtk.platform.Engine):
                 "Shotgun Pipeline Toolkit!\n\n"
                 "The Shotgun Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
-                "Please report any issues you see to support@shotgunsoftware.com"
-                % highest_supported_version
+                "Please report any issues you see via %s."
+                % (highest_supported_version, sgtk.support_url,)
             )
 
             # Display warning dialog
