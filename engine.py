@@ -118,8 +118,8 @@ class MaxEngine(sgtk.platform.Engine):
                 "Shotgun Pipeline Toolkit!\n\n"
                 "The Shotgun Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
-                "Please report any issues you see to support@shotgunsoftware.com"
-                % highest_supported_version
+                "Please report any issues you see via %s."
+                % (highest_supported_version, sgtk.support_url,)
             )
 
             # Display warning dialog
@@ -225,7 +225,7 @@ class MaxEngine(sgtk.platform.Engine):
         self.log_debug("Removing the shotgun menu from the main menu bar.")
         self._menu_generator.destroy_menu()
 
-    def _on_menus_loaded(self, code):
+    def _on_menus_loaded(self):
         """
         Called when receiving postLoadingMenus from 3dsMax.
 
@@ -466,14 +466,33 @@ class MaxEngine(sgtk.platform.Engine):
             widget_instance.setParent(self._get_dialog_parent())
             widget_instance.setObjectName(panel_id)
 
-            dock_widget = QtGui.QDockWidget(title, parent=main_window)
+            class DockWidget(QtGui.QDockWidget):
+                """
+                Widget used for docking app panels that ensures the widget is closed when the dock is closed
+                """
+
+                closed = QtCore.Signal(QtCore.QObject)
+
+                def closeEvent(self, event):
+                    widget = self.widget()
+                    if widget:
+                        widget.close()
+                    self.setParent(None)
+                    self.closed.emit(self)
+
+            dock_widget = DockWidget(title, parent=main_window)
             dock_widget.setObjectName(dock_widget_id)
             dock_widget.setWidget(widget_instance)
+            # Add a callback to remove the dock_widget from the list of open panels and delete it
+            dock_widget.closed.connect(self._remove_dock_widget)
             self.log_debug("Created new dock widget %s" % dock_widget_id)
 
             # Disable 3dsMax accelerators, in order for QTextEdit and QLineEdit
             # widgets to work properly.
             widget_instance.setProperty("NoMaxAccelerators", True)
+
+            # Remember the dock widget, so we can delete it later.
+            self._dock_widgets.append(dock_widget)
         else:
             # The dock widget wrapper already exists, so just get the
             # shotgun panel from it.
@@ -490,10 +509,15 @@ class MaxEngine(sgtk.platform.Engine):
             dock_widget.setFloating(True)
 
         dock_widget.show()
-        # Remember the dock widget, so we can delete it later.
-        self._dock_widgets.append(dock_widget)
-
         return widget_instance
+
+    def _remove_dock_widget(self, dock_widget):
+        """
+        Removes a docked widget (panel) opened by the engine
+        """
+        self._get_dialog_parent().removeDockWidget(dock_widget)
+        self._dock_widgets.remove(dock_widget)
+        dock_widget.deleteLater()
 
     def close_windows(self):
         """
@@ -516,13 +540,9 @@ class MaxEngine(sgtk.platform.Engine):
                     "Cannot close dialog %s: %s" % (dialog_window_title, exception)
                 )
 
-        # Delete all dock widgets previously added.
-        for dock_widget in self._dock_widgets:
-            # Keep MaxPlus.GetQMaxMainWindow() inside for-loop
-            # This will be executed only in version > 2017
-            # which supports Qt-docking.
-            self._get_dialog_parent().removeDockWidget(dock_widget)
-            dock_widget.deleteLater()
+        # Close all dock widgets previously added.
+        for dock_widget in self._dock_widgets[:]:
+            dock_widget.close()
 
     def _create_dialog(self, title, bundle, widget, parent):
         """
@@ -662,7 +682,7 @@ class MaxEngine(sgtk.platform.Engine):
     MAX_RELEASE_R18 = 18000
 
     # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 22900
+    MAXIMUM_SUPPORTED_VERSION = 23000
 
     def _max_version_to_year(self, version):
         """
