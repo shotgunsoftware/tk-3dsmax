@@ -265,6 +265,8 @@ class MaxEngine(sgtk.platform.Engine):
         # Run a series of app instance commands at startup.
         self._run_app_instance_commands()
 
+        self.tk_3dsmax.register_callbacks()
+
         # if a file was specified, load it now
         file_to_open = os.environ.get("SGTK_FILE_TO_OPEN")
         if file_to_open:

@@ -10,3 +10,4 @@
 
 from .menu_generation import MenuGenerator
 from .maxscript import MaxScript
+from .env_var_resolver import register_callbacks
