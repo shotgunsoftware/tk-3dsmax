@@ -1,9 +1,11 @@
+import os
+import hashlib
 import pymxs
 
 rt = pymxs.runtime
 
 callback_name = "tk_resolve_envs"
-persistent_variable_name = "SGTK_storage_lookup"
+persistent_variable_name = "SGTK_storage_lookup_"
 
 def register_callbacks():
     # remove any previous tk callbacks that may have been registered.
@@ -11,15 +13,20 @@ def register_callbacks():
 
     # now register the callbacks
     rt.callbacks.addScript(rt.Name('filePreSave'), store_env_var_lookup, id=rt.Name(callback_name))
-    # remove the persistent variable from the current scene before importing
-    # since persistent variables are only brought in if they don't exist already.
-    rt.callbacks.addScript(rt.Name('filePreMerge'), clean_existing_peristent_data, id=rt.Name(callback_name))
 
     # When opening or merging files we will check if any paths can be updated to match our env vars
-    rt.callbacks.addScript(rt.Name('filePostOpen'), update_and_resolve_paths, id=rt.Name(callback_name))
-    rt.callbacks.addScript(rt.Name('filePostMerge'), update_and_resolve_paths, id=rt.Name(callback_name))
+    rt.callbacks.addScript(rt.Name('filePostOpen'), post_open_callback, id=rt.Name(callback_name))
+    rt.callbacks.addScript(rt.Name('filePostMerge'), post_merge_callback, id=rt.Name(callback_name))
 
     print("SGTK env var callbacks registered")
+
+def post_open_callback():
+    print("post open callback called")
+    update_and_resolve_paths()
+
+def post_merge_callback():
+    print("post merge callback called")
+    update_and_resolve_paths()
 
 def store_env_var_lookup():
     """
@@ -34,11 +41,6 @@ def store_env_var_lookup():
     engine = sgtk.platform.current_engine()
 
     if engine:
-
-        clean_existing_peristent_data()
-        rt.execute('persistent global {0} = undefined'.format(persistent_variable_name))
-        rt.persistents.make(rt.name(persistent_variable_name))
-
         roots = []
         # get a list of storage roots in Shotgun
         for storage_root in sgtk.util.shotgun.publish_util.get_cached_local_storages(engine.sgtk):
@@ -62,38 +64,64 @@ def store_env_var_lookup():
         # the persistent variables won't be able to store that. So we must store a mx array
 
         # This should produce something like:
-        # #(#("$path1", "c:/path1"),#("$path2", "e:/path2"))
-        mxs_script = ""
+        # SGTK_storage_lookup_12s3ch23r7yhf73491hdz = #("$path1", "c:/path1")
         for root in roots:
-            mxs_script += '#("{0}", "{1}"),'.format(root[0], root[1])
+            mxs_script = '#("{0}", "{1}")'.format(root[0], root[1]).replace("\\", "\\\\")
 
-        #insert all the arrays into one master array and remove the last comma so the syntax is correct
-        mxs_script = "{0} = #({1})".format(persistent_variable_name, mxs_script.rstrip(","))
-        rt.execute(mxs_script)
+            # generate a unique variable name using the path
+            var_name = generate_variable_name(root[1])
+            rt.execute('persistent global {0} = undefined'.format(var_name))
+            rt.persistents.make(rt.name(var_name))
 
-        # rt.SGTK_storage_lookup = roots
+            # Now persistently store the roots to the unique variable name
+            mxs_script = "{0} = {1}".format(var_name, mxs_script)
+            rt.execute(mxs_script)
 
         print("persistent roots data stored")
 
-def clean_existing_peristent_data():
+def generate_variable_name(root_path):
     """
-    Removes the persistent variable
+    Takes the persistent variable name template and applies the hash of the path to the variable name.
+    :param root_path:
     :return:
     """
-    rt.persistents.remove(rt.name(persistent_variable_name))
+    #TODO might need to take into account the variable name as well.
+    hash_object = hashlib.md5(root_path.encode())
+    return persistent_variable_name + hash_object.hexdigest()
 
 def retrieve_storage_lookup():
     """
     Retrieves a previously stored env var look up from the scene persistent variables.
     :return:
     """
-    try:
-        roots = rt.SGTK_storage_lookup
-        # return a dictionary where the root path maps to the environment variable.
-        return {a_root[1]: a_root[0] for a_root in roots}
-    except AttributeError:
-        # the persistent variable wasn't present so no roots were returned
-        return []
+    # return a dictionary where the root path maps to the environment variable.
+    roots = {}
+    # when merging the persistent variables from the merged file are added to the globalVars not the persistent vars.
+    for variable in rt.globalVars.gather():
+        if str(variable).startswith(persistent_variable_name):
+            val = rt.globalVars.get(variable)
+            # put the path as the key and the sg root name as the value
+            roots[val[1]] = val[0]
+
+    return roots
+
+def _get_new_path(current_path, storage_roots):
+    """
+    Loops over the storage roots trying to see if the passed current_path
+    starts with a path in the storage_root lookup. If it does then it
+    will rebuild the path to match current environment variable path.
+    If it can't match then None is returned.
+    :param current_path:
+    :param storage_roots:
+    :return:
+    """
+    for previous_storage_path, raw_sg_root_path in storage_roots.items():
+        if current_path.startswith(previous_storage_path):
+            # take the previous path off so we can insert the new path on.
+            relative_path = os.path.relpath(current_path, previous_storage_path)
+
+            return os.path.join(os.path.expandvars(raw_sg_root_path), relative_path)
+
 
 def update_and_resolve_paths():
     """
@@ -102,3 +130,34 @@ def update_and_resolve_paths():
     :return:
     """
     storage_root_lookup = retrieve_storage_lookup()
+    print("storage_root_lookup", storage_root_lookup)
+
+    if not storage_root_lookup:
+        return
+
+    # repath all paths found in the asset manager
+    for i in range(rt.AssetManager.GetNumAssets()):
+        # Max is index 1 based.
+        asset = rt.AssetManager.GetAssetByIndex(i + 1)
+        a_file = asset.getfilename()
+
+        new_path = _get_new_path(a_file, storage_root_lookup)
+
+        if new_path is not None and new_path != a_file:
+            print("repathing {0} to {1}".format(a_file, new_path))
+            rt.atsops.RetargetAssets(rt.rootScene, a_file, new_path, CreateOutputFolder=False)
+            # TODO: check if the repath failed, if it did we could try adding an external path.
+
+            asset = rt.AssetManager.GetAssetByIndex(i + 1)
+            if asset.getfilename() != new_path:
+                print("failed to repath!")
+
+    # now check for any configured external paths that might need repathing.
+    for i in reversed(range(rt.mapPaths.count())):
+        # Max is index 1 based.
+        mapped_path = rt.mapPaths.get(i + 1)
+
+        new_mapped_path = _get_new_path(mapped_path, storage_root_lookup)
+
+        print(mapped_path)
+        print(new_mapped_path)
