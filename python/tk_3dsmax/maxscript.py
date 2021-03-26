@@ -167,14 +167,14 @@ class MaxScript:
             "    command_object = engine.maxscript_objects['{hash_name}']\n"
             "    command_object.{command_name}()\n"
             "else:\n"
-            "    engine.log_error('Shotgun Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
+            "    engine.log_error('SG Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
         ).format(hash_name=hash_name, command_name=method_name, action_name=action_name)
 
         pymxs.runtime.execute(
             """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
-            category: "Shotgun Menu Actions"
+            category: "SG Menu Actions"
             tooltip: "{action_name}"
             (
 	            on execute do
@@ -189,12 +189,12 @@ class MaxScript:
                     if (sgtk_main_menu_enabled != undefined and sgtk_main_menu_enabled == True) then
 		                python.execute "{python_code}"
                     else
-                        print "Shotgun Warning: You need to close the current window dialog before using any more commands."
+                        print "SG Warning: You need to close the current window dialog before using any more commands."
 	            )
             )
 
             -- Add menu item using previous MacroScript action
-            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "Shotgun Menu Actions"
+            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "SG Menu Actions"
             sgtk_menu_action.setUseCustomTitle true
             sgtk_menu_action.setTitle("{action_name}")
             {menu_var}.addItem sgtk_menu_action -1

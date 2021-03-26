@@ -115,8 +115,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
 
             msg = (
-                "Shotgun Pipeline Toolkit!\n\n"
-                "The Shotgun Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
+                "SG Pipeline Toolkit!\n\n"
+                "The SG Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
                 "Please report any issues you see via %s."
                 % (highest_supported_version, sgtk.support_url,)
@@ -129,7 +129,7 @@ class MaxEngine(sgtk.platform.Engine):
                 "compatibility_dialog_min_version", max_next_year
             ):
                 QtGui.QMessageBox.warning(
-                    None, "Shotgun Warning", "Warning - {0}".format(msg)
+                    None, "SG Warning", "Warning - {0}".format(msg)
                 )
             # and log the warning
             self.log_warning(msg)
@@ -211,7 +211,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Add Shotgun menu to the main menu bar.
         """
-        self.log_debug("Adding the shotgun menu to the main menu bar.")
+        self.log_debug("Adding the SG menu to the main menu bar.")
         self._menu_generator.create_menu()
         self.tk_3dsmax.MaxScript.enable_menu()
 
@@ -219,7 +219,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Remove Shotgun menu from the main menu bar.
         """
-        self.log_debug("Removing the shotgun menu from the main menu bar.")
+        self.log_debug("Removing the SG menu from the main menu bar.")
         self._menu_generator.destroy_menu()
 
     def _on_menus_loaded(self):
