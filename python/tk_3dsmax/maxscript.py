@@ -174,7 +174,7 @@ class MaxScript:
             """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
-            category: "SG Menu Actions"
+            category: "Shotgun Menu Actions"
             tooltip: "{action_name}"
             (
 	            on execute do
@@ -194,7 +194,7 @@ class MaxScript:
             )
 
             -- Add menu item using previous MacroScript action
-            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "SG Menu Actions"
+            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "Shotgun Menu Actions"
             sgtk_menu_action.setUseCustomTitle true
             sgtk_menu_action.setTitle("{action_name}")
             {menu_var}.addItem sgtk_menu_action -1
