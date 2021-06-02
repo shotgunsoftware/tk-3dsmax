@@ -129,7 +129,7 @@ class MaxScript:
         # Note that we're using the action name because we need these
         # macros to reference things consistently across sessions. Sadly,
         # if a second, concurrent, 3ds Max session is launched, Toolkit
-        # will build the Shotgun menu in that session and Max will write
+        # will build the ShotGrid menu in that session and Max will write
         # that updated menu layout to disk for the user, because it thinks
         # that needs to persist across sessions. This causes us problems
         # in the first session, then, because Max looks up what macro to
@@ -154,7 +154,7 @@ class MaxScript:
         Macro name must not have any strange characters (spaces, dash, etc..)
         These macro script will be saved as files by 3ds max on the user folder.
         Therefore, the name is made unique to the action name so as to not pollute the usermacro folder
-        with new macro for the same action every time shotgun is reloaded.
+        with new macro for the same action every time ShotGrid is reloaded.
         eg: 'Publish...' action will always re-use the same MacroScript.
         """
         macro_name = "sg_" + hashlib.md5(six.ensure_binary(action_name)).hexdigest()
@@ -174,7 +174,7 @@ class MaxScript:
             """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
-            category: "Shotgun Menu Actions"
+            category: "ShotGrid Menu Actions"
             tooltip: "{action_name}"
             (
 	            on execute do
@@ -194,7 +194,7 @@ class MaxScript:
             )
 
             -- Add menu item using previous MacroScript action
-            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "Shotgun Menu Actions"
+            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "ShotGrid Menu Actions"
             sgtk_menu_action.setUseCustomTitle true
             sgtk_menu_action.setTitle("{action_name}")
             {menu_var}.addItem sgtk_menu_action -1

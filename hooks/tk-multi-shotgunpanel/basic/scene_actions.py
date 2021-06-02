@@ -19,7 +19,7 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class MaxActions(HookBaseClass):
     """
-    Shotgun Panel Actions for 3dsMax
+    ShotGrid Panel Actions for 3dsMax
     """
 
     def generate_actions(self, sg_data, actions, ui_area):
@@ -28,7 +28,7 @@ class MaxActions(HookBaseClass):
         The data returned from this hook will be used to populate the
         actions menu.
 
-        The mapping between Shotgun objects and actions are kept in a different place
+        The mapping between ShotGrid objects and actions are kept in a different place
         (in the configuration) so at the point when this hook is called, the app
         has already established *which* actions are appropriate for this object.
 
@@ -40,7 +40,7 @@ class MaxActions(HookBaseClass):
         - If it will be shown in the main browsing area, "main" is passed.
         - If it will be shown in the details area, "details" is passed.
 
-        :param sg_data: Shotgun data dictionary with all the standard shotgun fields.
+        :param sg_data: ShotGrid data dictionary with all the standard ShotGrid fields.
         :param actions: List of action strings which have been defined in the app configuration.
         :param ui_area: String denoting the UI Area (see above).
         :returns List of dictionaries, each with keys name, params, caption and description
@@ -102,7 +102,7 @@ class MaxActions(HookBaseClass):
 
         :param name: Action name string representing one of the items returned by generate_actions.
         :param params: Params data, as specified by generate_actions.
-        :param sg_data: Shotgun data dictionary
+        :param sg_data: ShotGrid data dictionary
         :returns: No return value expected.
         """
         app = self.parent
@@ -165,7 +165,7 @@ class MaxActions(HookBaseClass):
         Merge contents of the given file into the scene.
 
         :param path: Path to file.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         """
 
         if not os.path.exists(path):
@@ -193,7 +193,7 @@ class MaxActions(HookBaseClass):
         Insert a reference to the given external file into the current scene.
 
         :param path: Path to file.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         """
 
         if not os.path.exists(path):
@@ -221,7 +221,7 @@ class MaxActions(HookBaseClass):
         Create a file texture node for a texture
 
         :param path:             Path to file.
-        :param sg_publish_data:  Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data:  ShotGrid data dictionary with all the standard publish fields.
         :returns:                The newly created file node
         """
 

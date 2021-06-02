@@ -58,7 +58,7 @@ class MaxActions(HookBaseClass):
         one object is returned for an action, use the params key to pass additional
         data into the run_action hook.
 
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         :param actions: List of action strings which have been defined in the app configuration.
         :param ui_area: String denoting the UI Area (see above).
         :returns List of dictionaries, each with keys name, params, caption and description
@@ -114,7 +114,7 @@ class MaxActions(HookBaseClass):
         Each entry will have the following values:
 
             name: Name of the action to execute
-            sg_publish_data: Publish information coming from Shotgun
+            sg_publish_data: Publish information coming from ShotGrid
             params: Parameters passed down from the generate_actions hook.
 
         .. note::
@@ -141,7 +141,7 @@ class MaxActions(HookBaseClass):
 
         :param name: Action name string representing one of the items returned by generate_actions.
         :param params: Params data, as specified by generate_actions.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         :returns: No return value expected.
         """
         app = self.parent
@@ -195,7 +195,7 @@ class MaxActions(HookBaseClass):
         Merge contents of the given file into the scene.
 
         :param path: Path to file.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         """
         if not os.path.exists(path):
             raise Exception("File not found on disk - '%s'" % path)
@@ -222,7 +222,7 @@ class MaxActions(HookBaseClass):
         Insert a reference to the given external file into the current scene.
 
         :param path: Path to file.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: ShotGrid data dictionary with all the standard publish fields.
         """
 
         if not os.path.exists(path):
@@ -250,7 +250,7 @@ class MaxActions(HookBaseClass):
         Create a file texture node for a texture
 
         :param path:             Path to file.
-        :param sg_publish_data:  Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data:  ShotGrid data dictionary with all the standard publish fields.
         :returns:                The newly created file node
         """
 

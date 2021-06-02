@@ -68,12 +68,12 @@ configuration:
         values:
             type: str
 
-# the Shotgun fields that this engine needs in order to operate correctly
+# the ShotGrid fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
 
 # More verbose description of this item
-display_name: "Shotgun Engine for 3ds Max"
-description: "Shotgun Integration in 3ds Max"
+display_name: "ShotGrid Engine for 3ds Max"
+description: "ShotGrid Integration in 3ds Max"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:

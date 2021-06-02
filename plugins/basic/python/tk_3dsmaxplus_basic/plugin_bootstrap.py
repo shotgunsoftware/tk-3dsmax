@@ -72,7 +72,7 @@ def bootstrap_toolkit(root_path):
         PluginProperties.running_as_standalone_plugin = False
 
     if PluginProperties.running_as_standalone_plugin:
-        # Retrieve the Shotgun toolkit core included with the plug-in and
+        # Retrieve the ShotGrid toolkit core included with the plug-in and
         # prepend its python package path to the python module search path.
         tkcore_python_path = manifest.get_sgtk_pythonpath(
             PluginProperties.plugin_root_path
@@ -111,11 +111,11 @@ def progress_callback(invoker, progress_value, message):
     :param message:        Progress message string
     """
 
-    print("Shotgun: %s" % message)
+    print("ShotGrid: %s" % message)
     # Make sure this is invoked in the main thread, as pymxs can't be
     # used from background threads.
     # Display temporary message in prompt line for maximum 2 secs.
-    invoker.invoke(rt.displayTempPrompt, "Shotgun: %s" % message, 2000)
+    invoker.invoke(rt.displayTempPrompt, "ShotGrid: %s" % message, 2000)
 
 
 def handle_bootstrap_completed(engine):
@@ -127,13 +127,13 @@ def handle_bootstrap_completed(engine):
     :param engine: Launched :class:`sgtk.platform.Engine` instance.
     """
 
-    print("Shotgun: Bootstrap successfully.")
+    print("ShotGrid: Bootstrap successfully.")
 
     # Add a logout menu item to the engine context menu only when
     # running as standalone plugin.
     if PluginProperties.running_as_standalone_plugin:
         engine.register_command(
-            "Log Out of Shotgun", _on_logout, {"type": "context_menu"}
+            "Log Out of ShotGrid", _on_logout, {"type": "context_menu"}
         )
         engine.update_shotgun_menu()
 
@@ -149,13 +149,13 @@ def handle_bootstrap_failed(phase, exception):
     :param exception: Python exception raised while bootstrapping.
     """
 
-    print("Shotgun: Bootstrap failed. %s" % exception)
+    print("ShotGrid: Bootstrap failed. %s" % exception)
     _create_login_menu()
 
 
 def shutdown_toolkit():
     """
-    Shutdown the Shotgun toolkit and its 3dsMax engine.
+    Shutdown the ShotGrid toolkit and its 3dsMax engine.
     """
     import sgtk
 
@@ -183,7 +183,7 @@ def _on_logout():
 
 def _logout_user():
     """
-    Shuts down the engine and logs out the user of Shotgun.
+    Shuts down the engine and logs out the user of ShotGrid.
     """
     import sgtk
 
@@ -230,7 +230,7 @@ class AsyncInvoker(QtCore.QObject):
 
 def _login_user():
     """
-    Logs in the user to Shotgun and starts the engine.
+    Logs in the user to ShotGrid and starts the engine.
     """
     import sgtk
 
@@ -238,12 +238,12 @@ def _login_user():
 
     try:
         # When the user is not yet authenticated,
-        # pop up the Shotgun login dialog to get the user's credentials,
+        # pop up the ShotGrid login dialog to get the user's credentials,
         # otherwise, get the cached user's credentials.
         user = sgtk.authentication.ShotgunAuthenticator().get_user()
 
     except sgtk.authentication.AuthenticationCancelled:
-        # When the user cancelled the Shotgun login dialog,
+        # When the user cancelled the ShotGrid login dialog,
         # keep around the displayed login menu.
         sgtk_logger.info("SG login was cancelled by the user.")
         return
@@ -261,7 +261,7 @@ def _login_user():
         os.path.join(PluginProperties.plugin_root_path, "bundle_cache")
     ]
 
-    # Retrieve the Shotgun entity type and id when they exist in the environment.
+    # Retrieve the ShotGrid entity type and id when they exist in the environment.
     # these are passed down through the app launcher when running in zero config
     entity = toolkit_mgr.get_entity_from_environment()
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
@@ -361,15 +361,15 @@ def _add_to_main_menu_bar(menu):
 
 def _create_login_menu():
     """
-    Creates and displays a Shotgun user login menu.
+    Creates and displays a ShotGrid user login menu.
     """
     _delete_login_menu()
 
     sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to Shotgun...", _login_user)
+    _add_to_menu(sg_menu, "Log In to ShotGrid...", _login_user)
     _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about Shotgun...", _jump_to_website)
+    _add_to_menu(sg_menu, "Learn about ShotGrid...", _jump_to_website)
     _add_separator(sg_menu)
     _add_to_menu(sg_menu, "Try SG for Free...", _jump_to_signup)
     _add_to_main_menu_bar(sg_menu)
@@ -377,7 +377,7 @@ def _create_login_menu():
 
 def _delete_login_menu():
     """
-    Deletes the displayed Shotgun user login menu.
+    Deletes the displayed ShotGrid user login menu.
     """
     old_menu = rt.menuMan.findMenu(constants.SG_MENU_LABEL)
     if old_menu is not None:
@@ -386,7 +386,7 @@ def _delete_login_menu():
 
 def _jump_to_website():
     """
-    Jumps to the Shotgun website in the default web browser.
+    Jumps to the ShotGrid website in the default web browser.
     """
 
     # At this point, the engine is not launched, so "QtCore" and
@@ -397,12 +397,12 @@ def _jump_to_website():
     QtCore = qt_importer.QtCore
     QtGui = qt_importer.QtGui
 
-    QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.shotgunsoftware.com"))
+    QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.shotgridsoftware.com"))
 
 
 def _jump_to_signup():
     """
-    Jumps to the Shotgun signup page in the default web browser.
+    Jumps to the ShotGrid signup page in the default web browser.
     """
 
     # At this point, the engine is not launched, so "QtCore" and
@@ -414,7 +414,7 @@ def _jump_to_signup():
     QtGui = qt_importer.QtGui
 
     QtGui.QDesktopServices.openUrl(
-        QtCore.QUrl("https://www.shotgunsoftware.com/signup")
+        QtCore.QUrl("https://www.shotgridsoftware.com/signup")
     )
 
 

@@ -209,7 +209,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def _add_shotgun_menu(self):
         """
-        Add Shotgun menu to the main menu bar.
+        Add ShotGrid menu to the main menu bar.
         """
         self.log_debug("Adding the SG menu to the main menu bar.")
         self._menu_generator.create_menu()
@@ -217,7 +217,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def _remove_shotgun_menu(self):
         """
-        Remove Shotgun menu from the main menu bar.
+        Remove ShotGrid menu from the main menu bar.
         """
         self.log_debug("Removing the SG menu from the main menu bar.")
         self._menu_generator.destroy_menu()
@@ -365,7 +365,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def update_shotgun_menu(self):
         """
-        Rebuild the shotgun menu displayed in the main menu bar
+        Rebuild the ShotGrid menu displayed in the main menu bar
         """
         self._remove_shotgun_menu()
         self._add_shotgun_menu()
@@ -492,7 +492,7 @@ class MaxEngine(sgtk.platform.Engine):
             self._dock_widgets.append(dock_widget)
         else:
             # The dock widget wrapper already exists, so just get the
-            # shotgun panel from it.
+            # ShotGrid panel from it.
             widget_instance = dock_widget.widget()
             self.log_debug("Found existing dock widget %s" % dock_widget_id)
 
@@ -607,7 +607,7 @@ class MaxEngine(sgtk.platform.Engine):
         status = QtGui.QDialog.DialogCode.Rejected
 
         try:
-            # Disable 'Shotgun' background menu while modals are there.
+            # Disable 'ShotGrid' background menu while modals are there.
             self.tk_3dsmax.MaxScript.disable_menu()
 
             # create the dialog:
@@ -627,7 +627,7 @@ class MaxEngine(sgtk.platform.Engine):
             tb = traceback.format_exc()
             self.log_error("Exception in modal window: %s" % tb)
         finally:
-            # Re-enable 'Shotgun' background menu after modal has been closed
+            # Re-enable 'ShotGrid' background menu after modal has been closed
             self.tk_3dsmax.MaxScript.enable_menu()
 
         # lastly, return the instantiated widget
