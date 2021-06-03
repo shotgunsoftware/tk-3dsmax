@@ -397,7 +397,7 @@ def _jump_to_website():
     QtCore = qt_importer.QtCore
     QtGui = qt_importer.QtGui
 
-    QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.shotgunsoftware.com"))
+    QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.shotgridsoftware.com"))
 
 
 def _jump_to_signup():
@@ -414,7 +414,7 @@ def _jump_to_signup():
     QtGui = qt_importer.QtGui
 
     QtGui.QDesktopServices.openUrl(
-        QtCore.QUrl("https://www.shotgunsoftware.com/signup")
+        QtCore.QUrl("https://www.shotgridsoftware.com/signup")
     )
 
 
