@@ -8,7 +8,7 @@ You can easily update your existing Toolkit and ShotGrid configurations to use t
 
 
 Updating ShotGrid
-================
+=================
 
 The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.3.0`` and up, include both 3ds Max engines. However, your ShotGrid site still needs to be updated to activate the ``tk-3dsmax`` engine.
 
