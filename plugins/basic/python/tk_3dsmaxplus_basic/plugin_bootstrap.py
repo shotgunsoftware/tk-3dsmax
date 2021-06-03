@@ -111,11 +111,11 @@ def progress_callback(invoker, progress_value, message):
     :param message:        Progress message string
     """
 
-    print("Shotgun: %s" % message)
+    print("ShotGrid: %s" % message)
     # Make sure this is invoked in the main thread, as pymxs can't be
     # used from background threads.
     # Display temporary message in prompt line for maximum 2 secs.
-    invoker.invoke(rt.displayTempPrompt, "Shotgun: %s" % message, 2000)
+    invoker.invoke(rt.displayTempPrompt, "ShotGrid: %s" % message, 2000)
 
 
 def handle_bootstrap_completed(engine):
@@ -127,13 +127,13 @@ def handle_bootstrap_completed(engine):
     :param engine: Launched :class:`sgtk.platform.Engine` instance.
     """
 
-    print("Shotgun: Bootstrap successfully.")
+    print("ShotGrid: Bootstrap successfully.")
 
     # Add a logout menu item to the engine context menu only when
     # running as standalone plugin.
     if PluginProperties.running_as_standalone_plugin:
         engine.register_command(
-            "Log Out of Shotgun", _on_logout, {"type": "context_menu"}
+            "Log Out of ShotGrid", _on_logout, {"type": "context_menu"}
         )
         engine.update_shotgun_menu()
 
@@ -149,7 +149,7 @@ def handle_bootstrap_failed(phase, exception):
     :param exception: Python exception raised while bootstrapping.
     """
 
-    print("Shotgun: Bootstrap failed. %s" % exception)
+    print("ShotGrid: Bootstrap failed. %s" % exception)
     _create_login_menu()
 
 
@@ -367,9 +367,9 @@ def _create_login_menu():
 
     sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to Shotgun...", _login_user)
+    _add_to_menu(sg_menu, "Log In to ShotGrid...", _login_user)
     _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about Shotgun...", _jump_to_website)
+    _add_to_menu(sg_menu, "Learn about ShotGrid...", _jump_to_website)
     _add_separator(sg_menu)
     _add_to_menu(sg_menu, "Try SG for Free...", _jump_to_signup)
     _add_to_main_menu_bar(sg_menu)
