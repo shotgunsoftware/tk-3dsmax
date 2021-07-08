@@ -10,6 +10,7 @@
 from __future__ import print_function
 import os
 import sys
+from traceback import format_exc
 
 import pymxs
 
@@ -74,7 +75,7 @@ def bootstrap_sgtk_with_plugins():
 
     logger = sgtk.LogManager.get_logger(__name__)
 
-    logger.debug("Launching 3dsMax in plugin mode")
+    logger.debug("Launching additional startup scripts")
 
     # Load all plugins by calling the 'load()' entry point.
     for plugin_path in os.environ["SGTK_LOAD_MAX_PLUGINS"].split(os.pathsep):
@@ -89,6 +90,8 @@ def bootstrap_sgtk_with_plugins():
                     "Missing 'load()' method in plugin %s.  Plugin won't be loaded"
                     % plugin_path
                 )
+            except:
+                logger.error(format_exc())
 
 
 def bootstrap_sgtk():
@@ -114,11 +117,13 @@ def bootstrap_sgtk():
     else:
         error("Shotgun: Unknown platform - cannot setup ssl")
         return
-
+    
+    bootstrap_sgtk_classic()
+    
+    #PHOSPHENE: i'm not sure what this would do, maybe it's leftover from an old method to instantiate 3dsmax?
+    #anyway we'll just combine the two calls, use the env variable to include additional startup scripts
     if os.environ.get("SGTK_LOAD_MAX_PLUGINS"):
         bootstrap_sgtk_with_plugins()
-    else:
-        bootstrap_sgtk_classic()
 
     # clean up temp env vars
     for var in [
