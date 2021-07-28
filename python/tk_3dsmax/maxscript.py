@@ -50,6 +50,9 @@ class MaxScript:
         :param menu_name: String name of menu to create
         :param menu_var: MaxScript variable name in which the menu will be created
         """
+        # Remove old Shotgun menu entry from cache
+        MaxScript.unregister_menu("Shotgun")
+
         MaxScript.unregister_menu(menu_name)
         pymxs.runtime.execute(
             """
