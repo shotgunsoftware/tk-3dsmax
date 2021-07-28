@@ -19,7 +19,7 @@ import unicodedata
 from sgtk.platform.qt import QtCore, QtGui
 from .maxscript import MaxScript
 
-MENU_LABEL = "Shotgun"
+MENU_LABEL = "ShotGrid"
 
 
 class MenuGenerator(object):
@@ -115,7 +115,7 @@ class MenuGenerator(object):
 
         MaxScript.create_menu(ctx_name, self._ctx_var)
         MaxScript.add_action_to_menu(
-            self._jump_to_sg, "Jump to Shotgun", self._ctx_var, self._engine
+            self._jump_to_sg, "Jump to ShotGrid", self._ctx_var, self._engine
         )
 
         # Add the menu item only when there are some file system locations.
@@ -162,7 +162,7 @@ class MenuGenerator(object):
                 for cmd in commands_by_app[app_name]:
                     cmd.add_to_menu(menu_var, self._engine)
 
-                MaxScript.add_to_menu(menu_var, self._menu_var, "ShotgunMenu")
+                MaxScript.add_to_menu(menu_var, self._menu_var, "ShotGridMenu")
             else:
                 # this app only has a single entry.
                 # display that on the menu

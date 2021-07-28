@@ -50,6 +50,9 @@ class MaxScript:
         :param menu_name: String name of menu to create
         :param menu_var: MaxScript variable name in which the menu will be created
         """
+        # Remove old Shotgun menu entry from cache
+        MaxScript.unregister_menu("Shotgun")
+
         MaxScript.unregister_menu(menu_name)
         pymxs.runtime.execute(
             """
@@ -174,7 +177,7 @@ class MaxScript:
             """
             -- Create MacroScript that will callback to our python object
             macroScript {macro_name}
-            category: "Shotgun Menu Actions"
+            category: "ShotGrid Menu Actions"
             tooltip: "{action_name}"
             (
 	            on execute do
@@ -194,7 +197,7 @@ class MaxScript:
             )
 
             -- Add menu item using previous MacroScript action
-            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "Shotgun Menu Actions"
+            sgtk_menu_action = menuMan.createActionItem "{macro_name}" "ShotGrid Menu Actions"
             sgtk_menu_action.setUseCustomTitle true
             sgtk_menu_action.setTitle("{action_name}")
             {menu_var}.addItem sgtk_menu_action -1
