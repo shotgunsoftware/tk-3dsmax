@@ -11,7 +11,6 @@ from __future__ import print_function
 import os
 import sys
 
-sys.path.append(os.environ["PYTHONPATH"])
 
 import pymxs
 
@@ -133,4 +132,23 @@ def bootstrap_sgtk():
             del os.environ[var]
 
 
+def adjust_sys_path():
+    """
+    Adjust sys.path list to include the os.environ["PYTHONPATH"] values
+
+    3DSMax remove intentionally the usage of the environment variable
+    PYTHONPATH so we need to add the values to sys.path manually.
+    """
+    python_path = os.environ.get("PYTHONPATH", None)
+    if not python_path:
+        return
+
+    values = reversed(python_path.split(os.pathsep))
+
+    for value in values:
+        if value not in sys.path:
+            sys.path.insert(0, value)
+
+
+adjust_sys_path()
 bootstrap_sgtk()
