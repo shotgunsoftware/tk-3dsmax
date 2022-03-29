@@ -119,7 +119,10 @@ class MaxEngine(sgtk.platform.Engine):
                 "The SG Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
                 "Please report any issues you see via %s."
-                % (highest_supported_version, sgtk.support_url,)
+                % (
+                    highest_supported_version,
+                    sgtk.support_url,
+                )
             )
 
             # Display warning dialog
@@ -677,7 +680,7 @@ class MaxEngine(sgtk.platform.Engine):
     MAX_RELEASE_R18 = 18000
 
     # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 24000
+    MAXIMUM_SUPPORTED_VERSION = 25000
 
     def _max_version_to_year(self, version):
         """
