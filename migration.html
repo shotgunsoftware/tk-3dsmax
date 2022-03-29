@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.2.2 documentation</title>
+  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.2.3 documentation</title>
   
 
   
@@ -136,7 +136,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-3dsmax</b> v1.2.2.<br>
+    <b>tk-3dsmax</b> v1.2.3.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -237,8 +237,8 @@
 <h3>Updating engine instance names<a class="headerlink" href="#updating-engine-instance-names" title="Permalink to this headline">¶</a></h3>
 <p>In order for the automatic software detection to work, you need to change the name of the <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> engine instances in your configuration to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
 <p>For example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">engines</span><span class="p">:</span>
-  <span class="nt">tk-3dsmax</span><span class="p">:</span> <span class="s">&quot;@settings.tk-3dsmax.project&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">engines</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tk-3dsmax</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;@settings.tk-3dsmax.project&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <p>You’ll also likely want to clean up file names and update references from <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
@@ -247,11 +247,11 @@
 <h3>Updating the engine location<a class="headerlink" href="#updating-the-engine-location" title="Permalink to this headline">¶</a></h3>
 <p>You need to update the <code class="docutils literal notranslate"><span class="pre">location</span></code> of the 3ds Max engine to point to the new engine named <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> with a version of <code class="docutils literal notranslate"><span class="pre">v1.0.0</span></code> or greater.</p>
 <p>For example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-3dsmax</span><span class="p">:</span>
-    <span class="nt">location</span><span class="p">:</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">app_store</span>
-        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tk-3dsmax</span>
-        <span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1.0.0</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-3dsmax</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">location</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app_store</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tk-3dsmax</span><span class="w"></span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.0.0</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -276,32 +276,32 @@
 <div class="section" id="tk-multi-loader2">
 <h4>tk-multi-loader2<a class="headerlink" href="#tk-multi-loader2" title="Permalink to this headline">¶</a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-loader2</span><span class="p">:</span>
-    <span class="nt">actions_hook</span><span class="p">:</span> <span class="s">&quot;{engine}/tk-multi-loader2/basic/scene_actions.py&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-loader2</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">actions_hook</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-loader2/basic/scene_actions.py&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="tk-multi-workfiles2">
 <h4>tk-multi-workfiles2<a class="headerlink" href="#tk-multi-workfiles2" title="Permalink to this headline">¶</a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">hook_scene_operation</span></code> accordingly:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-workfiles2</span><span class="p">:</span>
-    <span class="nt">hook_scene_operation</span><span class="p">:</span> <span class="s">&quot;{engine}/tk-multi-workfiles2/basic/scene_operation.py&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-workfiles2</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hook_scene_operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-workfiles2/basic/scene_operation.py&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="tk-multi-snapshot">
 <h4>tk-multi-snapshot<a class="headerlink" href="#tk-multi-snapshot" title="Permalink to this headline">¶</a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-snapshot</span><span class="p">:</span>
-    <span class="nt">hook_scene_operation</span><span class="p">:</span> <span class="s">&quot;{engine}/tk-multi-snapshot/basic/scene_operation.py&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-snapshot</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">hook_scene_operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-snapshot/basic/scene_operation.py&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="tk-multi-shotgunpanel">
 <h4>tk-multi-shotgunpanel<a class="headerlink" href="#tk-multi-shotgunpanel" title="Permalink to this headline">¶</a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-shotgunpanel</span><span class="p">:</span>
-    <span class="nt">actions_hook</span><span class="p">:</span> <span class="s">&quot;{engine}/tk-multi-shotgunpanel/basic/scene_actions.py&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-shotgunpanel</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">actions_hook</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-shotgunpanel/basic/scene_actions.py&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -335,7 +335,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Autodesk
+        &copy; Copyright 2022, Autodesk
 
     </p>
   </div> 
