@@ -10,4 +10,4 @@ you to easily run and deploy Toolkit Apps and Engines.
 - The plugin needs to be built before it can be executed. You do this by
   executing the build tools found [here](https://github.com/shotgunsoftware/tk-core/blob/master/developer).
 
-- For more information about Toolkit, see http://developer.shotgridsoftware.com/
+- For more information about Toolkit, see https://help.autodesk.com/view/SGDEV/ENU/
