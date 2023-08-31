@@ -8,7 +8,7 @@
 This repository is a part of the ShotGrid Pipeline Toolkit.
 
 - For more information about this app and for release notes, *see the wiki section*.
-- For general information and documentation, click here: https://help.autodesk.com/view/SGDEV/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html
+- For general information and documentation, click here: https://help.autodesk.com/view/SGDEV/ENU/
 - For information about ShotGrid in general, click here: https://www.autodesk.com/products/shotgrid/overview
 
 ## Using this app in your Setup
