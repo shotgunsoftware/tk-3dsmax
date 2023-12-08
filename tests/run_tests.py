@@ -30,6 +30,7 @@ import mock
 # running a script in Max, so create a believable argv and set it.
 argv = [
     "pytest",
+    "tests/test_publisher_hooks.py",
     "--capture",
     "no",
     "--cov",
@@ -39,21 +40,26 @@ argv = [
     "--verbose",
 ]
 # Patch argv
-with mock.patch.object(sys, "argv", argv, create=True):
-    # The sys.stdout in Max is not the standard stdout object, but some mocked
-    # object, which is missing isatty, so we'll implement it.
-    # and return True, since we're not a terminal.
-    with mock.patch.object(sys.stdout, "isatty", create=True, return_value=False):
-        current_dir = os.getcwd()
-        # It appears the path specified inside coveragerc is relative
-        # to the current working directly and not the test root,
-        # so we're going to change the current directory and restore it.
-        os.chdir(repo_root)
-        try:
-            # pytest expects the arguments and not the name of the executable
-            # to be passed in.
-            pytest.main(argv[1:])
-        finally:
-            if "test_publisher_hooks" in sys.modules:
-                sys.modules.pop("test_publisher_hooks")
-            os.chdir(current_dir)
+@mock.patch.object(sys, "argv", argv, create=True)
+# The sys.stdout and sys.stderr in Max are some mocked
+# object, which is missing isatty and fileno, so we'll implement them.
+# and return True, since we're not a terminal.
+@mock.patch.object(sys.stdout, "isatty", create=True, return_value=False)
+@mock.patch.object(sys.stderr, "fileno", create=True, return_value=2)
+def run_tests(_mock1, _mock2):
+    current_dir = os.getcwd()
+    # It appears the path specified inside coveragerc is relative
+    # to the current working directly and not the test root,
+    # so we're going to change the current directory and restore it.
+    os.chdir(repo_root)
+    try:
+        # pytest expects the arguments and not the name of the executable
+        # to be passed in.
+        pytest.main(argv[1:])
+    finally:
+        if "test_publisher_hooks" in sys.modules:
+            sys.modules.pop("test_publisher_hooks")
+        os.chdir(current_dir)
+
+
+run_tests()

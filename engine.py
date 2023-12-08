@@ -138,6 +138,8 @@ class MaxEngine(sgtk.platform.Engine):
             self.log_warning(msg)
 
         self._safe_dialog = []
+        # Keep the dialog to prevent the garbage collector from delete it
+        self._dialog = None
 
         # Add image formats since max doesn't add the correct paths by default and jpeg won't be readable
         maxpath = QtCore.QCoreApplication.applicationDirPath()
@@ -549,7 +551,7 @@ class MaxEngine(sgtk.platform.Engine):
         Parent function override to install event filtering in order to allow proper events to
         reach window dialogs (such as keyboard events).
         """
-        dialog = sgtk.platform.Engine._create_dialog(
+        self._dialog = sgtk.platform.Engine._create_dialog(
             self, title, bundle, widget, parent
         )
 
@@ -561,30 +563,30 @@ class MaxEngine(sgtk.platform.Engine):
             self._parent_to_max
             and self._max_version_to_year(self._get_max_version()) <= 2019
         ):
-            previous_parent = dialog.parent()
+            previous_parent = self._dialog.parent()
             try:
                 self.log_debug("Attempting to attach dialog to 3ds Max...")
-                dialog.setParent(None)
+                self._dialog.setParent(None)
                 # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
                 # Accessing MaxPlus here is safe because we're inside a
                 # a branch of code that can only be executed on Max 2019 and lower.
-                MaxPlus.AttachQWidgetToMax(dialog)
+                MaxPlus.AttachQWidgetToMax(self._dialog)
                 self.log_debug("AttachQWidgetToMax successful.")
             except AttributeError:
-                dialog.setParent(previous_parent)
+                self._dialog.setParent(previous_parent)
                 self.log_debug(
                     "AttachQWidgetToMax not available in this version of 3ds Max."
                 )
 
-        dialog.installEventFilter(self.dialogEvents)
+        self._dialog.installEventFilter(self.dialogEvents)
 
         # Add to tracked dialogs (will be removed in eventFilter)
-        self._safe_dialog.append(dialog)
+        self._safe_dialog.append(self._dialog)
 
         # Apply the engine-level stylesheet.
-        self._apply_external_styleshet(self, dialog)
+        self._apply_external_styleshet(self, self._dialog)
 
-        return dialog
+        return self._dialog
 
     def reload_qss(self):
         """
@@ -650,18 +652,26 @@ class MaxEngine(sgtk.platform.Engine):
         from sgtk.platform.qt import QtGui
 
         toggled = []
-
-        for dialog in self._safe_dialog:
-            needs_toggling = dialog.isVisible()
-
-            if needs_toggling:
-                self.log_debug("Toggling dialog off: %r" % dialog)
-                toggled.append(dialog)
-                dialog.hide()
-                dialog.lower()
-                QtGui.QApplication.processEvents()
-            else:
-                self.log_debug("Dialog is already hidden: %r" % dialog)
+        for sd in self._safe_dialog:
+            try:
+                self.log_debug("Processing dialog to hide: %r" % sd)
+                dialog = sd
+            except RuntimeError as e:
+                # this should hide all visible sgtk dialogs
+                # but in 3dsmax 2024/Python 3.10 they seem to be deleted by the garbage collector
+                # so falling back to the last _dialog created on _create_dialog method
+                self.log_warning(e)
+                dialog = self._dialog
+            finally:
+                needs_toggling = dialog.isVisible()
+                if needs_toggling:
+                    self.log_debug("Toggling dialog off: %r" % dialog)
+                    toggled.append(dialog)
+                    dialog.hide()
+                    dialog.lower()
+                    QtGui.QApplication.processEvents()
+                else:
+                    self.log_debug("Dialog is already hidden: %r" % dialog)
 
         try:
             func()
