@@ -2,10 +2,10 @@
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# This work is provided "AS IS" and subject to the Flow Production Tracking Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# agreement to the Flow Production Tracking Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 """
 A 3ds Max (2017+) engine for Toolkit based mostly on pymxs and also uses MaxPlus for certain features
@@ -115,8 +115,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
 
             msg = (
-                "SG Pipeline Toolkit!\n\n"
-                "The SG Pipeline Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
+                "Flow Production Tracking Toolkit!\n\n"
+                "The Flow Production Tracking Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
                 "Please report any issues you see via %s."
                 % (

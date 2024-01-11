@@ -2,10 +2,10 @@
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# This work is provided "AS IS" and subject to the Flow Production Tracking Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# agreement to the Flow Production Tracking Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 from __future__ import print_function
@@ -111,11 +111,11 @@ def progress_callback(invoker, progress_value, message):
     :param message:        Progress message string
     """
 
-    print("ShotGrid: %s" % message)
+    print("Flow Production Tracking: %s" % message)
     # Make sure this is invoked in the main thread, as pymxs can't be
     # used from background threads.
     # Display temporary message in prompt line for maximum 2 secs.
-    invoker.invoke(rt.displayTempPrompt, "ShotGrid: %s" % message, 2000)
+    invoker.invoke(rt.displayTempPrompt, "Flow Production Tracking: %s" % message, 2000)
 
 
 def handle_bootstrap_completed(engine):
@@ -127,13 +127,13 @@ def handle_bootstrap_completed(engine):
     :param engine: Launched :class:`sgtk.platform.Engine` instance.
     """
 
-    print("ShotGrid: Bootstrap successfully.")
+    print("Flow Production Tracking: Bootstrap successfully.")
 
     # Add a logout menu item to the engine context menu only when
     # running as standalone plugin.
     if PluginProperties.running_as_standalone_plugin:
         engine.register_command(
-            "Log Out of ShotGrid", _on_logout, {"type": "context_menu"}
+            "Log Out of Flow Production Tracking", _on_logout, {"type": "context_menu"}
         )
         engine.update_shotgun_menu()
 
@@ -149,7 +149,7 @@ def handle_bootstrap_failed(phase, exception):
     :param exception: Python exception raised while bootstrapping.
     """
 
-    print("ShotGrid: Bootstrap failed. %s" % exception)
+    print("Flow Production Tracking: Bootstrap failed. %s" % exception)
     _create_login_menu()
 
 
@@ -367,9 +367,9 @@ def _create_login_menu():
 
     sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to ShotGrid...", _login_user)
+    _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
     _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about ShotGrid...", _jump_to_website)
+    _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
     _add_separator(sg_menu)
     _add_to_menu(sg_menu, "Try SG for Free...", _jump_to_signup)
     _add_to_main_menu_bar(sg_menu)

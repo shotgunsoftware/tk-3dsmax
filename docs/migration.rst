@@ -1,28 +1,28 @@
 Migrating to the new ``tk-3dsmax`` engine
 #########################################
 
-You can easily update your existing Toolkit and ShotGrid configurations to use the new ``tk-3dsmax`` engine.
+You can easily update your existing Toolkit and Flow Production Tracking configurations to use the new ``tk-3dsmax`` engine.
 
 .. warning::
     The new ``tk-3dsmax`` engine supports **3ds Max 2017 and up**, while the existing ``tk-3dsmaxplus`` supports **3ds Max 2016-2020**. Do not attempt to migrate to the new ``tk-3dsmax`` engine if you still rely on **3ds Max 2016**. The new engine uses an API that did not exist in that version of 3ds Max.
 
 
-Updating ShotGrid
+Updating Flow Production Tracking
 =================
 
-The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.3.0`` and up, include both 3ds Max engines. However, your ShotGrid site still needs to be updated to activate the ``tk-3dsmax`` engine.
+The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.3.0`` and up, include both 3ds Max engines. However, your Flow Production Tracking site still needs to be updated to activate the ``tk-3dsmax`` engine.
 
-In order for the new engine to be usable from the ShotGrid Desktop or the ``tank`` command, you need to make sure there is a ``Software`` entity in ShotGrid configured for the ``tk-3dsmax`` engine. To do this, visit the ``Software`` page on your ShotGrid site. If you are a ShotGrid administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. You can then create a second software entity named ``3ds Max`` with the ``Engine`` field set to ``tk-3dsmax``.
+In order for the new engine to be usable from the Flow Production Tracking Toolkit or the ``tank`` command, you need to make sure there is a ``Software`` entity in Flow Production Tracking configured for the ``tk-3dsmax`` engine. To do this, visit the ``Software`` page on your Flow Production Tracking site. If you are a Flow Production Tracking administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. You can then create a second software entity named ``3ds Max`` with the ``Engine`` field set to ``tk-3dsmax``.
 
 .. image:: _static/software-entity.png
 
-However, doing this means that both engines will now be active for the out of the box integrations. By using the ``Project`` field, you can restrict which project uses the ``tk-3dsmaxplus`` engine and which project uses the new ``tk-3dsmax`` engine in order to avoid disruption in production. If you are not using the out of the box ShotGrid Integrations and plan on having only one of the two engines in your Toolkit configuration, you can duplicate the ``3ds Max`` ``Software`` entity and update the ``Engine`` field without having to worry about assigning projects.
+However, doing this means that both engines will now be active for the out of the box integrations. By using the ``Project`` field, you can restrict which project uses the ``tk-3dsmaxplus`` engine and which project uses the new ``tk-3dsmax`` engine in order to avoid disruption in production. If you are not using the out of the box Flow Production Tracking Integrations and plan on having only one of the two engines in your Toolkit configuration, you can duplicate the ``3ds Max`` ``Software`` entity and update the ``Engine`` field without having to worry about assigning projects.
 
 
 Updating the out of the box integrations
 ========================================
 
-If you wish to use the new engine with a project, simply make sure that the project is using version ``v1.3.0`` or greater of ``tk-config-basic`` or ``tk-config-default2``. If you have updated your ShotGrid site by following the steps above , you are now ready to use 3ds Max with the new engine.
+If you wish to use the new engine with a project, simply make sure that the project is using version ``v1.3.0`` or greater of ``tk-config-basic`` or ``tk-config-default2``. If you have updated your Flow Production Tracking site by following the steps above , you are now ready to use 3ds Max with the new engine.
 
 
 Migrating when using customized integrations
