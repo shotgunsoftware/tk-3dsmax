@@ -2,10 +2,10 @@
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Flow Production Tracking Toolkit
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Flow Production Tracking Toolkit Source Code License. All rights
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 from __future__ import print_function
 import os
@@ -45,7 +45,9 @@ def bootstrap_sgtk_classic():
 
     if not "TANK_ENGINE" in os.environ:
         logger.error("Missing required environment variable TANK_ENGINE.")
-        error("Flow Production Tracking: Missing required environment variable TANK_ENGINE.")
+        error(
+            "Flow Production Tracking: Missing required environment variable TANK_ENGINE."
+        )
         return
 
     engine_name = os.environ.get("TANK_ENGINE")
@@ -54,7 +56,8 @@ def bootstrap_sgtk_classic():
     except Exception as e:
         logger.exception("Could not create context! sgtk will be disabled.")
         error(
-            "Flow Production Tracking: Could not create context! sgtk will be disabled. Details: %s" % e
+            "Flow Production Tracking: Could not create context! sgtk will be disabled. Details: %s"
+            % e
         )
         return
 

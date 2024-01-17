@@ -2,10 +2,10 @@
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Flow Production Tracking Toolkit
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Flow Production Tracking Toolkit Source Code License. All rights
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 """
@@ -115,7 +115,10 @@ class MenuGenerator(object):
 
         MaxScript.create_menu(ctx_name, self._ctx_var)
         MaxScript.add_action_to_menu(
-            self._jump_to_sg, "Jump to Flow Production Tracking", self._ctx_var, self._engine
+            self._jump_to_sg,
+            "Jump to Flow Production Tracking",
+            self._ctx_var,
+            self._engine,
         )
 
         # Add the menu item only when there are some file system locations.

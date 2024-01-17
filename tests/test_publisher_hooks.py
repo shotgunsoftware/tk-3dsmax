@@ -2,10 +2,10 @@
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Flow Production Tracking Toolkit
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Flow Production Tracking Toolkit Source Code License. All rights
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
@@ -206,7 +206,9 @@ class TestPublisherHooks(TankTestBase):
 
         items[2].name == "scene.abc"
         items[2].type_display == "Alembic Cache"
-        assert [task.name for task in items[2].tasks] == ["Publish to Flow Production Tracking"]
+        assert [task.name for task in items[2].tasks] == [
+            "Publish to Flow Production Tracking"
+        ]
 
         items[3].name == "All Session Geometry"
         items[3].type_display == "Geometry"
