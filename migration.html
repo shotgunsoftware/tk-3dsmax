@@ -1,56 +1,36 @@
 
 
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.2.5 documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.2.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="The 3dsMax engine" href="index.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-    <a href='http://developer.shotgridsoftware.com'>
+    <a href='http://developers.shotgridsoftware.com'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -63,35 +43,20 @@
     
 
           
-            <a href="index.html" class="icon icon-home"> tk-3dsmax
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            tk-3dsmax
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
 
-          
-
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     
-            
-            
-              
-            
-            
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#updating-shotgrid">Updating ShotGrid</a></li>
@@ -115,8 +80,6 @@
 </li>
 </ul>
 
-            
-          
 
     <a href='genindex.html'>Alphabetic Index</a>
 
@@ -136,12 +99,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-3dsmax</b> v1.2.5.<br>
+    <b>tk-3dsmax</b> v1.2.6.<br>
     
         This documentation is part of the ShotGrid Pipeline Toolkit.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
+    <a class=custom_post_menu href='https://developers.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-3dsmax'>here</a>.
 
@@ -159,88 +122,53 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">tk-3dsmax</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="migrating-to-the-new-tk-3dsmax-engine">
-<h1>Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine<a class="headerlink" href="#migrating-to-the-new-tk-3dsmax-engine" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="migrating-to-the-new-tk-3dsmax-engine">
+<h1>Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine<a class="headerlink" href="#migrating-to-the-new-tk-3dsmax-engine" title="Permalink to this heading"></a></h1>
 <p>You can easily update your existing Toolkit and ShotGrid configurations to use the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine supports <strong>3ds Max 2017 and up</strong>, while the existing <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> supports <strong>3ds Max 2016-2020</strong>. Do not attempt to migrate to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine if you still rely on <strong>3ds Max 2016</strong>. The new engine uses an API that did not exist in that version of 3ds Max.</p>
+<p class="admonition-title">Warning</p>
+<p>The new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine supports <strong>3ds Max 2017 and up</strong>, while the existing <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> supports <strong>3ds Max 2016-2020</strong>. Do not attempt to migrate to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine if you still rely on <strong>3ds Max 2016</strong>. The new engine uses an API that did not exist in that version of 3ds Max.</p>
 </div>
-<div class="section" id="updating-shotgrid">
-<h2>Updating ShotGrid<a class="headerlink" href="#updating-shotgrid" title="Permalink to this headline">¶</a></h2>
+<section id="updating-shotgrid">
+<h2>Updating ShotGrid<a class="headerlink" href="#updating-shotgrid" title="Permalink to this heading"></a></h2>
 <p>The new releases of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> and <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code> configurations, <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> and up, include both 3ds Max engines. However, your ShotGrid site still needs to be updated to activate the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
 <p>In order for the new engine to be usable from the ShotGrid Desktop or the <code class="docutils literal notranslate"><span class="pre">tank</span></code> command, you need to make sure there is a <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity in ShotGrid configured for the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine. To do this, visit the <code class="docutils literal notranslate"><span class="pre">Software</span></code> page on your ShotGrid site. If you are a ShotGrid administrator, you can access the page by clicking on the user icon at the top right of your site and selecting <code class="docutils literal notranslate"><span class="pre">Software</span></code>. You can then create a second software entity named <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> with the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field set to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
 <img alt="_images/software-entity.png" src="_images/software-entity.png" />
 <p>However, doing this means that both engines will now be active for the out of the box integrations. By using the <code class="docutils literal notranslate"><span class="pre">Project</span></code> field, you can restrict which project uses the <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> engine and which project uses the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine in order to avoid disruption in production. If you are not using the out of the box ShotGrid Integrations and plan on having only one of the two engines in your Toolkit configuration, you can duplicate the <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity and update the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field without having to worry about assigning projects.</p>
-</div>
-<div class="section" id="updating-the-out-of-the-box-integrations">
-<h2>Updating the out of the box integrations<a class="headerlink" href="#updating-the-out-of-the-box-integrations" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="updating-the-out-of-the-box-integrations">
+<h2>Updating the out of the box integrations<a class="headerlink" href="#updating-the-out-of-the-box-integrations" title="Permalink to this heading"></a></h2>
 <p>If you wish to use the new engine with a project, simply make sure that the project is using version <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> or greater of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> or <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code>. If you have updated your ShotGrid site by following the steps above , you are now ready to use 3ds Max with the new engine.</p>
-</div>
-<div class="section" id="migrating-when-using-customized-integrations">
-<h2>Migrating when using customized integrations<a class="headerlink" href="#migrating-when-using-customized-integrations" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="migrating-when-using-customized-integrations">
+<h2>Migrating when using customized integrations<a class="headerlink" href="#migrating-when-using-customized-integrations" title="Permalink to this heading"></a></h2>
 <p>Migrating a configuration manually to use the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine is relatively straightforward. The following indicates which steps need to be taken to update your configuration.</p>
-<div class="section" id="a-migration-example">
-<h3>A migration example<a class="headerlink" href="#a-migration-example" title="Permalink to this headline">¶</a></h3>
+<section id="a-migration-example">
+<h3>A migration example<a class="headerlink" href="#a-migration-example" title="Permalink to this heading"></a></h3>
 <p>You can view a pull request where <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code> was updated to use the new engine <a class="reference external" href="https://github.com/shotgunsoftware/tk-config-default2/pull/67">here</a>.</p>
 <p>To learn more about each of the required changes, continue reading below.</p>
-</div>
-<div class="section" id="updating-engine-instance-names">
-<h3>Updating engine instance names<a class="headerlink" href="#updating-engine-instance-names" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="updating-engine-instance-names">
+<h3>Updating engine instance names<a class="headerlink" href="#updating-engine-instance-names" title="Permalink to this heading"></a></h3>
 <p>In order for the automatic software detection to work, you need to change the name of the <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> engine instances in your configuration to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
 <p>For example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">engines</span><span class="p">:</span>
@@ -248,9 +176,9 @@
 </pre></div>
 </div>
 <p>You’ll also likely want to clean up file names and update references from <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
-</div>
-<div class="section" id="updating-the-engine-location">
-<h3>Updating the engine location<a class="headerlink" href="#updating-the-engine-location" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="updating-the-engine-location">
+<h3>Updating the engine location<a class="headerlink" href="#updating-the-engine-location" title="Permalink to this heading"></a></h3>
 <p>You need to update the <code class="docutils literal notranslate"><span class="pre">location</span></code> of the 3ds Max engine to point to the new engine named <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> with a version of <code class="docutils literal notranslate"><span class="pre">v1.0.0</span></code> or greater.</p>
 <p>For example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-3dsmax</span><span class="p">:</span>
@@ -260,14 +188,14 @@
 <span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.0.0</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="updating-the-application-hooks">
-<h3>Updating the application hooks<a class="headerlink" href="#updating-the-application-hooks" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="updating-the-application-hooks">
+<h3>Updating the application hooks<a class="headerlink" href="#updating-the-application-hooks" title="Permalink to this heading"></a></h3>
 <p>Some of our applications originally shipped with the <code class="docutils literal notranslate"><span class="pre">Blur</span> <span class="pre">Python</span></code> version of the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> hooks. This will cause issues with the new engine as they share the same name. As such, you will need to update to newer versions of some of our applications so they do not include these outdated hooks.</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">tk-multi-loader2</span></code> version <code class="docutils literal notranslate"><span class="pre">v1.19.5</span></code> or greater</li>
-<li><code class="docutils literal notranslate"><span class="pre">tk-multi-snapshot</span></code> version <code class="docutils literal notranslate"><span class="pre">v0.7.5</span></code> or greater</li>
-<li><code class="docutils literal notranslate"><span class="pre">tk-multi-workfiles2</span></code> version <code class="docutils literal notranslate"><span class="pre">v0.11.15</span></code> or greater</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tk-multi-loader2</span></code> version <code class="docutils literal notranslate"><span class="pre">v1.19.5</span></code> or greater</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tk-multi-snapshot</span></code> version <code class="docutils literal notranslate"><span class="pre">v0.7.5</span></code> or greater</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tk-multi-workfiles2</span></code> version <code class="docutils literal notranslate"><span class="pre">v0.11.15</span></code> or greater</p></li>
 </ul>
 <p>If you do not update these applications, you will get an error similar to this one in your Toolkit logs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
@@ -279,94 +207,75 @@
 </pre></div>
 </div>
 <p>In addition, the 3ds Max hooks for those applications are now distributed with the engine instead of being distributed with the application. Therefore, you need to update the 3ds Max hooks for the following applications:</p>
-<div class="section" id="tk-multi-loader2">
-<h4>tk-multi-loader2<a class="headerlink" href="#tk-multi-loader2" title="Permalink to this headline">¶</a></h4>
+<section id="tk-multi-loader2">
+<h4>tk-multi-loader2<a class="headerlink" href="#tk-multi-loader2" title="Permalink to this heading"></a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-loader2</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">actions_hook</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-loader2/basic/scene_actions.py&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="tk-multi-workfiles2">
-<h4>tk-multi-workfiles2<a class="headerlink" href="#tk-multi-workfiles2" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="tk-multi-workfiles2">
+<h4>tk-multi-workfiles2<a class="headerlink" href="#tk-multi-workfiles2" title="Permalink to this heading"></a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">hook_scene_operation</span></code> accordingly:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-workfiles2</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hook_scene_operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-workfiles2/basic/scene_operation.py&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="tk-multi-snapshot">
-<h4>tk-multi-snapshot<a class="headerlink" href="#tk-multi-snapshot" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="tk-multi-snapshot">
+<h4>tk-multi-snapshot<a class="headerlink" href="#tk-multi-snapshot" title="Permalink to this heading"></a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-snapshot</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">hook_scene_operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-snapshot/basic/scene_operation.py&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="tk-multi-shotgunpanel">
-<h4>tk-multi-shotgunpanel<a class="headerlink" href="#tk-multi-shotgunpanel" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="tk-multi-shotgunpanel">
+<h4>tk-multi-shotgunpanel<a class="headerlink" href="#tk-multi-shotgunpanel" title="Permalink to this heading"></a></h4>
 <p>You need to update <code class="docutils literal notranslate"><span class="pre">actions_hook</span></code> accordingly:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tk-multi-shotgunpanel</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">actions_hook</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{engine}/tk-multi-shotgunpanel/basic/scene_actions.py&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="tk-multi-publish2">
-<h4>tk-multi-publish2<a class="headerlink" href="#tk-multi-publish2" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="tk-multi-publish2">
+<h4>tk-multi-publish2<a class="headerlink" href="#tk-multi-publish2" title="Permalink to this heading"></a></h4>
 <p>There is no need to edit the hooks for the publisher. The default hook setting for the publisher searches for the hooks in the engine’s <code class="docutils literal notranslate"><span class="pre">hooks</span></code> folder and this engine includes them at the expected location.</p>
-</div>
-</div>
-<div class="section" id="updating-your-schema">
-<h3>Updating your schema<a class="headerlink" href="#updating-your-schema" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="updating-your-schema">
+<h3>Updating your schema<a class="headerlink" href="#updating-your-schema" title="Permalink to this heading"></a></h3>
 <p>It is possible that your configuration uses the <code class="docutils literal notranslate"><span class="pre">defer_creation</span></code> parameter. Make sure that any references to <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> are converted to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="The 3dsMax engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="The 3dsMax engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2023, Autodesk
+    <p>&#169; Copyright 2024, Autodesk.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
-  
  
 
   <script type="text/javascript">
