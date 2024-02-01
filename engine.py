@@ -132,7 +132,7 @@ class MaxEngine(sgtk.platform.Engine):
                 "compatibility_dialog_min_version", max_next_year
             ):
                 QtGui.QMessageBox.warning(
-                    None, "SG Warning", "Warning - {0}".format(msg)
+                    None, "PTR Warning", "Warning - {0}".format(msg)
                 )
             # and log the warning
             self.log_warning(msg)
@@ -216,7 +216,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Add Shotgun menu to the main menu bar.
         """
-        self.log_debug("Adding the SG menu to the main menu bar.")
+        self.log_debug("Adding the PTR menu to the main menu bar.")
         self._menu_generator.create_menu()
         self.tk_3dsmax.MaxScript.enable_menu()
 
@@ -224,7 +224,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         Remove Shotgun menu from the main menu bar.
         """
-        self.log_debug("Removing the SG menu from the main menu bar.")
+        self.log_debug("Removing the PTR menu from the main menu bar.")
         self._menu_generator.destroy_menu()
 
     def _on_menus_loaded(self):

@@ -170,7 +170,7 @@ class MaxScript:
             "    command_object = engine.maxscript_objects['{hash_name}']\n"
             "    command_object.{command_name}()\n"
             "else:\n"
-            "    engine.log_error('SG Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
+            "    engine.log_error('PTR Error: Failed to find Action command in MAXScript callback for action [{action_name}]!')\n"
         ).format(hash_name=hash_name, command_name=method_name, action_name=action_name)
 
         pymxs.runtime.execute(
@@ -192,7 +192,7 @@ class MaxScript:
                     if (sgtk_main_menu_enabled != undefined and sgtk_main_menu_enabled == True) then
 		                python.execute "{python_code}"
                     else
-                        print "SG Warning: You need to close the current window dialog before using any more commands."
+                        print "PTR Warning: You need to close the current window dialog before using any more commands."
 	            )
             )
 
