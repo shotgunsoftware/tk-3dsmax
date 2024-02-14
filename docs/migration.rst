@@ -12,7 +12,7 @@ Updating Flow Production Tracking
 
 The new releases of ``tk-config-basic`` and ``tk-config-default2`` configurations, ``v1.3.0`` and up, include both 3ds Max engines. However, your Flow Production Tracking site still needs to be updated to activate the ``tk-3dsmax`` engine.
 
-In order for the new engine to be usable from the Flow Production Tracking Toolkit or the ``tank`` command, you need to make sure there is a ``Software`` entity in Flow Production Tracking configured for the ``tk-3dsmax`` engine. To do this, visit the ``Software`` page on your Flow Production Tracking site. If you are a Flow Production Tracking administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. You can then create a second software entity named ``3ds Max`` with the ``Engine`` field set to ``tk-3dsmax``.
+In order for the new engine to be usable from the Flow Production Tracking or the ``tank`` command, you need to make sure there is a ``Software`` entity in Flow Production Tracking configured for the ``tk-3dsmax`` engine. To do this, visit the ``Software`` page on your Flow Production Tracking site. If you are a Flow Production Tracking administrator, you can access the page by clicking on the user icon at the top right of your site and selecting ``Software``. You can then create a second software entity named ``3ds Max`` with the ``Engine`` field set to ``tk-3dsmax``.
 
 .. image:: _static/software-entity.png
 

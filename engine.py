@@ -115,8 +115,8 @@ class MaxEngine(sgtk.platform.Engine):
             )
 
             msg = (
-                "Flow Production Tracking Toolkit!\n\n"
-                "The Flow Production Tracking Toolkit has not yet been fully tested with 3ds Max versions greater than %s. "
+                "Flow Production Tracking!\n\n"
+                "The Flow Production Tracking has not yet been fully tested with 3ds Max versions greater than %s. "
                 "You can continue to use the Toolkit but you may experience bugs or instability. "
                 "Please report any issues you see via %s."
                 % (
