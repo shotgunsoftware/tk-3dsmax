@@ -5,7 +5,7 @@
 
 ## Documentation
 
-This repository is a part of the Flow Production Tracking.
+This repository is a part of the Flow Production Tracking Toolkit.
 
 - For more information about this app and for release notes, *see the wiki section*.
 - For general information and documentation, click here: https://help.autodesk.com/view/SGDEV/ENU/
