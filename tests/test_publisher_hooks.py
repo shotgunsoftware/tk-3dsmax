@@ -163,7 +163,7 @@ class TestPublisherHooks(TankTestBase):
         items[0].type_display == "3dsmax Session"
         assert [task.name for task in items[0].tasks] == [
             "Begin file versioning",
-            "Publish to ShotGrid",
+            "Publish to Flow Production Tracking",
         ]
 
         tasks = list(items[0].tasks)
@@ -194,19 +194,21 @@ class TestPublisherHooks(TankTestBase):
         items[0].type_display == "3dsmax Session"
         assert [task.name for task in items[0].tasks] == [
             "Begin file versioning",
-            "Publish to ShotGrid",
+            "Publish to Flow Production Tracking",
         ]
 
         items[1].name == "rendering.mp4"
         items[1].type_display == "preview"
         assert [task.name for task in items[1].tasks] == [
-            "Publish to ShotGrid",
+            "Publish to Flow Production Tracking",
             "Upload for review",
         ]
 
         items[2].name == "scene.abc"
         items[2].type_display == "Alembic Cache"
-        assert [task.name for task in items[2].tasks] == ["Publish to ShotGrid"]
+        assert [task.name for task in items[2].tasks] == [
+            "Publish to Flow Production Tracking"
+        ]
 
         items[3].name == "All Session Geometry"
         items[3].type_display == "Geometry"

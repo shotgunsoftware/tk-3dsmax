@@ -18,11 +18,11 @@ engines:
       tk-multi-publish2:
         collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
         publish_plugins:
-        # Default hook 1: publish any file to SG
+        # Default hook 1: publish any file to PTR
         - name: Publish to Shotgun
           hook: "{self}/publish_file.py"
           settings: {}
-        # Default hook 2: upload known, reviewable types to SG
+        # Default hook 2: upload known, reviewable types to PTR
         - name: Upload for review
           hook: "{self}/upload_version.py"
           settings: {}

@@ -59,7 +59,7 @@ def bootstrap_toolkit(root_path):
     #   configuration, core already exists in the pythonpath.
 
     # Display temporary message in prompt line for maximum 5 secs.
-    rt.displayTempPrompt("Loading SG integration...", 5000)
+    rt.displayTempPrompt("Loading PTR integration...", 5000)
 
     # Remember path, to handle logout/login
     PluginProperties.plugin_root_path = root_path
@@ -111,11 +111,11 @@ def progress_callback(invoker, progress_value, message):
     :param message:        Progress message string
     """
 
-    print("ShotGrid: %s" % message)
+    print("Flow Production Tracking: %s" % message)
     # Make sure this is invoked in the main thread, as pymxs can't be
     # used from background threads.
     # Display temporary message in prompt line for maximum 2 secs.
-    invoker.invoke(rt.displayTempPrompt, "ShotGrid: %s" % message, 2000)
+    invoker.invoke(rt.displayTempPrompt, "Flow Production Tracking: %s" % message, 2000)
 
 
 def handle_bootstrap_completed(engine):
@@ -127,13 +127,13 @@ def handle_bootstrap_completed(engine):
     :param engine: Launched :class:`sgtk.platform.Engine` instance.
     """
 
-    print("ShotGrid: Bootstrap successfully.")
+    print("Flow Production Tracking: Bootstrap successfully.")
 
     # Add a logout menu item to the engine context menu only when
     # running as standalone plugin.
     if PluginProperties.running_as_standalone_plugin:
         engine.register_command(
-            "Log Out of ShotGrid", _on_logout, {"type": "context_menu"}
+            "Log Out of Flow Production Tracking", _on_logout, {"type": "context_menu"}
         )
         engine.update_shotgun_menu()
 
@@ -149,7 +149,7 @@ def handle_bootstrap_failed(phase, exception):
     :param exception: Python exception raised while bootstrapping.
     """
 
-    print("ShotGrid: Bootstrap failed. %s" % exception)
+    print("Flow Production Tracking: Bootstrap failed. %s" % exception)
     _create_login_menu()
 
 
@@ -163,13 +163,13 @@ def shutdown_toolkit():
     engine = sgtk.platform.current_engine()
 
     if engine:
-        logger.info("Stopping the SG engine.")
+        logger.info("Stopping the PTR engine.")
         # Close the various windows (dialogs, panels, etc.) opened by the engine.
         engine.close_windows()
         # Turn off your engine! Step away from the car!
         engine.destroy()
     else:
-        logger.debug("The SG engine was already stopped!")
+        logger.debug("The PTR engine was already stopped!")
 
 
 def _on_logout():
@@ -245,7 +245,7 @@ def _login_user():
     except sgtk.authentication.AuthenticationCancelled:
         # When the user cancelled the Shotgun login dialog,
         # keep around the displayed login menu.
-        sgtk_logger.info("SG login was cancelled by the user.")
+        sgtk_logger.info("PTR login was cancelled by the user.")
         return
 
     _delete_login_menu()
@@ -303,7 +303,7 @@ def _add_to_menu(menu, title, callback):
 
     # Hash the macro name just like we do in the engine for consistency.
     macro_name = "sg_" + hashlib.md5(six.ensure_binary(callback.__name__)).hexdigest()
-    category = "SG Bootstrap Menu Actions"
+    category = "PTR Bootstrap Menu Actions"
     # The createActionItem expects a macro and not some MaxScript, so create a
     # macro first...
     rt.execute(
@@ -367,11 +367,11 @@ def _create_login_menu():
 
     sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to ShotGrid...", _login_user)
+    _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
     _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about ShotGrid...", _jump_to_website)
+    _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
     _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Try SG for Free...", _jump_to_signup)
+    _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
     _add_to_main_menu_bar(sg_menu)
 
 

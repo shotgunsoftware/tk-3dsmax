@@ -45,7 +45,9 @@ def bootstrap_sgtk_classic():
 
     if not "TANK_ENGINE" in os.environ:
         logger.error("Missing required environment variable TANK_ENGINE.")
-        error("ShotGrid: Missing required environment variable TANK_ENGINE.")
+        error(
+            "Flow Production Tracking: Missing required environment variable TANK_ENGINE."
+        )
         return
 
     engine_name = os.environ.get("TANK_ENGINE")
@@ -54,7 +56,8 @@ def bootstrap_sgtk_classic():
     except Exception as e:
         logger.exception("Could not create context! sgtk will be disabled.")
         error(
-            "ShotGrid: Could not create context! sgtk will be disabled. Details: %s" % e
+            "Flow Production Tracking: Could not create context! sgtk will be disabled. Details: %s"
+            % e
         )
         return
 
@@ -62,7 +65,7 @@ def bootstrap_sgtk_classic():
         sgtk.platform.start_engine(engine_name, context.tank, context)
     except Exception as e:
         logger.exception("Could not start engine")
-        error("ShotGrid: Could not start engine: %s" % e)
+        error("Flow Production Tracking: Could not start engine: %s" % e)
         return
 
 
@@ -113,7 +116,7 @@ def bootstrap_sgtk():
             path_parts = [ssl_path] + path_parts
             os.environ["PYTHONPATH"] = ";".join(path_parts)
     else:
-        error("ShotGrid: Unknown platform - cannot setup ssl")
+        error("Flow Production Tracking: Unknown platform - cannot setup ssl")
         return
 
     if os.environ.get("SGTK_LOAD_MAX_PLUGINS"):

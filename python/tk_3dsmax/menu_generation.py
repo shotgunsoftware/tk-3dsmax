@@ -19,7 +19,7 @@ import unicodedata
 from sgtk.platform.qt import QtCore, QtGui
 from .maxscript import MaxScript
 
-MENU_LABEL = "ShotGrid"
+MENU_LABEL = "Flow Production Tracking"
 
 
 class MenuGenerator(object):
@@ -115,7 +115,10 @@ class MenuGenerator(object):
 
         MaxScript.create_menu(ctx_name, self._ctx_var)
         MaxScript.add_action_to_menu(
-            self._jump_to_sg, "Jump to ShotGrid", self._ctx_var, self._engine
+            self._jump_to_sg,
+            "Jump to Flow Production Tracking",
+            self._ctx_var,
+            self._engine,
         )
 
         # Add the menu item only when there are some file system locations.
