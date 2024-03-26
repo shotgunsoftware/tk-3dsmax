@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.2.6 documentation</title>
+  <title>Migrating to the new tk-3dsmax engine &mdash; tk-3dsmax v1.3.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-    <a href='http://developers.shotgridsoftware.com'>
+    <a href='https://help.autodesk.com/view/SGDEV/ENU/'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -59,7 +59,7 @@
     
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#updating-shotgrid">Updating ShotGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-flow-production-tracking">Updating Flow Production Tracking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#updating-the-out-of-the-box-integrations">Updating the out of the box integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#migrating-when-using-customized-integrations">Migrating when using customized integrations</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#a-migration-example">A migration example</a></li>
@@ -99,12 +99,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-3dsmax</b> v1.2.6.<br>
+    <b>tk-3dsmax</b> v1.3.0.<br>
     
-        This documentation is part of the ShotGrid Pipeline Toolkit.
+        This documentation is part of the Flow Production Tracking.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developers.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
+    <a class=custom_post_menu href='https://help.autodesk.com/view/SGDEV/ENU/'>The Flow Production Tracking developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-3dsmax'>here</a>.
 
@@ -143,21 +143,21 @@
              
   <section id="migrating-to-the-new-tk-3dsmax-engine">
 <h1>Migrating to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine<a class="headerlink" href="#migrating-to-the-new-tk-3dsmax-engine" title="Permalink to this heading"></a></h1>
-<p>You can easily update your existing Toolkit and ShotGrid configurations to use the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
+<p>You can easily update your existing Toolkit and Flow Production Tracking configurations to use the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine supports <strong>3ds Max 2017 and up</strong>, while the existing <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> supports <strong>3ds Max 2016-2020</strong>. Do not attempt to migrate to the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine if you still rely on <strong>3ds Max 2016</strong>. The new engine uses an API that did not exist in that version of 3ds Max.</p>
 </div>
-<section id="updating-shotgrid">
-<h2>Updating ShotGrid<a class="headerlink" href="#updating-shotgrid" title="Permalink to this heading"></a></h2>
-<p>The new releases of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> and <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code> configurations, <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> and up, include both 3ds Max engines. However, your ShotGrid site still needs to be updated to activate the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
-<p>In order for the new engine to be usable from the ShotGrid Desktop or the <code class="docutils literal notranslate"><span class="pre">tank</span></code> command, you need to make sure there is a <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity in ShotGrid configured for the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine. To do this, visit the <code class="docutils literal notranslate"><span class="pre">Software</span></code> page on your ShotGrid site. If you are a ShotGrid administrator, you can access the page by clicking on the user icon at the top right of your site and selecting <code class="docutils literal notranslate"><span class="pre">Software</span></code>. You can then create a second software entity named <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> with the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field set to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
+<section id="updating-flow-production-tracking">
+<h2>Updating Flow Production Tracking<a class="headerlink" href="#updating-flow-production-tracking" title="Permalink to this heading"></a></h2>
+<p>The new releases of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> and <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code> configurations, <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> and up, include both 3ds Max engines. However, your Flow Production Tracking site still needs to be updated to activate the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine.</p>
+<p>In order for the new engine to be usable from the Flow Production Tracking or the <code class="docutils literal notranslate"><span class="pre">tank</span></code> command, you need to make sure there is a <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity in Flow Production Tracking configured for the <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine. To do this, visit the <code class="docutils literal notranslate"><span class="pre">Software</span></code> page on your Flow Production Tracking site. If you are a Flow Production Tracking administrator, you can access the page by clicking on the user icon at the top right of your site and selecting <code class="docutils literal notranslate"><span class="pre">Software</span></code>. You can then create a second software entity named <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> with the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field set to <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code>.</p>
 <img alt="_images/software-entity.png" src="_images/software-entity.png" />
-<p>However, doing this means that both engines will now be active for the out of the box integrations. By using the <code class="docutils literal notranslate"><span class="pre">Project</span></code> field, you can restrict which project uses the <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> engine and which project uses the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine in order to avoid disruption in production. If you are not using the out of the box ShotGrid Integrations and plan on having only one of the two engines in your Toolkit configuration, you can duplicate the <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity and update the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field without having to worry about assigning projects.</p>
+<p>However, doing this means that both engines will now be active for the out of the box integrations. By using the <code class="docutils literal notranslate"><span class="pre">Project</span></code> field, you can restrict which project uses the <code class="docutils literal notranslate"><span class="pre">tk-3dsmaxplus</span></code> engine and which project uses the new <code class="docutils literal notranslate"><span class="pre">tk-3dsmax</span></code> engine in order to avoid disruption in production. If you are not using the out of the box Flow Production Tracking Integrations and plan on having only one of the two engines in your Toolkit configuration, you can duplicate the <code class="docutils literal notranslate"><span class="pre">3ds</span> <span class="pre">Max</span></code> <code class="docutils literal notranslate"><span class="pre">Software</span></code> entity and update the <code class="docutils literal notranslate"><span class="pre">Engine</span></code> field without having to worry about assigning projects.</p>
 </section>
 <section id="updating-the-out-of-the-box-integrations">
 <h2>Updating the out of the box integrations<a class="headerlink" href="#updating-the-out-of-the-box-integrations" title="Permalink to this heading"></a></h2>
-<p>If you wish to use the new engine with a project, simply make sure that the project is using version <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> or greater of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> or <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code>. If you have updated your ShotGrid site by following the steps above , you are now ready to use 3ds Max with the new engine.</p>
+<p>If you wish to use the new engine with a project, simply make sure that the project is using version <code class="docutils literal notranslate"><span class="pre">v1.3.0</span></code> or greater of <code class="docutils literal notranslate"><span class="pre">tk-config-basic</span></code> or <code class="docutils literal notranslate"><span class="pre">tk-config-default2</span></code>. If you have updated your Flow Production Tracking site by following the steps above , you are now ready to use 3ds Max with the new engine.</p>
 </section>
 <section id="migrating-when-using-customized-integrations">
 <h2>Migrating when using customized integrations<a class="headerlink" href="#migrating-when-using-customized-integrations" title="Permalink to this heading"></a></h2>
