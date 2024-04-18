@@ -415,12 +415,11 @@ class MaxEngine(sgtk.platform.Engine):
             # we can start using it properly.
             # This logic was taken from
             # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
-            import shiboken2
-            from sgtk.platform.qt import QtGui
+            from sgtk.platform.qt import QtGui, shiboken
 
             widget = QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
-            return shiboken2.wrapInstance(
-                shiboken2.getCppPointer(widget)[0], QtGui.QMainWindow
+            return shiboken.wrapInstance(
+                shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
             )
         elif self._max_version_to_year(self._get_max_version()) > 2017:
             #
