@@ -18,10 +18,13 @@ from . import constants
 from . import __name__ as PLUGIN_PACKAGE_NAME
 
 try:
-    from PySide2 import QtCore
+    from PySide6 import QtCore
 except ImportError:
-    # Max 2017 was PySide 1, so fallback on that
-    from PySide import QtCore
+    try:
+        from PySide2 import QtCore
+    except ImportError:
+        # Max 2017 was PySide 1, so fallback on that
+        from PySide import QtCore
 
 
 class PluginProperties(object):
