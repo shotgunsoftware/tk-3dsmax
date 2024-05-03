@@ -17,10 +17,8 @@ tests_folder = os.path.abspath(os.path.dirname(__file__))
 repo_root = os.path.dirname(tests_folder)
 
 # Activate the virtual environment required to run test tests in 3dsmax.
-activate_this_py = os.path.join(tests_folder, "venv", "Scripts", "activate_this.py")
-with open(activate_this_py, "rt") as f:
-    exec(f.read(), {"__file__": activate_this_py})
-
+sys.prefix = os.path.join(tests_folder, "venv")
+sys.path.insert(0, os.path.join(tests_folder, "venv", "Lib", "site-packages"))
 
 import pytest
 import mock
