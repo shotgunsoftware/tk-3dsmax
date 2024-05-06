@@ -19,7 +19,7 @@ engines:
         collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
         publish_plugins:
         # Default hook 1: publish any file to PTR
-        - name: Publish to Shotgun
+        - name: Publish to Flow Production Tracking
           hook: "{self}/publish_file.py"
           settings: {}
         # Default hook 2: upload known, reviewable types to PTR
@@ -29,7 +29,7 @@ engines:
         - name: Begin file versioning
           hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
           settings: {}
-        - name: Publish to Shotgun
+        - name: Publish to Flow Production Tracking
           hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
           settings: {}
         location:
