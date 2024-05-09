@@ -229,7 +229,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def _on_menus_loaded(self):
         """
-        Called when receiving postLoadingMenus from 3dsMax.
+        Called when receiving postLoadingMenus from 3dsMax < 2025
 
         :param code: Notification code received
         """
@@ -248,24 +248,33 @@ class MaxEngine(sgtk.platform.Engine):
         Called from the main thread when all apps have initialized
         """
         # set up menu handler
-        self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
-        self._add_shotgun_menu()
+        if self._max_version_to_year(self._get_max_version()) >= 2025:
+            self._menu_generator = self.tk_3dsmax.MenuGenerator2025(self)
+            self._add_shotgun_menu()
 
-        # Register a callback for the postLoadingMenus event.
-        python_code = "\n".join(
-            [
-                "import sgtk",
-                "engine = sgtk.platform.current_engine()",
-                "engine._on_menus_loaded()",
-            ]
-        )
-        # Unfortunately we can't pass in a Python function as a callback,
-        # so we're passing in piece of MaxScript instead.
-        pymxs.runtime.callbacks.addScript(
-            pymxs.runtime.Name("postLoadingMenus"),
-            'python.execute "{0}"'.format(python_code),
-            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
-        )
+            # This causes the menu manager to reload the current configuration, 
+            # causing the menu file chain to be loaded and the callback to occur.
+            iCuiMenuMgr = pymxs.runtime.MaxOps.GetICuiMenuMgr()
+            iCuiMenuMgr.LoadConfiguration(iCuiMenuMgr.GetCurrentConfiguration())
+        else:
+            self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
+            self._add_shotgun_menu()
+
+            # Register a callback for the postLoadingMenus event.
+            python_code = "\n".join(
+                [
+                    "import sgtk",
+                    "engine = sgtk.platform.current_engine()",
+                    "engine._on_menus_loaded()",
+                ]
+            )
+            # Unfortunately we can't pass in a Python function as a callback,
+            # so we're passing in piece of MaxScript instead.
+            pymxs.runtime.callbacks.addScript(
+                pymxs.runtime.Name("postLoadingMenus"),
+                'python.execute "{0}"'.format(python_code),
+                id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+            )
 
         # Run a series of app instance commands at startup.
         self._run_app_instance_commands()
