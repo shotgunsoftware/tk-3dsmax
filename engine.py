@@ -196,6 +196,9 @@ class MaxEngine(sgtk.platform.Engine):
         # This needs to be present for apps as it will be used in
         # show_dialog when perforce asks for login info very early on.
         self.tk_3dsmax = self.import_module("tk_3dsmax")
+        
+        # include callbacks to ensure context is correct
+        self.tk_3dsmax.tank_ensure_callbacks_registered(engine=self)
 
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
@@ -610,6 +613,7 @@ class MaxEngine(sgtk.platform.Engine):
             return None
 
         status = QtGui.QDialog.DialogCode.Rejected
+        widget=None
 
         try:
             # Disable 'Shotgun' background menu while modals are there.
@@ -636,7 +640,8 @@ class MaxEngine(sgtk.platform.Engine):
             self.tk_3dsmax.MaxScript.enable_menu()
 
         # lastly, return the instantiated widget
-        return (status, widget)
+        if widget:
+            return (status, widget)
 
     def safe_dialog_exec(self, func):
         """
