@@ -370,7 +370,7 @@ def _create_login_menu():
     _delete_login_menu()
 
     if rt.maxVersion()[0] >= constants.MAX_2025_MENU_SYSTEM:
-        ...
+        _add_to_2025_menu()
     else:
         sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
@@ -465,3 +465,64 @@ def _get_plugin_info():
 
     # return a dictionary with the required info
     return dict(plugin_id=plugin_id, base_configuration=base_configuration)
+
+
+def _menu_items_2025():
+    return {
+        3001: {
+            "name": "Log In to Flow Production Tracking...",
+            "action": _login_user,
+        },
+        3002: {
+            "name": "Learn about Flow Production Tracking...",
+            "action": _jump_to_website,
+        },
+        3003: {
+            "name": "Try PTR for Free...",
+            "action": _jump_to_signup,
+        }
+    }
+
+
+def _add_to_2025_menu():
+    def populate_menu(menuroot):
+        for code, menu_item in _menu_items_2025().items():
+            menuroot.additem(code, menu_item["name"])
+            menuroot.addseparator()
+    
+    def menu_item_selected(itemid):
+        _menu_items_2025()[itemid]["action"]()
+    
+    rt.populate_menu = populate_menu
+    rt.menu_item_selected = menu_item_selected
+
+    mxswrapper = """
+        macroscript Python_Action_Item category:"Menu Category" buttonText:"Options..."
+        (
+            on populateDynamicMenu menuRoot do
+            (
+                populate_menu menuRoot
+            )
+            on dynamicMenuItemSelected id do
+            (
+                menu_item_selected id
+            )
+        )
+        """
+    rt.execute(mxswrapper)
+
+    def create_menu_callback():
+        menumgr = rt.callbacks.notificationparam()
+        mainmenubar = menumgr.mainmenubar
+        newsubmenu = mainmenubar.createsubmenu(
+            rt.genguid(), constants.SG_MENU_LABEL, beforeid=constants.HELPMENU_ID
+        )
+        newsubmenu.createaction(
+            rt.genguid(), 647394, "Python_Action_Item`Menu Category"
+        )
+
+    MENU_DEMO_SCRIPT = rt.name("sgtk_menu_main")
+    rt.callbacks.removescripts(id=MENU_DEMO_SCRIPT)
+    rt.callbacks.addscript(
+        rt.name("cuiRegisterMenus"), create_menu_callback, id=MENU_DEMO_SCRIPT
+    )
