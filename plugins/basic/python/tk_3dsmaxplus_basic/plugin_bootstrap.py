@@ -251,7 +251,6 @@ def _login_user():
         sgtk_logger.info("PTR login was cancelled by the user.")
         return
 
-    
     _delete_login_menu()
 
     # get information about this plugin (plugin id & base config)
@@ -376,7 +375,9 @@ def _create_login_menu():
 
         _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
         _add_separator(sg_menu)
-        _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
+        _add_to_menu(
+            sg_menu, "Learn about Flow Production Tracking...", _jump_to_website
+        )
         _add_separator(sg_menu)
         _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
         _add_to_main_menu_bar(sg_menu)
@@ -480,7 +481,7 @@ def _menu_items_2025():
         3003: {
             "name": "Try PTR for Free...",
             "action": _jump_to_signup,
-        }
+        },
     }
 
 
@@ -489,10 +490,10 @@ def _add_to_2025_menu():
         for code, menu_item in _menu_items_2025().items():
             menuroot.additem(code, menu_item["name"])
             menuroot.addseparator()
-    
+
     def menu_item_selected(itemid):
         _menu_items_2025()[itemid]["action"]()
-    
+
     rt.populate_menu = populate_menu
     rt.menu_item_selected = menu_item_selected
 
