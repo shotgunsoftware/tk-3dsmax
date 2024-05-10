@@ -251,8 +251,8 @@ def _login_user():
         sgtk_logger.info("PTR login was cancelled by the user.")
         return
 
-    if rt.maxVersion()[0] < constants.MAX_2025_MENU_SYSTEM:
-        _delete_login_menu()
+    
+    _delete_login_menu()
 
     # get information about this plugin (plugin id & base config)
     plugin_info = _get_plugin_info()
@@ -369,20 +369,26 @@ def _create_login_menu():
     """
     _delete_login_menu()
 
-    sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
+    if rt.maxVersion()[0] >= constants.MAX_2025_MENU_SYSTEM:
+        ...
+    else:
+        sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
-    _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
-    _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
-    _add_to_main_menu_bar(sg_menu)
+        _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
+        _add_separator(sg_menu)
+        _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
+        _add_separator(sg_menu)
+        _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
+        _add_to_main_menu_bar(sg_menu)
 
 
 def _delete_login_menu():
     """
     Deletes the displayed Shotgun user login menu.
     """
+    if rt.maxVersion()[0] >= constants.MAX_2025_MENU_SYSTEM:
+        return
+
     old_menu = rt.menuMan.findMenu(constants.SG_MENU_LABEL)
     if old_menu is not None:
         rt.menuMan.unregisterMenu(old_menu)
