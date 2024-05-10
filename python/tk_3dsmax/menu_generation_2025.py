@@ -18,6 +18,7 @@ from .menu_generation import MenuGenerator, AppCommand
 MENU_LABEL = "Flow Production Tracking"
 HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
 
+
 class MenuGenerator2025(MenuGenerator):
     """
     Menu generation functionality for 3dsmax 2025+
@@ -92,7 +93,7 @@ class MenuGenerator2025(MenuGenerator):
                     if not cmd_obj.favourite:
                         # skip favourites since they are alreay on the menu
                         menuroot.additem(cmd_obj.code, cmd_obj.name)
-        
+
         def populate_favs_menu(menuroot):
             for cmd in favorites:
                 menuroot.additem(cmd.code, cmd.name)
@@ -106,7 +107,7 @@ class MenuGenerator2025(MenuGenerator):
         def menu_item_selected(itemid):
             cmd_fn_list[itemid]()
 
-        # let this be called from mxs by injecting it in the global maxscript namespace 
+        # let this be called from mxs by injecting it in the global maxscript namespace
         rt.populate_apps_menu = populate_apps_menu
         rt.populate_favs_menu = populate_favs_menu
         rt.populate_cntx_menu = populate_cntx_menu
@@ -146,21 +147,33 @@ class MenuGenerator2025(MenuGenerator):
                 menu_item_selected id
             )
         )
-        """.format(context_name=str(self._engine.context))
+        """.format(
+            context_name=str(self._engine.context)
+        )
         rt.execute(mxswrapper)
 
         def create_menu_callback():
             menumgr = rt.callbacks.notificationparam()
             mainmenubar = menumgr.mainmenubar
-            newsubmenu = mainmenubar.createsubmenu(rt.genguid(), MENU_LABEL, beforeid=HELPMENU_ID)
-            newsubmenu.createaction(rt.genguid(), 647394, "Python_Cntx_Action_Item`Menu Cntx Category")
-            newsubmenu.createaction(rt.genguid(), 647394, "Python_Favs_Action_Item`Menu Favs Category")
+            newsubmenu = mainmenubar.createsubmenu(
+                rt.genguid(), MENU_LABEL, beforeid=HELPMENU_ID
+            )
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Cntx_Action_Item`Menu Cntx Category"
+            )
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Favs_Action_Item`Menu Favs Category"
+            )
             newsubmenu.createseparator(rt.genguid())
-            newsubmenu.createaction(rt.genguid(), 647394, "Python_Apps_Action_Item`Menu Apps Category")
-        
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Apps_Action_Item`Menu Apps Category"
+            )
+
         MENU_DEMO_SCRIPT = rt.name(self._menu_var)
         rt.callbacks.removescripts(id=MENU_DEMO_SCRIPT)
-        rt.callbacks.addscript(rt.name("cuiRegisterMenus"), create_menu_callback, id=MENU_DEMO_SCRIPT)
+        rt.callbacks.addscript(
+            rt.name("cuiRegisterMenus"), create_menu_callback, id=MENU_DEMO_SCRIPT
+        )
 
     def destroy_menu(self):
         rt.callbacks.removescripts(id=rt.name(self._menu_var))
