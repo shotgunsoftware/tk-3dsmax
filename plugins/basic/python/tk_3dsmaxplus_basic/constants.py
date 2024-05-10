@@ -12,3 +12,4 @@
 
 SG_MENU_ITEMS_CATEGORY = "Flow Production Tracking Menu Actions"
 SG_MENU_LABEL = "Flow Production Tracking"
+MAX_2025_MENU_SYSTEM = 27000

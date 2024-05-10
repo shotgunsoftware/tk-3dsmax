@@ -251,7 +251,8 @@ def _login_user():
         sgtk_logger.info("PTR login was cancelled by the user.")
         return
 
-    _delete_login_menu()
+    if rt.maxVersion()[0] < constants.MAX_2025_MENU_SYSTEM:
+        _delete_login_menu()
 
     # get information about this plugin (plugin id & base config)
     plugin_info = _get_plugin_info()
