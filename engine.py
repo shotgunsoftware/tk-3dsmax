@@ -252,7 +252,7 @@ class MaxEngine(sgtk.platform.Engine):
             self._menu_generator = self.tk_3dsmax.MenuGenerator2025(self)
             self._add_shotgun_menu()
 
-            # This causes the menu manager to reload the current configuration, 
+            # This causes the menu manager to reload the current configuration,
             # causing the menu file chain to be loaded and the callback to occur.
             iCuiMenuMgr = pymxs.runtime.MaxOps.GetICuiMenuMgr()
             iCuiMenuMgr.LoadConfiguration(iCuiMenuMgr.GetCurrentConfiguration())
