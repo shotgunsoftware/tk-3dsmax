@@ -20,11 +20,7 @@ from . import __name__ as PLUGIN_PACKAGE_NAME
 try:
     from PySide6 import QtCore
 except ImportError:
-    try:
-        from PySide2 import QtCore
-    except ImportError:
-        # Max 2017 was PySide 1, so fallback on that
-        from PySide import QtCore
+    from PySide2 import QtCore
 
 
 class PluginProperties(object):
