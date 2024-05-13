@@ -1,4 +1,4 @@
-![3ds Max](https://img.shields.io/badge/3ds%20Max-2024%20%7C%202023%20%7C%202022%20%7C%202021-blue)
+![3ds Max](https://img.shields.io/badge/3ds%20Max-2025%20%7C%202024%20%7C%202023%20%7C%202022%20%7C%202021-blue)
 [![VFX Platform](https://img.shields.io/badge/vfxplatform-2023%20%7C%202022%20%7C%202021-blue.svg)](http://www.vfxplatform.com/)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.9%20%7C%203.7-blue.svg)](https://www.python.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)

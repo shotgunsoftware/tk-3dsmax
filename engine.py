@@ -8,8 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 """
-A 3ds Max (2017+) engine for Toolkit based mostly on pymxs and also uses MaxPlus for certain features
-on older Max releases.
+A 3ds Max (2017+) engine for Toolkit based pymxs
 """
 from __future__ import print_function
 import os
@@ -18,15 +17,6 @@ import math
 import sgtk
 
 import pymxs
-
-# MaxPlus will be deprecated in a future release of Max, so tolerate the failure to import it.
-# The code in the engine that uses MaxPlus is for versions 2019 and below, which do ship
-# with MaxPlus, so we're in no danger of getting an error when MaxPlus eventually
-# goes away.
-try:
-    import MaxPlus
-except ImportError:
-    pass
 
 
 class MaxEngine(sgtk.platform.Engine):
@@ -430,9 +420,6 @@ class MaxEngine(sgtk.platform.Engine):
             return shiboken.wrapInstance(
                 shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
             )
-        elif self._max_version_to_year(self._get_max_version()) > 2017:
-            #
-            return MaxPlus.GetQMaxMainWindow()
         else:
             return super(MaxEngine, self)._get_dialog_parent()
 
@@ -563,29 +550,6 @@ class MaxEngine(sgtk.platform.Engine):
             self, title, bundle, widget, parent
         )
 
-        # Attaching the dialog to Max is a matter of whether this is a new
-        # enough version of 3ds Max. Anything short of 2016 SP1 is going to
-        # fail here with an AttributeError, so we can just catch that and
-        # continue on without the new-style parenting.
-        if (
-            self._parent_to_max
-            and self._max_version_to_year(self._get_max_version()) <= 2019
-        ):
-            previous_parent = self._dialog.parent()
-            try:
-                self.log_debug("Attempting to attach dialog to 3ds Max...")
-                self._dialog.setParent(None)
-                # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
-                # Accessing MaxPlus here is safe because we're inside a
-                # a branch of code that can only be executed on Max 2019 and lower.
-                MaxPlus.AttachQWidgetToMax(self._dialog)
-                self.log_debug("AttachQWidgetToMax successful.")
-            except AttributeError:
-                self._dialog.setParent(previous_parent)
-                self.log_debug(
-                    "AttachQWidgetToMax not available in this version of 3ds Max."
-                )
-
         self._dialog.installEventFilter(self.dialogEvents)
 
         # Add to tracked dialogs (will be removed in eventFilter)
@@ -692,11 +656,6 @@ class MaxEngine(sgtk.platform.Engine):
                 dialog.raise_()  # for MacOS
 
     ##########################################################################################
-    # MaxPlus SDK Patching
-
-    # Version Id for 3dsmax 2016 Taken from Max Sdk (not currently available in maxplus)
-    MAX_RELEASE_R18 = 18000
-
     # Latest supported max version
     MAXIMUM_SUPPORTED_VERSION = 27000
 
