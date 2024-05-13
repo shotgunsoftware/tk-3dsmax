@@ -296,7 +296,8 @@ def _set_project():
         directory=_get_project_folder_dir(),
         filter="3dsMax Files (*.max)",
     )
-    file_dialog.setFileMode(QtGui.QFileDialog.DirectoryOnly)
+    file_dialog.setFileMode(QtGui.QFileDialog.Directory)
+    file_dialog.setOption(QtGui.QFileDialog.ShowDirsOnly, True)
     file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Set")
     file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
     file_dialog.setOption(QtGui.QFileDialog.DontResolveSymlinks)
