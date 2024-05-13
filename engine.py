@@ -361,10 +361,11 @@ class MaxEngine(sgtk.platform.Engine):
         """
         self.log_debug("%s: Destroying..." % self)
 
-        pymxs.runtime.callbacks.removeScripts(
-            pymxs.runtime.Name("postLoadingMenus"),
-            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
-        )
+        if self._max_version_to_year(self._get_max_version()) < 2025:
+            pymxs.runtime.callbacks.removeScripts(
+                pymxs.runtime.Name("postLoadingMenus"),
+                id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+            )
         self._remove_shotgun_menu()
 
     def update_shotgun_menu(self):
