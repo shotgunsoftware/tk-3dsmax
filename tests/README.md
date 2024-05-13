@@ -29,7 +29,7 @@ To run these tests, you need to do the following
     tests\venv\Scripts\pip install -U -r tests\requirements.txt
     ```
 
-1. Launch 3dsmax
+1. Launch 3dsmax directly (not from FPTR Desktop)
     1. Go to the "**Scripting**" menu → select "**Scripting Listener**"
     1. "**File**" → "**Run Script**"
     1. Browse to `tests/run_tests.py`
