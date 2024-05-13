@@ -1,1 +1,2 @@
+wheel ; python_version >= '3.11'
 https://github.com/shotgunsoftware/tk-toolchain/archive/master.zip
