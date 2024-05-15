@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Shotgun Software Inc.
+# Copyright (c) 2024 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -11,61 +11,44 @@
 """
 Menu handling for 3ds Max
 """
-import os
-import sys
-import traceback
-import unicodedata
+from pymxs import runtime as rt
 
-from sgtk.platform.qt import QtCore, QtGui
-from .maxscript import MaxScript
-
-MENU_LABEL = "Flow Production Tracking"
+from .menu_generation_menuman import MenuGenerator_menuMan, AppCommand
 
 
-class MenuGenerator(object):
+class MenuGenerator(MenuGenerator_menuMan):
     """
-    Menu generation functionality for 3dsmax
-
-    Actual menu creation is done through MaxScript to prevent a crash with modal dialogs.
-    The crash happens if a modal dialog is open and a user clicks on a menu with action items
-    that directly call python code
+    Menu generation functionality for 3dsmax 2025+
     """
-
-    def __init__(self, engine):
-        """
-        Initialize Menu Generator.
-        :param engine: Engine to get commands from.
-        """
-        self._engine = engine
-
-        # Maxscript variable name for context menu
-        self._ctx_var = "sgtk_menu_ctx"
-        # Mascript variable name for Shotgun main menu
-        self._menu_var = "sgtk_menu_main"
-
-        # Need a globally available object for maxscript action callbacks to be able to refer to python objects
-        self._engine.maxscript_objects = {}
 
     def create_menu(self):
         """
         Create the Shotgun Menu
         """
-
         # Create the main menu
-        MaxScript.create_menu(MENU_LABEL, self._menu_var)
+
+        # callbacks initial dict
+        cmd_fn_list = {
+            2001: self._jump_to_sg,
+            2002: self._jump_to_fs,
+        }
 
         # enumerate all items and create menu objects for them
         cmd_items = []
-        for (cmd_name, cmd_details) in self._engine.commands.items():
-            cmd_items.append(AppCommand(cmd_name, cmd_details))
+        for idx, (cmd_name, cmd_details) in enumerate(self._engine.commands.items()):
+            code = idx + 1000
+            command = AppCommand2025(cmd_name, cmd_details, code)
+            cmd_items.append(command)
+            cmd_fn_list[code] = command.execute
 
         # start with context menu
-        self._create_context_builder()
+        context_items = []
         for cmd in cmd_items:
             if cmd.get_type() == "context_menu":
-                cmd.add_to_menu(self._ctx_var, self._engine)
+                context_items.append(cmd)
 
         # now favourites
+        favorites = []
         for fav in self._engine.get_setting("menu_favourites", []):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
@@ -76,16 +59,13 @@ class MenuGenerator(object):
                     and cmd.name == menu_name
                 ):
                     # found our match!
-                    cmd.add_to_menu(self._menu_var, self._engine)
+                    favorites.append(cmd)
                     # mark as a favourite item
                     cmd.favourite = True
-
-        MaxScript.add_separator(self._menu_var)
 
         # now go through all of the menu items.
         # separate them out into various sections
         commands_by_app = {}
-
         for cmd in cmd_items:
             if cmd.get_type() != "context_menu":
                 # normal menu
@@ -97,175 +77,108 @@ class MenuGenerator(object):
                     commands_by_app[app_name] = []
                 commands_by_app[app_name].append(cmd)
 
-        # now add all apps to main menu
-        self._add_app_menu(commands_by_app)
+        # Define 3dsmax 2025 menu callbacks
+        def populate_apps_menu(menuroot):
+            for app_name in sorted(commands_by_app.keys()):
+                if len(commands_by_app[app_name]) > 1:
+                    # make a sub menu and put all items in the sub menu
+                    submenu = menuroot.addsubmenu(app_name)
+                    for cmd in commands_by_app[app_name]:
+                        submenu.additem(cmd.code, cmd.name)
+                else:
+                    cmd_obj = commands_by_app[app_name][0]
+                    if not cmd_obj.favourite:
+                        # skip favourites since they are alreay on the menu
+                        menuroot.additem(cmd_obj.code, cmd_obj.name)
 
-        MaxScript.add_to_main_menu_bar(self._menu_var, MENU_LABEL)
+        def populate_favs_menu(menuroot):
+            for cmd in favorites:
+                menuroot.additem(cmd.code, cmd.name)
 
-    def destroy_menu(self):
-        MaxScript.unregister_menu(MENU_LABEL)
+        def populate_cntx_menu(menuroot):
+            menuroot.additem(2001, "Jump to Flow Production Tracking")
+            menuroot.additem(2002, "Jump to File System")
+            for cmd in context_items:
+                menuroot.additem(cmd.code, cmd.name)
 
-    def _create_context_builder(self):
-        """
-        Adds a context menu wich displays the current context
-        :returns: Menu builder
-        """
-        ctx = self._engine.context
-        ctx_name = str(ctx)
+        def menu_item_selected(itemid):
+            cmd_fn_list[itemid]()
 
-        MaxScript.create_menu(ctx_name, self._ctx_var)
-        MaxScript.add_action_to_menu(
-            self._jump_to_sg,
-            "Jump to Flow Production Tracking",
-            self._ctx_var,
-            self._engine,
+        # let this be called from mxs by injecting it in the global maxscript namespace
+        rt.populate_apps_menu = populate_apps_menu
+        rt.populate_favs_menu = populate_favs_menu
+        rt.populate_cntx_menu = populate_cntx_menu
+        rt.menu_item_selected = menu_item_selected
+
+        mxswrapper = """
+        macroscript Python_Apps_Action_Item category:"Menu Apps Category" buttonText:"Toolkit Apps"
+        (
+            on populateDynamicMenu menuRoot do
+            (
+                populate_apps_menu menuRoot
+            )
+            on dynamicMenuItemSelected id do
+            (
+                menu_item_selected id
+            )
         )
+        macroscript Python_Favs_Action_Item category:"Menu Favs Category" buttonText:"Favorites"
+        (
+            on populateDynamicMenu menuRoot do
+            (
+                populate_favs_menu menuRoot
+            )
+            on dynamicMenuItemSelected id do
+            (
+                menu_item_selected id
+            )
+        )
+        macroscript Python_Cntx_Action_Item category:"Menu Cntx Category" buttonText:"{context_name}"
+        (
+            on populateDynamicMenu menuRoot do
+            (
+                populate_cntx_menu menuRoot
+            )
+            on dynamicMenuItemSelected id do
+            (
+                menu_item_selected id
+            )
+        )
+        """.format(
+            context_name=str(self._engine.context)
+        )
+        rt.execute(mxswrapper)
 
-        # Add the menu item only when there are some file system locations.
-        if ctx.filesystem_locations:
-            MaxScript.add_action_to_menu(
-                self._jump_to_fs, "Jump to File System", self._ctx_var, self._engine
+        def create_menu_callback():
+            menumgr = rt.callbacks.notificationparam()
+            mainmenubar = menumgr.mainmenubar
+            newsubmenu = mainmenubar.createsubmenu(
+                rt.genguid(), self._engine.MENU_LABEL, beforeid=self._engine.HELPMENU_ID
+            )
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Cntx_Action_Item`Menu Cntx Category"
+            )
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Favs_Action_Item`Menu Favs Category"
+            )
+            newsubmenu.createseparator(rt.genguid())
+            newsubmenu.createaction(
+                rt.genguid(), 647394, "Python_Apps_Action_Item`Menu Apps Category"
             )
 
-        MaxScript.add_separator(self._menu_var)
-        MaxScript.add_to_menu(self._ctx_var, self._menu_var, "ctx_builder")
+        MENU_DEMO_SCRIPT = rt.name(self._menu_var)
+        rt.callbacks.removescripts(id=MENU_DEMO_SCRIPT)
+        rt.callbacks.addscript(
+            rt.name("cuiRegisterMenus"), create_menu_callback, id=MENU_DEMO_SCRIPT
+        )
 
-    def _jump_to_sg(self):
-        """
-        Jump from context to Sg
-        """
-        url = self._engine.context.shotgun_url
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
-
-    def _jump_to_fs(self):
-        """
-        Jump from context to Fs
-        """
-        # launch one window for each location on disk
-        paths = self._engine.context.filesystem_locations
-        for disk_location in paths:
-            cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
-            exit_code = os.system(cmd)
-            if exit_code != 0:
-                self._engine.log_error("Failed to launch '%s'!" % cmd)
-
-    def _add_app_menu(self, commands_by_app):
-        """
-        Add all apps to the main menu, process them one by one.
-        :param commands_by_app: Dictionary of app name and commands related to the app, which
-                                will be added to the menu builder
-        """
-        for app_name in sorted(commands_by_app.keys()):
-            if len(commands_by_app[app_name]) > 1:
-                # more than one menu entry fort his app
-                # make a sub menu and put all items in the sub menu
-                menu_var = "sgtk_menu_builder"
-                MaxScript.create_menu(app_name, menu_var)
-
-                for cmd in commands_by_app[app_name]:
-                    cmd.add_to_menu(menu_var, self._engine)
-
-                MaxScript.add_to_menu(menu_var, self._menu_var, "ShotGridMenu")
-            else:
-                # this app only has a single entry.
-                # display that on the menu
-                cmd_obj = commands_by_app[app_name][0]
-                if not cmd_obj.favourite:
-                    # skip favourites since they are alreay on the menu
-                    cmd_obj.add_to_menu(self._menu_var, self._engine)
+    def destroy_menu(self):
+        rt.callbacks.removescripts(id=rt.name(self._menu_var))
+        iCuiMenuMgr = rt.MaxOps.GetICuiMenuMgr()
+        iCuiMenuMgr.LoadConfiguration(iCuiMenuMgr.GetCurrentConfiguration())
 
 
-class AppCommand(object):
-    """
-    Wraps around a single command that you get from engine.commands
-    """
-
-    def __init__(self, name, command_dict):
-        """
-        Initialize AppCommand object.
-        :param name: Command name
-        :param command_dict: Dictionary containing a 'callback' property to use as callback.
-        """
-        self.name = name
-        self.properties = command_dict["properties"]
-        self.callback = command_dict["callback"]
-        self.favourite = False
-
-    def get_app_name(self):
-        """
-        Returns the name of the app that this command belongs to
-        """
-        if "app" in self.properties:
-            return self.properties["app"].display_name
-        return None
-
-    def get_app_instance_name(self):
-        """
-        Returns the name of the app instance, as defined in the environment.
-        Returns None if not found.
-        """
-        engine = self.get_engine()
-        if engine is None:
-            return None
-
-        if "app" not in self.properties:
-            return None
-
-        app_instance = self.properties["app"]
-
-        for (app_instance_name, app_instance_obj) in engine.apps.items():
-            if app_instance_obj == app_instance:
-                # found our app!
-                return app_instance_name
-
-        return None
-
-    def get_documentation_url_str(self):
-        """
-        Returns the documentation as a str
-        """
-        if "app" in self.properties:
-            app = self.properties["app"]
-            return app.documentation_url
-
-        return None
-
-    def get_engine(self):
-        """
-        Returns the engine from the App Instance
-        Returns None if not found
-        """
-        if "app" not in self.properties:
-            return None
-
-        app_instance = self.properties["app"]
-        engine = app_instance.engine
-
-        return engine
-
-    def get_type(self):
-        """
-        returns the command type. Returns node, custom_pane or default.
-        """
-        return self.properties.get("type", "default")
-
-    def execute(self):
-        """
-        Delegate method for this command
-        """
-        try:
-            self.callback()
-        except:
-            tb = traceback.format_exc()
-
-            engine = self.get_engine()
-            if engine is not None:
-                engine.log_error("Failed to call command '%s'. '%s'!" % (self.name, tb))
-
-    def add_to_menu(self, menu_var, engine):
-        """
-        Add command to menu
-        :param menu_var: MaxScript menu variable name to add menu item to.
-        :param engine: Current engine where the action can be globally linked back to. (Not the App engine)
-        """
-        MaxScript.add_action_to_menu(self.execute, self.name, menu_var, engine)
+class AppCommand2025(AppCommand):
+    def __init__(self, name, command_dict, code):
+        self.code = code
+        super().__init__(name, command_dict)

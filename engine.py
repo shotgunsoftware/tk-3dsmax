@@ -23,6 +23,7 @@ class MaxEngine(sgtk.platform.Engine):
     The main Toolkit engine for 3ds Max
     """
     HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
+    MENU_LABEL = "Flow Production Tracking"
 
     @property
     def host_info(self):
@@ -239,7 +240,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         # set up menu handler
         if self._max_version_to_year(self._get_max_version()) >= 2025:
-            self._menu_generator = self.tk_3dsmax.MenuGenerator2025(self)
+            self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
             self._add_shotgun_menu()
 
             # This causes the menu manager to reload the current configuration,
@@ -247,7 +248,7 @@ class MaxEngine(sgtk.platform.Engine):
             iCuiMenuMgr = pymxs.runtime.MaxOps.GetICuiMenuMgr()
             iCuiMenuMgr.LoadConfiguration(iCuiMenuMgr.GetCurrentConfiguration())
         else:
-            self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
+            self._menu_generator = self.tk_3dsmax.MenuGenerator_menuMan(self)
             self._add_shotgun_menu()
 
             # Register a callback for the postLoadingMenus event.
