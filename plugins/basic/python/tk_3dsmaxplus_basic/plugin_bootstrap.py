@@ -485,7 +485,6 @@ def _add_to_2025_menu():
     def populate_menu(menuroot):
         for code, menu_item in _menu_items_2025().items():
             menuroot.additem(code, menu_item["name"])
-            menuroot.addseparator()
 
     def menu_item_selected(itemid):
         _menu_items_2025()[itemid]["action"]()
