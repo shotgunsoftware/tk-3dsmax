@@ -505,7 +505,7 @@ def _add_to_2025_menu():
                 menu_item_selected id
             )
         )
-        """
+    """
     rt.execute(mxswrapper)
 
     def create_menu_callback():
