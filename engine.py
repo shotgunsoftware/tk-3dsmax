@@ -599,7 +599,7 @@ class MaxEngine(sgtk.platform.Engine):
                 self._parent_to_max = True
 
             # finally launch it, modal state
-            status = dialog.exec()
+            status = dialog.exec_()
         except Exception:
             import traceback
 

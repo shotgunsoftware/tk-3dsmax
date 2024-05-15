@@ -302,7 +302,7 @@ def _set_project():
     file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
     file_dialog.setOption(QtGui.QFileDialog.DontResolveSymlinks)
     file_dialog.setOption(QtGui.QFileDialog.DontUseNativeDialog)
-    if not file_dialog.exec():
+    if not file_dialog.exec_():
         return
     path = file_dialog.selectedFiles()[0]
     _set_project_folder_dir(path)
