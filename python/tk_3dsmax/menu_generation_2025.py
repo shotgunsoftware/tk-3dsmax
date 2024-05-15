@@ -16,7 +16,6 @@ from pymxs import runtime as rt
 from .menu_generation import MenuGenerator, AppCommand
 
 MENU_LABEL = "Flow Production Tracking"
-HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
 
 
 class MenuGenerator2025(MenuGenerator):
@@ -156,7 +155,7 @@ class MenuGenerator2025(MenuGenerator):
             menumgr = rt.callbacks.notificationparam()
             mainmenubar = menumgr.mainmenubar
             newsubmenu = mainmenubar.createsubmenu(
-                rt.genguid(), MENU_LABEL, beforeid=HELPMENU_ID
+                rt.genguid(), MENU_LABEL, beforeid=self._engine.HELPMENU_ID
             )
             newsubmenu.createaction(
                 rt.genguid(), 647394, "Python_Cntx_Action_Item`Menu Cntx Category"

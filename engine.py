@@ -12,7 +12,6 @@ A 3ds Max (2022+) engine for Toolkit based pymxs
 """
 from __future__ import print_function
 import os
-import time
 import math
 import sgtk
 
@@ -23,6 +22,7 @@ class MaxEngine(sgtk.platform.Engine):
     """
     The main Toolkit engine for 3ds Max
     """
+    HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
 
     @property
     def host_info(self):

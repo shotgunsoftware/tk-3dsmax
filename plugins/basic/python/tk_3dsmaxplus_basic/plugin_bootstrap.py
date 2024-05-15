@@ -482,6 +482,8 @@ def _menu_items_2025():
 
 
 def _add_to_2025_menu():
+    import sgtk
+
     def populate_menu(menuroot):
         for code, menu_item in _menu_items_2025().items():
             menuroot.additem(code, menu_item["name"])
@@ -508,10 +510,11 @@ def _add_to_2025_menu():
     rt.execute(mxswrapper)
 
     def create_menu_callback():
+        engine = sgtk.platform.current_engine()
         menumgr = rt.callbacks.notificationparam()
         mainmenubar = menumgr.mainmenubar
         newsubmenu = mainmenubar.createsubmenu(
-            rt.genguid(), constants.SG_MENU_LABEL, beforeid=constants.HELPMENU_ID
+            rt.genguid(), constants.SG_MENU_LABEL, beforeid=engine.HELPMENU_ID
         )
         newsubmenu.createaction(
             rt.genguid(), 647394, "Python_Action_Item`Menu Category"
