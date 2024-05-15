@@ -20,8 +20,6 @@ from sgtk.platform.qt import QtCore, QtGui
 from .maxscript import MaxScript
 
 
-
-
 class MenuGenerator_menuMan(object):
     """
     Menu generation legacy functionality for 3dsmax <= 2024
@@ -56,7 +54,7 @@ class MenuGenerator_menuMan(object):
 
         # enumerate all items and create menu objects for them
         cmd_items = []
-        for (cmd_name, cmd_details) in self._engine.commands.items():
+        for cmd_name, cmd_details in self._engine.commands.items():
             cmd_items.append(AppCommand(cmd_name, cmd_details))
 
         # start with context menu
@@ -213,7 +211,7 @@ class AppCommand(object):
 
         app_instance = self.properties["app"]
 
-        for (app_instance_name, app_instance_obj) in engine.apps.items():
+        for app_instance_name, app_instance_obj in engine.apps.items():
             if app_instance_obj == app_instance:
                 # found our app!
                 return app_instance_name

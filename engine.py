@@ -22,6 +22,7 @@ class MaxEngine(sgtk.platform.Engine):
     """
     The main Toolkit engine for 3ds Max
     """
+
     HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
     MENU_LABEL = "Flow Production Tracking"
 
@@ -300,7 +301,7 @@ class MaxEngine(sgtk.platform.Engine):
 
         # Build a dictionary mapping app instance names to dictionaries of commands they registered with the engine.
         app_instance_commands = {}
-        for (command_name, value) in self.commands.items():
+        for command_name, value in self.commands.items():
             app_instance = value["properties"].get("app")
             if app_instance:
                 # Add entry 'command name: command function' to the command dictionary of this app instance.
@@ -326,7 +327,7 @@ class MaxEngine(sgtk.platform.Engine):
             else:
                 if not setting_command_name:
                     # Run all commands of the given app instance.
-                    for (command_name, command_function) in command_dict.items():
+                    for command_name, command_function in command_dict.items():
                         self.log_debug(
                             "%s startup running app '%s' command '%s'."
                             % (self.name, app_instance_name, command_name)
