@@ -16,7 +16,7 @@ from pymxs import runtime as rt
 from .menu_generation_menuman import MenuGenerator_menuMan, AppCommand
 
 
-class MenuGenerator(MenuGenerator_menuMan):
+class MenuGenerator_callbacks(MenuGenerator_menuMan):
     """
     Menu generation functionality for 3dsmax 2025+
     """

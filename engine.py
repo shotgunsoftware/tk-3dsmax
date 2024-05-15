@@ -241,7 +241,7 @@ class MaxEngine(sgtk.platform.Engine):
         """
         # set up menu handler
         if self._max_version_to_year(self._get_max_version()) >= 2025:
-            self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
+            self._menu_generator = self.tk_3dsmax.MenuGenerator_callbacks(self)
             self._add_shotgun_menu()
 
             # This causes the menu manager to reload the current configuration,
