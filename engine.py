@@ -8,7 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 """
-A 3ds Max (2017+) engine for Toolkit based pymxs
+A 3ds Max (2022+) engine for Toolkit based pymxs
 """
 from __future__ import print_function
 import os
