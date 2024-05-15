@@ -19,11 +19,6 @@ To run these tests, you need to do the following
     & "C:\Program Files\Autodesk\3ds Max {version}\Python\python.exe" -m venv tests/venv
     ```
 
-1. Activate the environment
-    ```ps1
-    .\tests\venv\Scripts\Activate.ps1
-    ```
-
 1. Install all dependencies needed for the test:
     ```ps1
     tests\venv\Scripts\pip install -U -r tests\requirements.txt
