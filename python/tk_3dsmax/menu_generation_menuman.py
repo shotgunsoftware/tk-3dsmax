@@ -19,12 +19,10 @@ import unicodedata
 from sgtk.platform.qt import QtCore, QtGui
 from .maxscript import MaxScript
 
-MENU_LABEL = "Flow Production Tracking"
 
-
-class MenuGenerator(object):
+class MenuGenerator_menuMan(object):
     """
-    Menu generation functionality for 3dsmax
+    Menu generation legacy functionality for 3dsmax <= 2024
 
     Actual menu creation is done through MaxScript to prevent a crash with modal dialogs.
     The crash happens if a modal dialog is open and a user clicks on a menu with action items
@@ -52,11 +50,11 @@ class MenuGenerator(object):
         """
 
         # Create the main menu
-        MaxScript.create_menu(MENU_LABEL, self._menu_var)
+        MaxScript.create_menu(self._engine.MENU_LABEL, self._menu_var)
 
         # enumerate all items and create menu objects for them
         cmd_items = []
-        for (cmd_name, cmd_details) in self._engine.commands.items():
+        for cmd_name, cmd_details in self._engine.commands.items():
             cmd_items.append(AppCommand(cmd_name, cmd_details))
 
         # start with context menu
@@ -100,10 +98,10 @@ class MenuGenerator(object):
         # now add all apps to main menu
         self._add_app_menu(commands_by_app)
 
-        MaxScript.add_to_main_menu_bar(self._menu_var, MENU_LABEL)
+        MaxScript.add_to_main_menu_bar(self._menu_var, self._engine.MENU_LABEL)
 
     def destroy_menu(self):
-        MaxScript.unregister_menu(MENU_LABEL)
+        MaxScript.unregister_menu(self._engine.MENU_LABEL)
 
     def _create_context_builder(self):
         """
@@ -213,7 +211,7 @@ class AppCommand(object):
 
         app_instance = self.properties["app"]
 
-        for (app_instance_name, app_instance_obj) in engine.apps.items():
+        for app_instance_name, app_instance_obj in engine.apps.items():
             if app_instance_obj == app_instance:
                 # found our app!
                 return app_instance_name

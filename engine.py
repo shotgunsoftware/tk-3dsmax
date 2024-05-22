@@ -8,31 +8,23 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 """
-A 3ds Max (2017+) engine for Toolkit based mostly on pymxs and also uses MaxPlus for certain features
-on older Max releases.
+A 3ds Max (2022+) engine for Toolkit based pymxs
 """
 from __future__ import print_function
 import os
-import time
 import math
 import sgtk
 
 import pymxs
-
-# MaxPlus will be deprecated in a future release of Max, so tolerate the failure to import it.
-# The code in the engine that uses MaxPlus is for versions 2019 and below, which do ship
-# with MaxPlus, so we're in no danger of getting an error when MaxPlus eventually
-# goes away.
-try:
-    import MaxPlus
-except ImportError:
-    pass
 
 
 class MaxEngine(sgtk.platform.Engine):
     """
     The main Toolkit engine for 3ds Max
     """
+
+    HELPMENU_ID = "cee8f758-2199-411b-81e7-d3ff4a80d143"
+    MENU_LABEL = "Flow Production Tracking"
 
     @property
     def host_info(self):
@@ -229,7 +221,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     def _on_menus_loaded(self):
         """
-        Called when receiving postLoadingMenus from 3dsMax.
+        Called when receiving postLoadingMenus from 3dsMax < 2025
 
         :param code: Notification code received
         """
@@ -248,24 +240,33 @@ class MaxEngine(sgtk.platform.Engine):
         Called from the main thread when all apps have initialized
         """
         # set up menu handler
-        self._menu_generator = self.tk_3dsmax.MenuGenerator(self)
-        self._add_shotgun_menu()
+        if self._max_version_to_year(self._get_max_version()) >= 2025:
+            self._menu_generator = self.tk_3dsmax.MenuGenerator_callbacks(self)
+            self._add_shotgun_menu()
 
-        # Register a callback for the postLoadingMenus event.
-        python_code = "\n".join(
-            [
-                "import sgtk",
-                "engine = sgtk.platform.current_engine()",
-                "engine._on_menus_loaded()",
-            ]
-        )
-        # Unfortunately we can't pass in a Python function as a callback,
-        # so we're passing in piece of MaxScript instead.
-        pymxs.runtime.callbacks.addScript(
-            pymxs.runtime.Name("postLoadingMenus"),
-            'python.execute "{0}"'.format(python_code),
-            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
-        )
+            # This causes the menu manager to reload the current configuration,
+            # causing the menu file chain to be loaded and the callback to occur.
+            iCuiMenuMgr = pymxs.runtime.MaxOps.GetICuiMenuMgr()
+            iCuiMenuMgr.LoadConfiguration(iCuiMenuMgr.GetCurrentConfiguration())
+        else:
+            self._menu_generator = self.tk_3dsmax.MenuGenerator_menuMan(self)
+            self._add_shotgun_menu()
+
+            # Register a callback for the postLoadingMenus event.
+            python_code = "\n".join(
+                [
+                    "import sgtk",
+                    "engine = sgtk.platform.current_engine()",
+                    "engine._on_menus_loaded()",
+                ]
+            )
+            # Unfortunately we can't pass in a Python function as a callback,
+            # so we're passing in piece of MaxScript instead.
+            pymxs.runtime.callbacks.addScript(
+                pymxs.runtime.Name("postLoadingMenus"),
+                'python.execute "{0}"'.format(python_code),
+                id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+            )
 
         # Run a series of app instance commands at startup.
         self._run_app_instance_commands()
@@ -300,7 +301,7 @@ class MaxEngine(sgtk.platform.Engine):
 
         # Build a dictionary mapping app instance names to dictionaries of commands they registered with the engine.
         app_instance_commands = {}
-        for (command_name, value) in self.commands.items():
+        for command_name, value in self.commands.items():
             app_instance = value["properties"].get("app")
             if app_instance:
                 # Add entry 'command name: command function' to the command dictionary of this app instance.
@@ -326,7 +327,7 @@ class MaxEngine(sgtk.platform.Engine):
             else:
                 if not setting_command_name:
                     # Run all commands of the given app instance.
-                    for (command_name, command_function) in command_dict.items():
+                    for command_name, command_function in command_dict.items():
                         self.log_debug(
                             "%s startup running app '%s' command '%s'."
                             % (self.name, app_instance_name, command_name)
@@ -362,10 +363,11 @@ class MaxEngine(sgtk.platform.Engine):
         """
         self.log_debug("%s: Destroying..." % self)
 
-        pymxs.runtime.callbacks.removeScripts(
-            pymxs.runtime.Name("postLoadingMenus"),
-            id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
-        )
+        if self._max_version_to_year(self._get_max_version()) < 2025:
+            pymxs.runtime.callbacks.removeScripts(
+                pymxs.runtime.Name("postLoadingMenus"),
+                id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
+            )
         self._remove_shotgun_menu()
 
     def update_shotgun_menu(self):
@@ -415,16 +417,12 @@ class MaxEngine(sgtk.platform.Engine):
             # we can start using it properly.
             # This logic was taken from
             # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
-            import shiboken2
-            from sgtk.platform.qt import QtGui
+            from sgtk.platform.qt import QtGui, shiboken
 
             widget = QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
-            return shiboken2.wrapInstance(
-                shiboken2.getCppPointer(widget)[0], QtGui.QMainWindow
+            return shiboken.wrapInstance(
+                shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
             )
-        elif self._max_version_to_year(self._get_max_version()) > 2017:
-            #
-            return MaxPlus.GetQMaxMainWindow()
         else:
             return super(MaxEngine, self)._get_dialog_parent()
 
@@ -555,29 +553,6 @@ class MaxEngine(sgtk.platform.Engine):
             self, title, bundle, widget, parent
         )
 
-        # Attaching the dialog to Max is a matter of whether this is a new
-        # enough version of 3ds Max. Anything short of 2016 SP1 is going to
-        # fail here with an AttributeError, so we can just catch that and
-        # continue on without the new-style parenting.
-        if (
-            self._parent_to_max
-            and self._max_version_to_year(self._get_max_version()) <= 2019
-        ):
-            previous_parent = self._dialog.parent()
-            try:
-                self.log_debug("Attempting to attach dialog to 3ds Max...")
-                self._dialog.setParent(None)
-                # widget must be parentless when calling MaxPlus.AttachQWidgetToMax
-                # Accessing MaxPlus here is safe because we're inside a
-                # a branch of code that can only be executed on Max 2019 and lower.
-                MaxPlus.AttachQWidgetToMax(self._dialog)
-                self.log_debug("AttachQWidgetToMax successful.")
-            except AttributeError:
-                self._dialog.setParent(previous_parent)
-                self.log_debug(
-                    "AttachQWidgetToMax not available in this version of 3ds Max."
-                )
-
         self._dialog.installEventFilter(self.dialogEvents)
 
         # Add to tracked dialogs (will be removed in eventFilter)
@@ -684,13 +659,8 @@ class MaxEngine(sgtk.platform.Engine):
                 dialog.raise_()  # for MacOS
 
     ##########################################################################################
-    # MaxPlus SDK Patching
-
-    # Version Id for 3dsmax 2016 Taken from Max Sdk (not currently available in maxplus)
-    MAX_RELEASE_R18 = 18000
-
     # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 26000
+    MAXIMUM_SUPPORTED_VERSION = 27000
 
     def _max_version_to_year(self, version):
         """

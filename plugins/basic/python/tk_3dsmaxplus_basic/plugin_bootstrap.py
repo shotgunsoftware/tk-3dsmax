@@ -18,10 +18,9 @@ from . import constants
 from . import __name__ as PLUGIN_PACKAGE_NAME
 
 try:
-    from PySide2 import QtCore
+    from PySide6 import QtCore
 except ImportError:
-    # Max 2017 was PySide 1, so fallback on that
-    from PySide import QtCore
+    from PySide2 import QtCore
 
 
 class PluginProperties(object):
@@ -365,20 +364,28 @@ def _create_login_menu():
     """
     _delete_login_menu()
 
-    sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
+    if rt.maxVersion()[0] >= constants.MAX_2025_MENU_SYSTEM:
+        _add_to_2025_menu()
+    else:
+        sg_menu = rt.menuMan.createMenu(constants.SG_MENU_LABEL)
 
-    _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
-    _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Learn about Flow Production Tracking...", _jump_to_website)
-    _add_separator(sg_menu)
-    _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
-    _add_to_main_menu_bar(sg_menu)
+        _add_to_menu(sg_menu, "Log In to Flow Production Tracking...", _login_user)
+        _add_separator(sg_menu)
+        _add_to_menu(
+            sg_menu, "Learn about Flow Production Tracking...", _jump_to_website
+        )
+        _add_separator(sg_menu)
+        _add_to_menu(sg_menu, "Try PTR for Free...", _jump_to_signup)
+        _add_to_main_menu_bar(sg_menu)
 
 
 def _delete_login_menu():
     """
     Deletes the displayed Shotgun user login menu.
     """
+    if rt.maxVersion()[0] >= constants.MAX_2025_MENU_SYSTEM:
+        return
+
     old_menu = rt.menuMan.findMenu(constants.SG_MENU_LABEL)
     if old_menu is not None:
         rt.menuMan.unregisterMenu(old_menu)
@@ -455,3 +462,66 @@ def _get_plugin_info():
 
     # return a dictionary with the required info
     return dict(plugin_id=plugin_id, base_configuration=base_configuration)
+
+
+def _menu_items_2025():
+    return {
+        3001: {
+            "name": "Log In to Flow Production Tracking...",
+            "action": _login_user,
+        },
+        3002: {
+            "name": "Learn about Flow Production Tracking...",
+            "action": _jump_to_website,
+        },
+        3003: {
+            "name": "Try PTR for Free...",
+            "action": _jump_to_signup,
+        },
+    }
+
+
+def _add_to_2025_menu():
+    import sgtk
+
+    def populate_menu(menuroot):
+        for code, menu_item in _menu_items_2025().items():
+            menuroot.additem(code, menu_item["name"])
+
+    def menu_item_selected(itemid):
+        _menu_items_2025()[itemid]["action"]()
+
+    rt.populate_menu = populate_menu
+    rt.menu_item_selected = menu_item_selected
+
+    mxswrapper = """
+        macroscript Python_Action_Item category:"Menu Category" buttonText:"Options..."
+        (
+            on populateDynamicMenu menuRoot do
+            (
+                populate_menu menuRoot
+            )
+            on dynamicMenuItemSelected id do
+            (
+                menu_item_selected id
+            )
+        )
+    """
+    rt.execute(mxswrapper)
+
+    def create_menu_callback():
+        engine = sgtk.platform.current_engine()
+        menumgr = rt.callbacks.notificationparam()
+        mainmenubar = menumgr.mainmenubar
+        newsubmenu = mainmenubar.createsubmenu(
+            rt.genguid(), constants.SG_MENU_LABEL, beforeid=engine.HELPMENU_ID
+        )
+        newsubmenu.createaction(
+            rt.genguid(), 647394, "Python_Action_Item`Menu Category"
+        )
+
+    MENU_DEMO_SCRIPT = rt.name("sgtk_menu_main")
+    rt.callbacks.removescripts(id=MENU_DEMO_SCRIPT)
+    rt.callbacks.addscript(
+        rt.name("cuiRegisterMenus"), create_menu_callback, id=MENU_DEMO_SCRIPT
+    )

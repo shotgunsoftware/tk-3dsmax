@@ -178,7 +178,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
             # the session has not been saved before (no path determined).
             # provide a save button. the session will need to be saved before
             # validation will succeed.
-            self.logger.warn(
+            self.logger.warning(
                 "The Max session has not been saved.", extra=_get_save_as_action()
             )
 

@@ -14,17 +14,17 @@ To run these tests, you need to do the following
 
     In general, anything defined in `tests/fixtures/config/env/test.yml`
 
-1. From a terminal, create a virtual environment at `tests/venv`
-   ```ps1
-   & "C:\Program Files\Autodesk\3ds Max {version}\Python\python.exe" -m venv tests/venv
-   ```
+1. From a PowerShell terminal, create a virtual environment at `tests/venv`
+    ```ps1
+    & "C:\Program Files\Autodesk\3ds Max {version}\Python\python.exe" -m venv tests/venv
+    ```
 
 1. Install all dependencies needed for the test:
-   ```ps1
+    ```ps1
     tests\venv\Scripts\pip install -U -r tests\requirements.txt
     ```
 
-1. Launch 3dsmax
+1. Launch 3dsmax from the Windows shortcut (not from FPTR Desktop)
     1. Go to the "**Scripting**" menu → select "**Scripting Listener**"
     1. "**File**" → "**Run Script**"
     1. Browse to `tests/run_tests.py`

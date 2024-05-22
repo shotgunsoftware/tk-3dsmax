@@ -12,13 +12,6 @@ import os
 import sys
 
 
-import pymxs
-
-# the version of max when a working SSL python
-# started to be distributed with it.
-SSL_INCLUDED_VERSION = 20000
-
-
 def error(msg):
     """
     Error Repost
@@ -88,10 +81,17 @@ def bootstrap_sgtk_with_plugins():
             module = __import__(module_name)
             try:
                 module.load(plugin_path)
-            except AttributeError:
+            except AttributeError as e:
                 logger.error(
-                    "Missing 'load()' method in plugin %s.  Plugin won't be loaded"
-                    % plugin_path
+                    "Missing 'load()' method in plugin %s. Plugin won't be loaded: %s"
+                    % (plugin_path, type(e)),
+                    exc_info=True,
+                )
+            except Exception as e:
+                logger.error(
+                    "Plugin %s won't be loaded because of an error: %s"
+                    % (plugin_path, e),
+                    exc_info=True,
                 )
 
 
@@ -99,26 +99,6 @@ def bootstrap_sgtk():
     """
     Bootstrap. This is called when preparing to launch by multi-launch.
     """
-    import sgtk
-
-    if sgtk.util.is_windows():
-
-        # get the version number from max
-        version_number = pymxs.runtime.maxVersion()[0]
-
-        if version_number < SSL_INCLUDED_VERSION:
-            # our version of 3dsmax does not have ssl included.
-            # patch this up by adding to the pythonpath
-            resources = os.path.join(os.path.dirname(__file__), "..", "..", "resources")
-            ssl_path = os.path.join(resources, "ssl_fix")
-            sys.path.insert(0, ssl_path)
-            path_parts = os.environ.get("PYTHONPATH", "").split(";")
-            path_parts = [ssl_path] + path_parts
-            os.environ["PYTHONPATH"] = ";".join(path_parts)
-    else:
-        error("Flow Production Tracking: Unknown platform - cannot setup ssl")
-        return
-
     if os.environ.get("SGTK_LOAD_MAX_PLUGINS"):
         bootstrap_sgtk_with_plugins()
     else:
