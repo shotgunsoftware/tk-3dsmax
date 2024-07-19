@@ -75,6 +75,15 @@ class MaxEngine(sgtk.platform.Engine):
 
         self._max_version = None
 
+
+        if "custom_dpi_factor" not in kwargs:
+            kwargs["custom_dpi_factor"] = pymxs.runtime.GetUIScaleFactor()
+            print(f"""
+
+    MAX DPI: {kwargs["custom_dpi_factor"]}
+
+    """)
+
         # proceed about your business
         sgtk.platform.Engine.__init__(self, *args, **kwargs)
 
