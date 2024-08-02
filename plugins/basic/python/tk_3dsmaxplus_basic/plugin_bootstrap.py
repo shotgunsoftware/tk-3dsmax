@@ -304,7 +304,9 @@ def _add_to_menu(menu, title, callback):
         from tank_vendor import six as sgutils
 
     # Hash the macro name just like we do in the engine for consistency.
-    macro_name = "sg_" + hashlib.md5(sgutils.ensure_binary(callback.__name__)).hexdigest()
+    macro_name = (
+        "sg_" + hashlib.md5(sgutils.ensure_binary(callback.__name__)).hexdigest()
+    )
     category = "PTR Bootstrap Menu Actions"
     # The createActionItem expects a macro and not some MaxScript, so create a
     # macro first...
