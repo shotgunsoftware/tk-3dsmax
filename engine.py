@@ -10,7 +10,6 @@
 """
 A 3ds Max (2022+) engine for Toolkit based pymxs
 """
-from __future__ import print_function
 import os
 import math
 import sgtk
@@ -424,7 +423,7 @@ class MaxEngine(sgtk.platform.Engine):
                 shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
             )
         else:
-            return super(MaxEngine, self)._get_dialog_parent()
+            return super()._get_dialog_parent()
 
     def show_panel(self, panel_id, title, bundle, widget_class, *args, **kwargs):
         """
@@ -449,7 +448,7 @@ class MaxEngine(sgtk.platform.Engine):
                 "Panel functionality not implemented. Falling back to showing "
                 "panel '%s' in a modeless dialog" % panel_id
             )
-            return super(MaxEngine, self).show_panel(
+            return super().show_panel(
                 panel_id, title, bundle, widget_class, *args, **kwargs
             )
 
