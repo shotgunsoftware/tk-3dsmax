@@ -37,6 +37,8 @@ argv = [
     "--cov-report=html",
     "--verbose",
 ]
+
+
 # Patch argv
 @mock.patch.object(sys, "argv", argv, create=True)
 # The sys.stdout and sys.stderr in Max are some mocked
