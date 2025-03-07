@@ -56,7 +56,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
         part of its environment configuration.
         """
         # inherit the settings from the base publish plugin
-        base_settings = super(MaxSessionGeometryPublishPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         # settings specific to this class
         max_publish_settings = {
@@ -209,7 +209,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
             item.properties["publish_version"] = work_fields["version"]
 
         # run the base class validation
-        return super(MaxSessionGeometryPublishPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -240,7 +240,7 @@ class MaxSessionGeometryPublishPlugin(HookBaseClass):
 
         # Now that the path has been generated, hand it off to the base publish
         # file plugin
-        super(MaxSessionGeometryPublishPlugin, self).publish(settings, item)
+        super().publish(settings, item)
 
 
 def _session_path():

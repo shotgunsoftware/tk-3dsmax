@@ -32,7 +32,7 @@ class TestPublisherHooks(TankTestBase):
         """
         Set up the configuration and start the engine.
         """
-        super(TestPublisherHooks, self).setUp()
+        super().setUp()
         self.setup_fixtures()
 
         # Cleanup the scene before the test run so we don't get poluted with
@@ -78,7 +78,7 @@ class TestPublisherHooks(TankTestBase):
         that logging is still captured by the test.
         """
         assert len(self._logs) > 0
-        super(TestPublisherHooks, self).tearDown()
+        super().tearDown()
 
     def _emit_log(self, handler, record):
         """

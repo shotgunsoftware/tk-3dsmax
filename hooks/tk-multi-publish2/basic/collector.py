@@ -45,7 +45,7 @@ class MaxSessionCollector(HookBaseClass):
         """
 
         # grab any base class settings
-        collector_settings = super(MaxSessionCollector, self).settings or {}
+        collector_settings = super().settings or {}
 
         # settings specific to this collector
         max_session_settings = {
@@ -186,7 +186,7 @@ class MaxSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle various files
-            super(MaxSessionCollector, self)._collect_file(parent_item, export_path)
+            super()._collect_file(parent_item, export_path)
 
     def collect_previews(self, parent_item, project_root):
         """
@@ -223,9 +223,7 @@ class MaxSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
-            item = super(MaxSessionCollector, self)._collect_file(
-                parent_item, movie_path
-            )
+            item = super()._collect_file(parent_item, movie_path)
 
             # the item has been created. update the display name to include
             # the an indication of what it is and why it was collected
