@@ -111,7 +111,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(MaxSessionPublishPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         # settings specific to this class
         max_publish_settings = {
@@ -286,7 +286,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         item.properties["path"] = path
 
         # run the base class validation
-        return super(MaxSessionPublishPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -309,7 +309,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         item.properties["path"] = path
 
         # let the base class register the publish
-        super(MaxSessionPublishPlugin, self).publish(settings, item)
+        super().publish(settings, item)
 
     def finalize(self, settings, item):
         """
@@ -323,7 +323,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         """
 
         # do the base class finalization
-        super(MaxSessionPublishPlugin, self).finalize(settings, item)
+        super().finalize(settings, item)
 
         # bump the session file to the next version
         self._save_to_next_version(item.properties["path"], item, _save_session)
