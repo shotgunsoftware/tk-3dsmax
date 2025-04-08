@@ -195,9 +195,6 @@ def _get_installation_paths_from_registry(logger):
     :returns: List of paths where 3dsmax is installed,
     """
 
-    if not sgtk.util.is_windows():
-        return []
-
     import winreg
 
     base_key_name = "SOFTWARE\\Autodesk\\3dsMax"
