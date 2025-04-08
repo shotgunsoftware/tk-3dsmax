@@ -197,12 +197,12 @@ def _get_installation_paths_from_registry(logger):
 
     import winreg
 
-    base_key_name = "SOFTWARE\\Autodesk\\3dsMax"
-    sub_key_names = []
-
     logger.debug(
         "Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax"
     )
+
+    base_key_name = "SOFTWARE\\Autodesk\\3dsMax"
+    sub_key_names = []
 
     # find all subkeys in key HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk\3dsMax
     try:
