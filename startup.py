@@ -12,7 +12,6 @@ import os
 import re
 import sys
 import sgtk
-import winreg
 
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
@@ -196,12 +195,17 @@ def _get_installation_paths_from_registry(logger):
     :returns: List of paths where 3dsmax is installed,
     """
 
-    logger.debug(
-        "Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax"
-    )
+    if not sgtk.util.is_windows():
+        return []
+    
+    import winreg
 
     base_key_name = "SOFTWARE\\Autodesk\\3dsMax"
     sub_key_names = []
+
+    logger.debug(
+        "Querying windows registry for key HKEY_LOCAL_MACHINE\\SOFTWARE\\Autodesk\\3dsMax"
+    )
 
     # find all subkeys in key HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk\3dsMax
     try:
