@@ -10,11 +10,18 @@
 """
 A 3ds Max (2022+) engine for Toolkit based pymxs
 """
-import os
 import math
-import sgtk
+import os
+import re
 
+
+import sgtk
 import pymxs
+
+# Max versions compatibility constants
+VERSION_OLDEST_COMPATIBLE = 2021
+VERSION_OLDEST_SUPPORTED = 2023
+VERSION_NEWEST_SUPPORTED = 2026
 
 
 class MaxEngine(sgtk.platform.Engine):
@@ -47,17 +54,13 @@ class MaxEngine(sgtk.platform.Engine):
             }
 
         References:
-        http://docs.autodesk.com/3DSMAX/16/ENU/3ds-Max-Python-API-Documentation/index.html
+        https://help.autodesk.com/view/MAXDEV/2026/ENU/?guid=MAXDEV_Python_what_s_new_in_3ds_max_python_api_html
         """
         host_info = {"name": "3ds Max", "version": "unknown"}
 
-        try:
-            host_info["version"] = str(
-                self._max_version_to_year(self._get_max_version())
-            )
-        except:
-            # Fallback to initialized values above
-            pass
+        max_version_year = self.max_version_year
+        if max_version_year:
+            host_info["version"] = str(max_version_year)
 
         return host_info
 
@@ -73,6 +76,7 @@ class MaxEngine(sgtk.platform.Engine):
         self._dock_widgets = []
 
         self._max_version = None
+        self._max_version_year = None
 
         # proceed about your business
         sgtk.platform.Engine.__init__(self, *args, **kwargs)
@@ -98,35 +102,75 @@ class MaxEngine(sgtk.platform.Engine):
 
         self.log_debug("%s: Initializing..." % self)
 
-        if self._get_max_version() > MaxEngine.MAXIMUM_SUPPORTED_VERSION:
-            # Untested max version
+        compatibility_warning_msg = None
+        show_warning_dlg = self.has_ui
+        url_doc_supported_versions = "https://help.autodesk.com/view/SGDEV/ENU/?guid=SGD_si_integrations_engine_supported_versions_html"
 
-            highest_supported_version = self._max_version_to_year(
-                MaxEngine.MAXIMUM_SUPPORTED_VERSION
+        if self.max_version_year < VERSION_OLDEST_COMPATIBLE:
+            # Old incompatible version
+            raise sgtk.TankError(
+                "Flow Production Tracking is no longer compatible with 3ds Max "
+                f"versions older than {VERSION_OLDEST_COMPATIBLE}.\n"
+                "For information regarding support engine versions, please "
+                f"visit this page: {url_doc_supported_versions}"
+            )
+        elif self.max_version_year < VERSION_OLDEST_SUPPORTED:
+            # Older than the oldest supported version
+            compatibility_warning_msg = (
+                "Flow Production Tracking no longer supports 3ds Max versions "
+                f"older than {VERSION_OLDEST_SUPPORTED}.\n"
+                "You can continue to use Toolkit but you may experience bugs "
+                "or instabilities.\n\n"
+                "For information regarding support engine versions, please "
+                "visit this page: {url_doc_supported_versions}"
+            )
+        elif self.max_version_year < VERSION_NEWEST_SUPPORTED:
+            # Within the range of supported versions
+            self.logger.debug(f"Running 3ds Max version {self.max_version_year}")
+        else:
+            # Newer than the newest supported version: untested
+            compatibility_warning_msg = (
+                "The Flow Production Tracking has not yet been fully tested "
+                f"with 3ds Max version {self.max_version_year}.\n"
+                "You can continue to use the Toolkit but you may experience "
+                "bugs or instabilities.\n\n"
+                "Please report any issues to: {support_url}"
             )
 
-            msg = (
-                "Flow Production Tracking!\n\n"
-                "The Flow Production Tracking has not yet been fully tested with 3ds Max versions greater than %s. "
-                "You can continue to use the Toolkit but you may experience bugs or instability. "
-                "Please report any issues you see via %s."
-                % (
-                    highest_supported_version,
-                    sgtk.support_url,
+            show_warning_dlg = show_warning_dlg and (
+                self.max_version_year
+                >= self.get_setting(
+                    "compatibility_dialog_min_version",
+                    default=VERSION_NEWEST_SUPPORTED,
                 )
             )
 
-            # Display warning dialog
-            max_year = self._max_version_to_year(self._get_max_version())
-            max_next_year = highest_supported_version + 1
-            if max_year >= self.get_setting(
-                "compatibility_dialog_min_version", max_next_year
-            ):
+        if compatibility_warning_msg:
+            if show_warning_dlg:
+                # Display warning dialog
                 QtGui.QMessageBox.warning(
-                    None, "PTR Warning", "Warning - {0}".format(msg)
+                    None,  # parent
+                    "Warning - Flow Production Tracking Compatibility!".ljust(70),  # title
+                    compatibility_warning_msg.replace(
+                        # Precense of \n breaks the Rich Text Format
+                        "\n", "<br>"
+                    ).format(
+                        support_url='<a href="{u}">{u}</a>'.format(
+                            u=sgtk.support_url,
+                        ),
+                        url_doc_supported_versions='<a href="{u}">{u}</a>'.format(
+                            u=url_doc_supported_versions,
+                        ),
+                    ),
                 )
+
             # and log the warning
-            self.log_warning(msg)
+            self.log_warning(
+                re.sub("\\n+", " ", compatibility_warning_msg).format(
+                    support_url=sgtk.support_url,
+                    url_doc_supported_versions=url_doc_supported_versions,
+                )
+            )
 
         self._safe_dialog = []
         # Keep the dialog to prevent the garbage collector from delete it
@@ -165,7 +209,7 @@ class MaxEngine(sgtk.platform.Engine):
         # possible that we'll get back a QCoreApplication from Max, which won't
         # carry references to a stylesheet. In that case, we apply our styling
         # to the dialog parent, which will be the top-level Max window.
-        if self._max_version_to_year(self._get_max_version()) < 2018:
+        if self.max_version_year < 2018:
             parent_widget = sgtk.platform.qt.QtCore.QCoreApplication.instance()
         else:
             parent_widget = self._get_dialog_parent()
@@ -175,7 +219,7 @@ class MaxEngine(sgtk.platform.Engine):
         if "toolkit 3dsmax style extension" not in curr_stylesheet:
             # If we're in pre-2017 Max then we need to handle our own styling. Otherwise
             # we just inherit from Max.
-            if self._max_version_to_year(self._get_max_version()) < 2017:
+            if self.max_version_year < 2017:
                 self._initialize_dark_look_and_feel()
 
             curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
@@ -239,7 +283,7 @@ class MaxEngine(sgtk.platform.Engine):
         Called from the main thread when all apps have initialized
         """
         # set up menu handler
-        if self._max_version_to_year(self._get_max_version()) >= 2025:
+        if self.max_version_year >= 2025:
             self._menu_generator = self.tk_3dsmax.MenuGenerator_callbacks(self)
             self._add_shotgun_menu()
 
@@ -361,8 +405,7 @@ class MaxEngine(sgtk.platform.Engine):
         Called when the engine is shutting down
         """
         self.log_debug("%s: Destroying..." % self)
-
-        if self._max_version_to_year(self._get_max_version()) < 2025:
+        if self.max_version_year < 2025:
             pymxs.runtime.callbacks.removeScripts(
                 pymxs.runtime.Name("postLoadingMenus"),
                 id=pymxs.runtime.Name("sg_tk_on_menus_loaded"),
@@ -410,7 +453,7 @@ class MaxEngine(sgtk.platform.Engine):
         # Older versions of Max make use of special logic in _create_dialog
         # to handle window parenting. If we can, though, we should go with
         # the more standard approach to getting the main window.
-        if self._max_version_to_year(self._get_max_version()) > 2020:
+        if self.max_version_year > 2020:
             # getMAXHWND returned a float instead of a long, which was completely
             # unusable with PySide in 2017 to 2020, but starting 2021
             # we can start using it properly.
@@ -442,7 +485,7 @@ class MaxEngine(sgtk.platform.Engine):
 
         self.log_debug("Begin showing panel %s" % panel_id)
 
-        if self._max_version_to_year(self._get_max_version()) <= 2017:
+        if self.max_version_year <= 2017:
             # Qt docking is supported in version 2018 and later.
             self.log_warning(
                 "Panel functionality not implemented. Falling back to showing "
@@ -657,17 +700,22 @@ class MaxEngine(sgtk.platform.Engine):
                 dialog.activateWindow()  # for Windows
                 dialog.raise_()  # for MacOS
 
-    ##########################################################################################
-    # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 28000
-
-    def _max_version_to_year(self, version):
+    @property
+    def max_version_year(self):
         """
         Get the max year from the max release version.
-        Note that while 17000 is 2015, 17900 would be 2016 alpha
         """
-        year = 2000 + (math.ceil(version / 1000.0) - 2)
-        return year
+
+        if self._max_version_year is None:
+            max_version = self._get_max_version()
+            try:
+                assert isinstance(max_version[7], int)
+                self._max_version_year = max_version[7]
+            except (AssertionError, IndexError) as err:
+                self.log_debug("Unable to extract Max version {}".format(err))
+                self._max_version_year = 0
+
+        return self._max_version_year
 
     def _get_max_version(self):
         """
@@ -677,7 +725,7 @@ class MaxEngine(sgtk.platform.Engine):
             # Make sure this gets executed from the main thread because pymxs can't be used
             # from a background thread.
             self._max_version = self.execute_in_main_thread(
-                lambda: pymxs.runtime.maxVersion()[0]
+                lambda: pymxs.runtime.maxVersion()
             )
         # 3dsMax Version returns a number which contains max version, sdk version, etc...
         return self._max_version
