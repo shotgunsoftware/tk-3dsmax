@@ -207,24 +207,14 @@ class MaxEngine(sgtk.platform.Engine):
         # the style setup once per session - it looks like
         # 3dsmax slows down if this is executed every engine restart.
         #
-        # If we're in pre-Qt Max (before 2018) then we'll need to apply the
-        # stylesheet to the QApplication. That's not safe in 2019.3+, as it's
-        # possible that we'll get back a QCoreApplication from Max, which won't
-        # carry references to a stylesheet. In that case, we apply our styling
-        # to the dialog parent, which will be the top-level Max window.
-        if self.max_version_year < 2018:
-            parent_widget = sgtk.platform.qt.QtCore.QCoreApplication.instance()
-        else:
-            parent_widget = self._get_dialog_parent()
+        # It's possible that we'll get back a QCoreApplication from Max, which
+        # won't carry references to a stylesheet. In that case, we apply our
+        # styling to the dialog parent, which will be the top-level Max window.
+        parent_widget = self._get_dialog_parent()
 
         curr_stylesheet = parent_widget.styleSheet()
 
         if "toolkit 3dsmax style extension" not in curr_stylesheet:
-            # If we're in pre-2017 Max then we need to handle our own styling. Otherwise
-            # we just inherit from Max.
-            if self.max_version_year < 2017:
-                self._initialize_dark_look_and_feel()
-
             curr_stylesheet += "\n\n /* toolkit 3dsmax style extension */ \n\n"
             curr_stylesheet += (
                 "\n\n QDialog#TankDialog > QWidget { background-color: #343434; }\n\n"
@@ -456,20 +446,16 @@ class MaxEngine(sgtk.platform.Engine):
         # Older versions of Max make use of special logic in _create_dialog
         # to handle window parenting. If we can, though, we should go with
         # the more standard approach to getting the main window.
-        if self.max_version_year > 2020:
-            # getMAXHWND returned a float instead of a long, which was completely
-            # unusable with PySide in 2017 to 2020, but starting 2021
-            # we can start using it properly.
-            # This logic was taken from
-            # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
-            from sgtk.platform.qt import QtGui, shiboken
 
-            widget = QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
-            return shiboken.wrapInstance(
-                shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
-            )
-        else:
-            return super()._get_dialog_parent()
+        # getMAXHWND returned a float instead of a long
+        # This logic was taken from
+        # https://help.autodesk.com/view/3DSMAX/2020/ENU/?guid=__developer_creating_python_uis_html
+        from sgtk.platform.qt import QtGui, shiboken
+
+        widget = QtGui.QWidget.find(pymxs.runtime.windows.getMAXHWND())
+        return shiboken.wrapInstance(
+            shiboken.getCppPointer(widget)[0], QtGui.QMainWindow
+        )
 
     def show_panel(self, panel_id, title, bundle, widget_class, *args, **kwargs):
         """
@@ -487,16 +473,6 @@ class MaxEngine(sgtk.platform.Engine):
         from sgtk.platform.qt import QtCore, QtGui
 
         self.log_debug("Begin showing panel %s" % panel_id)
-
-        if self.max_version_year <= 2017:
-            # Qt docking is supported in version 2018 and later.
-            self.log_warning(
-                "Panel functionality not implemented. Falling back to showing "
-                "panel '%s' in a modeless dialog" % panel_id
-            )
-            return super().show_panel(
-                panel_id, title, bundle, widget_class, *args, **kwargs
-            )
 
         dock_widget_id = "sgtk_dock_widget_" + panel_id
 
