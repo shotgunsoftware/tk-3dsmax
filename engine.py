@@ -150,10 +150,13 @@ class MaxEngine(sgtk.platform.Engine):
                 # Display warning dialog
                 QtGui.QMessageBox.warning(
                     None,  # parent
-                    "Warning - Flow Production Tracking Compatibility!".ljust(70),  # title
+                    "Warning - Flow Production Tracking Compatibility!".ljust(
+                        70
+                    ),  # title
                     compatibility_warning_msg.replace(
                         # Precense of \n breaks the Rich Text Format
-                        "\n", "<br>"
+                        "\n",
+                        "<br>",
                     ).format(
                         support_url='<a href="{u}">{u}</a>'.format(
                             u=sgtk.support_url,
