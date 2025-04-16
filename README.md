@@ -2,7 +2,7 @@
 
 ![Supported 3ds Max versions: 2023 - 2026](https://img.shields.io/badge/3ds%20Max-2026_|_2025_|_2024_|_2023-blue?logo=autodesk "Supported 3ds Max versions")
 [![Supported VFX Platform: 2022 - 2025](https://img.shields.io/badge/VFX_Platform-2025_|_2024_|_2023_|_2022-blue)](http://www.vfxplatform.com/ "Supported VFX Platform")
-[![Supported Python versions: 3.9 - 3.11](https://img.shields.io/badge/Python-3.11_|_3.10_|_3.9-blue?logo=python)](https://www.python.org/ "Supported Python versions")
+[![Supported Python versions: 3.9 - 3.11](https://img.shields.io/badge/Python-3.11_|_3.10_|_3.9-blue?logo=python&logoColor=f5f5f5)](https://www.python.org/ "Supported Python versions")
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Linting](https://img.shields.io/badge/PEP8%20by-Hound%20CI-a873d1.svg)](https://houndci.com)
