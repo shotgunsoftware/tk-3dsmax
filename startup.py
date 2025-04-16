@@ -29,7 +29,7 @@ class MaxLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2017"
+        return "2021"
 
     def scan_software(self):
         """
