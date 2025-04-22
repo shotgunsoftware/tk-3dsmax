@@ -29,7 +29,7 @@ class MaxLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2017"
+        return "2021"
 
     def scan_software(self):
         """
@@ -161,7 +161,7 @@ class MaxLauncher(SoftwareLauncher):
             path_sw_versions = [
                 p.lower()
                 for p in exec_path.split(os.path.sep)
-                if re.match("3ds max [0-9]+[.0-9]*$", p.lower()) is not None
+                if re.match("3ds max [0-9]+[\\.0-9]*$", p.lower()) is not None
             ]
             if path_sw_versions:
                 # Use this sub dir to determine the default display name

@@ -659,7 +659,7 @@ class MaxEngine(sgtk.platform.Engine):
 
     ##########################################################################################
     # Latest supported max version
-    MAXIMUM_SUPPORTED_VERSION = 27000
+    MAXIMUM_SUPPORTED_VERSION = 28000
 
     def _max_version_to_year(self, version):
         """
