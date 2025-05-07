@@ -198,10 +198,8 @@ For information regarding support engine versions, please visit this page:
                 )
             )
 
-            if (
-                self.has_ui
-                and self.max_version_year
-                >= self.get_setting("compatibility_dialog_min_version")
+            if self.has_ui and self.max_version_year >= self.get_setting(
+                "compatibility_dialog_min_version"
             ):
                 QtGui.QMessageBox.warning(
                     None,  # parent
