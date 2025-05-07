@@ -10,18 +10,16 @@
 """
 A 3ds Max (2022+) engine for Toolkit based pymxs
 """
-import math
 import os
-import re
-
-
+import math
 import sgtk
+
 import pymxs
 
 # Max versions compatibility constants
-VERSION_OLDEST_COMPATIBLE = 2021
-VERSION_OLDEST_SUPPORTED = 2023
-VERSION_NEWEST_SUPPORTED = 2026
+VERSION_OLDEST_COMPATIBLE = 2023
+VERSION_OLDEST_SUPPORTED = 2024
+VERSION_NEWEST_SUPPORTED = 2025
 
 
 class MaxEngine(sgtk.platform.Engine):
@@ -102,78 +100,136 @@ class MaxEngine(sgtk.platform.Engine):
 
         self.log_debug("%s: Initializing..." % self)
 
-        compatibility_warning_msg = None
-        show_warning_dlg = self.has_ui
         url_doc_supported_versions = "https://help.autodesk.com/view/SGDEV/ENU/?guid=SGD_si_integrations_engine_supported_versions_html"
 
         if self.max_version_year < VERSION_OLDEST_COMPATIBLE:
             # Old incompatible version
+            message = """
+Flow Production Tracking is no longer compatible with {product} versions older
+than {version}.
+
+For information regarding support engine versions, please visit this page:
+{url_doc_supported_versions}
+            """.strip()
+
+            if self.has_ui:
+                try:
+                    QtGui.QMessageBox.critical(
+                        None,  # parent
+                        "Error - Flow Production Tracking Compatibility!".ljust(
+                            # Padding to try to prevent the dialog being insanely narrow
+                            70
+                        ),
+                        message.replace(
+                            # Precense of \n breaks the Rich Text Format
+                            "\n",
+                            "<br>",
+                        ).format(
+                            product="3ds Max",
+                            url_doc_supported_versions='<a href="{u}">{u}</a>'.format(
+                                u=url_doc_supported_versions,
+                            ),
+                            version=VERSION_OLDEST_COMPATIBLE,
+                        ),
+                    )
+                except:
+                    # It is unlikely that the above message will go through
+                    # on old versions of Max (Python2, Qt4, ...).
+                    # But there is nothing more we can do here.
+                    pass
+
             raise sgtk.TankError(
-                "Flow Production Tracking is no longer compatible with 3ds Max "
-                f"versions older than {VERSION_OLDEST_COMPATIBLE}.\n"
-                "For information regarding support engine versions, please "
-                f"visit this page: {url_doc_supported_versions}"
+                message.format(
+                    product="3ds Max",
+                    url_doc_supported_versions=url_doc_supported_versions,
+                    version=VERSION_OLDEST_COMPATIBLE,
+                )
             )
+
         elif self.max_version_year < VERSION_OLDEST_SUPPORTED:
             # Older than the oldest supported version
-            compatibility_warning_msg = (
-                "Flow Production Tracking no longer supports 3ds Max versions "
-                f"older than {VERSION_OLDEST_SUPPORTED}.\n"
-                "You can continue to use Toolkit but you may experience bugs "
-                "or instabilities.\n\n"
-                "For information regarding support engine versions, please "
-                "visit this page: {url_doc_supported_versions}"
+            self.logger.warning(
+                "Flow Production Tracking no longer supports {product} "
+                "versions older than {version}".format(
+                    product="3ds Max",
+                    version=VERSION_OLDEST_SUPPORTED,
+                )
             )
+
+            if self.has_ui:
+                QtGui.QMessageBox.warning(
+                    None,  # parent
+                    "Warning - Flow Production Tracking Compatibility!".ljust(
+                        # Padding to try to prevent the dialog being insanely narrow
+                        70
+                    ),
+                    """
+Flow Production Tracking no longer supports {product} versions older than
+{version}.
+You can continue to use Toolkit but you may experience bugs or instabilities.
+
+For information regarding support engine versions, please visit this page:
+{url_doc_supported_versions}
+                    """.strip()
+                    .replace(
+                        # Precense of \n breaks the Rich Text Format
+                        "\n",
+                        "<br>",
+                    )
+                    .format(
+                        product="3ds Max",
+                        url_doc_supported_versions='<a href="{u}">{u}</a>'.format(
+                            u=url_doc_supported_versions,
+                        ),
+                        version=VERSION_OLDEST_SUPPORTED,
+                    ),
+                )
+
         elif self.max_version_year < VERSION_NEWEST_SUPPORTED:
             # Within the range of supported versions
             self.logger.debug(f"Running 3ds Max version {self.max_version_year}")
         else:
             # Newer than the newest supported version: untested
-            compatibility_warning_msg = (
-                "The Flow Production Tracking has not yet been fully tested "
-                f"with 3ds Max version {self.max_version_year}.\n"
-                "You can continue to use the Toolkit but you may experience "
-                "bugs or instabilities.\n\n"
-                "Please report any issues to: {support_url}"
-            )
-
-            show_warning_dlg = show_warning_dlg and (
-                self.max_version_year
-                >= self.get_setting(
-                    "compatibility_dialog_min_version",
-                    default=VERSION_NEWEST_SUPPORTED,
+            self.logger.warning(
+                "Flow Production Tracking has not yet been fully tested with "
+                "{product} version {version}.".format(
+                    product="3ds Max",
+                    version=self.max_version_year,
                 )
             )
 
-        if compatibility_warning_msg:
-            if show_warning_dlg:
-                # Display warning dialog
+            if (
+                self.has_ui
+                and self.max_version_year
+                >= self.get_setting("compatibility_dialog_min_version")
+            ):
                 QtGui.QMessageBox.warning(
                     None,  # parent
                     "Warning - Flow Production Tracking Compatibility!".ljust(
+                        # Padding to try to prevent the dialog being insanely narrow
                         70
-                    ),  # title
-                    compatibility_warning_msg.replace(
+                    ),
+                    """
+Flow Production Tracking has not yet been fully tested with {product} version
+{version}.
+You can continue to use Toolkit but you may experience bugs or instabilities.
+
+Please report any issues to:
+{support_url}
+                    """.strip()
+                    .replace(
                         # Precense of \n breaks the Rich Text Format
                         "\n",
                         "<br>",
-                    ).format(
+                    )
+                    .format(
+                        product="3ds Max",
                         support_url='<a href="{u}">{u}</a>'.format(
                             u=sgtk.support_url,
                         ),
-                        url_doc_supported_versions='<a href="{u}">{u}</a>'.format(
-                            u=url_doc_supported_versions,
-                        ),
+                        version=self.max_version_year,
                     ),
                 )
-
-            # and log the warning
-            self.log_warning(
-                re.sub("\\n+", " ", compatibility_warning_msg).format(
-                    support_url=sgtk.support_url,
-                    url_doc_supported_versions=url_doc_supported_versions,
-                )
-            )
 
         self._safe_dialog = []
         # Keep the dialog to prevent the garbage collector from delete it
