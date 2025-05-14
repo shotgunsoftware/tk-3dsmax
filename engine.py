@@ -134,7 +134,7 @@ For information regarding support engine versions, please visit this page:
                             version=VERSION_OLDEST_COMPATIBLE,
                         ),
                     )
-                except:
+                except:  # nosec B110
                     # It is unlikely that the above message will go through
                     # on old versions of Max (Python2, Qt4, ...).
                     # But there is nothing more we can do here.
