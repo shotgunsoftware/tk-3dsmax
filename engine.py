@@ -123,7 +123,7 @@ For information regarding support engine versions, please visit this page:
                             70
                         ),
                         message.replace(
-                            # Precense of \n breaks the Rich Text Format
+                            # Presence of \n breaks the Rich Text Format
                             "\n",
                             "<br>",
                         ).format(
@@ -174,7 +174,7 @@ For information regarding support engine versions, please visit this page:
 {url_doc_supported_versions}
                     """.strip()
                     .replace(
-                        # Precense of \n breaks the Rich Text Format
+                        # Presence of \n breaks the Rich Text Format
                         "\n",
                         "<br>",
                     )
@@ -187,11 +187,10 @@ For information regarding support engine versions, please visit this page:
                     ),
                 )
 
-        elif self.max_version_year < VERSION_NEWEST_SUPPORTED:
+        elif self.max_version_year <= VERSION_NEWEST_SUPPORTED:
             # Within the range of supported versions
             self.logger.debug(f"Running 3ds Max version {self.max_version_year}")
-        else:
-            # Newer than the newest supported version: untested
+        else:  # Newer than the newest supported version (untested)
             self.logger.warning(
                 "Flow Production Tracking has not yet been fully tested with "
                 "{product} version {version}.".format(
@@ -218,7 +217,7 @@ Please report any issues to:
 {support_url}
                     """.strip()
                     .replace(
-                        # Precense of \n breaks the Rich Text Format
+                        # Presence of \n breaks the Rich Text Format
                         "\n",
                         "<br>",
                     )
@@ -770,7 +769,7 @@ Please report any issues to:
             try:
                 assert isinstance(max_version[7], int)
                 self._max_version_year = max_version[7]
-            except (AssertionError, IndexError) as err:
+            except (AssertionError, IndexError, TypeError) as err:
                 self.log_debug("Unable to extract Max version {}".format(err))
                 self._max_version_year = 0
 
