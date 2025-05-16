@@ -15,6 +15,9 @@ import sgtk
 
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
+# Max versions compatibility constants
+VERSION_OLDEST_COMPATIBLE = 2021
+
 
 class MaxLauncher(SoftwareLauncher):
     """
@@ -28,7 +31,7 @@ class MaxLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2021"
+        return str(VERSION_OLDEST_COMPATIBLE)
 
     def scan_software(self):
         """
