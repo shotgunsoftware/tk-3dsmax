@@ -17,9 +17,9 @@ import sgtk
 import pymxs
 
 # Max versions compatibility constants
-VERSION_OLDEST_COMPATIBLE = 2023
-VERSION_OLDEST_SUPPORTED = 2024
-VERSION_NEWEST_SUPPORTED = 2025
+VERSION_OLDEST_COMPATIBLE = 2021
+VERSION_OLDEST_SUPPORTED = 2023
+VERSION_NEWEST_SUPPORTED = 2026
 # Caution: make sure compatibility_dialog_min_version default value in info.yml
 # is equal to VERSION_NEWEST_SUPPORTED
 
