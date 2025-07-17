@@ -297,9 +297,7 @@ def _add_to_menu(menu, title, callback):
     :param callable callback: Method to call when the menu item is selected.
     """
     # Hash the macro name just like we do in the engine for consistency.
-    macro_name = (
-        "sg_" + hashlib.md5(callback.__name__.encode("utf-8")).hexdigest()
-    )
+    macro_name = "sg_" + hashlib.md5(callback.__name__.encode("utf-8")).hexdigest()
 
     category = "PTR Bootstrap Menu Actions"
     # The createActionItem expects a macro and not some MaxScript, so create a
