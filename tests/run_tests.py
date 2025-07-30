@@ -10,7 +10,7 @@
 
 import os
 import sys
-import unitest.mock as mock
+import unittest.mock as mock
 
 __file__ = os.path.abspath(__file__)
 
