@@ -12,8 +12,7 @@ import os
 import contextlib
 import logging
 import pprint
-
-import mock
+import unittest.mock as mock
 
 import sgtk
 

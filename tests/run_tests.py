@@ -10,6 +10,7 @@
 
 import os
 import sys
+import unittest.mock as mock
 
 __file__ = os.path.abspath(__file__)
 
@@ -21,7 +22,6 @@ sys.prefix = os.path.join(tests_folder, "venv")
 sys.path.insert(0, os.path.join(tests_folder, "venv", "Lib", "site-packages"))
 
 import pytest
-import mock
 
 # We need to patch a couple of things to make pytest and argparse happy.
 # argparse doesn't like it when argv is empty, which is what happens when
