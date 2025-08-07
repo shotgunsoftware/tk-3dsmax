@@ -16,11 +16,6 @@ import sgtk
 
 import pymxs
 
-try:
-    from tank_vendor import sgutils
-except ImportError:
-    from tank_vendor import six as sgutils
-
 
 class MaxScript:
     """
@@ -163,7 +158,7 @@ class MaxScript:
         with new macro for the same action every time shotgun is reloaded.
         eg: 'Publish...' action will always re-use the same MacroScript.
         """
-        macro_name = "sg_" + hashlib.md5(sgutils.ensure_binary(action_name)).hexdigest()
+        macro_name = "sg_" + hashlib.md5(action_name.encode("utf-8")).hexdigest()
 
         # Creating python code separately as it needs to have no indentation in the macroscript
         python_code = (
