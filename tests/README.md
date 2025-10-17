@@ -5,7 +5,7 @@ you must be on Windows with 3dsMax installed.
 
 To run these tests, you need to do the following
 
- 1. From a PowerShell terminal,in the tk-3dsmax git clone folder:
+ 1. From a PowerShell terminal, in the tk-3dsmax git clone folder:
      1. Make sure the **following** tk repositories are clone in the same base
         folder as this one:
          * tk-core
