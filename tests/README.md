@@ -20,7 +20,7 @@ To run these tests, you need to do the following
         Also make sure those repositories are up-to-date.
 
         One way to do all this is to run the
-        [prepare-test-repos.ps1](tests/prepare-test-repos.ps1) script:
+        [prepare-test-repos.ps1](./prepare-test-repos.ps1) script:
 
         ```ps1
         tests\prepare-test-repos.ps1
@@ -48,8 +48,8 @@ To run these tests, you need to do the following
 
 1. Launch 3dsmax from the Windows shortcut (not from FPTR Desktop)
     1. Go to the "**Scripting**" menu → select "**Scripting Listener**"
-    2. "**File**" → "**Run Script**"
-    3. Browse to `tests/run_tests.py`
+    1. "**File**" → "**Run Script**"
+    1. Browse to `tests/run_tests.py`
 
 > [!NOTE]
 > After running the tests about a dozen time or so, the 3dsMax session seems to
