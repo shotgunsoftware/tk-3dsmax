@@ -13,7 +13,7 @@ foreach ($repo in $repos) {
 
     # if not present, clone the repo
     if (-not (Test-Path "../$repo")) {
-        Write-Host "$repo does not exist, cloning"  
+        Write-Host "$repo does not exist, cloning"
         git remote -v | Select-String -Pattern "origin\s+(.+)\s+\(fetch\)" | ForEach-Object {
             $baseUrl = [System.IO.Path]::GetDirectoryName($_.Matches[0].Groups[1].Value)
         }
