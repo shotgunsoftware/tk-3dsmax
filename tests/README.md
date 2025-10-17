@@ -36,7 +36,7 @@ To run these tests, you need to do the following
         & "C:\Program Files\Autodesk\3ds Max $($max_version)\Python\python.exe" -m venv --clear tests/venv
         ```
 
-    1. Install the `wheel`package:
+    1. Install the `wheel` package:
         ```ps1
         tests\venv\Scripts\pip install -U wheel
         ```
