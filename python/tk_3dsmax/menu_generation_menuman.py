@@ -11,6 +11,7 @@
 """
 Menu handling for 3ds Max
 """
+
 import os
 import sys
 import traceback

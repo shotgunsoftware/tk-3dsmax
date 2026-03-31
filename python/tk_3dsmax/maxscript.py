@@ -11,6 +11,7 @@
 """
 MaxScript handling for 3ds Max
 """
+
 import hashlib
 import sgtk
 
@@ -52,14 +53,10 @@ class MaxScript:
         MaxScript.unregister_menu("Shotgun")
 
         MaxScript.unregister_menu(menu_name)
-        pymxs.runtime.execute(
-            """
+        pymxs.runtime.execute("""
             -- create the main menu
             {menu_var} = menuMan.createMenu "{menu_name}"
-        """.format(
-                menu_var=menu_var, menu_name=menu_name
-            )
-        )
+        """.format(menu_var=menu_var, menu_name=menu_name))
 
     @staticmethod
     def unregister_menu(menu_name):
@@ -68,15 +65,11 @@ class MaxScript:
 
         :param str menu_name: Name of the menu in the menu bar.
         """
-        pymxs.runtime.execute(
-            """
+        pymxs.runtime.execute("""
             -- clear the menu
             sgtk_oldMenu = menuMan.findMenu "{menu_name}"
             if sgtk_oldMenu != undefined then menuMan.unregisterMenu sgtk_oldMenu
-        """.format(
-                menu_name=menu_name
-            )
-        )
+        """.format(menu_name=menu_name))
 
     @staticmethod
     def add_separator(menu_var):
@@ -85,14 +78,10 @@ class MaxScript:
         :param menu_var: MaxScript variable name of the menu to add separator into
         """
 
-        pymxs.runtime.execute(
-            """
+        pymxs.runtime.execute("""
             sgtk_menu_separator = menuMan.createSeparatorItem()
             {menu_var}.addItem sgtk_menu_separator -1
-        """.format(
-                menu_var=menu_var
-            )
-        )
+        """.format(menu_var=menu_var))
 
     @staticmethod
     def add_to_main_menu_bar(menu_var, menu_name):
@@ -102,18 +91,14 @@ class MaxScript:
         :param menu_name: String name of the menu to add
         """
 
-        pymxs.runtime.execute(
-            """
+        pymxs.runtime.execute("""
             -- Add main menu to Max, second to last which should be before Help
             sgtk_main_menu_bar = menuMan.getMainMenuBar()
             sgtk_sub_menu_index = sgtk_main_menu_bar.numItems() - 1
             sgtk_sub_menu_item = menuMan.createSubMenuItem "{menu_name}" {menu_var}
             sgtk_main_menu_bar.addItem sgtk_sub_menu_item sgtk_sub_menu_index
             menuMan.updateMenuBar()
-        """.format(
-                menu_var=menu_var, menu_name=menu_name
-            )
-        )
+        """.format(menu_var=menu_var, menu_name=menu_name))
 
     @staticmethod
     def add_action_to_menu(callback, action_name, menu_var, engine):
