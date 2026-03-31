@@ -11,6 +11,7 @@
 """
 Menu handling for 3ds Max
 """
+
 from pymxs import runtime as rt
 
 from .menu_generation_menuman import MenuGenerator_menuMan, AppCommand
@@ -144,9 +145,7 @@ class MenuGenerator_callbacks(MenuGenerator_menuMan):
                 menu_item_selected id
             )
         )
-        """.format(
-            context_name=str(self._engine.context)
-        )
+        """.format(context_name=str(self._engine.context))
         rt.execute(mxswrapper)
 
         def create_menu_callback():

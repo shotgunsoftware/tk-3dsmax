@@ -14,7 +14,6 @@ from sgtk.platform.qt import QtGui
 
 import pymxs
 
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 

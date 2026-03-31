@@ -10,6 +10,7 @@
 """
 A 3ds Max (2022+) engine for Toolkit based pymxs
 """
+
 import os
 import math
 import sgtk

@@ -16,7 +16,7 @@ import sgtk
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
 # Max versions compatibility constants
-VERSION_OLDEST_COMPATIBLE = 2021
+VERSION_OLDEST_COMPATIBLE = 2022
 
 
 class MaxLauncher(SoftwareLauncher):
@@ -48,7 +48,7 @@ class MaxLauncher(SoftwareLauncher):
 
         supported_sw_versions = []
         for sw_version in self._find_software():
-            (supported, reason) = self._is_supported(sw_version)
+            supported, reason = self._is_supported(sw_version)
             if supported:
                 supported_sw_versions.append(sw_version)
             else:

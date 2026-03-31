@@ -13,7 +13,6 @@ import sgtk
 
 import pymxs
 
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
@@ -168,7 +167,7 @@ class MaxActions(HookBaseClass):
         if not os.path.exists(path):
             raise Exception("File not found on disk - '%s'" % path)
 
-        (_, ext) = os.path.splitext(path)
+        _, ext = os.path.splitext(path)
 
         supported_file_exts = [".max"]
         if ext.lower() not in supported_file_exts:
@@ -196,7 +195,7 @@ class MaxActions(HookBaseClass):
         if not os.path.exists(path):
             raise Exception("File not found on disk - '%s'" % path)
 
-        (_, ext) = os.path.splitext(path)
+        _, ext = os.path.splitext(path)
 
         supported_file_exts = [".max"]
         if ext.lower() not in supported_file_exts:
