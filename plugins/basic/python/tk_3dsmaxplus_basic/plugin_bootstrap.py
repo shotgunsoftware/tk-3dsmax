@@ -225,6 +225,28 @@ class AsyncInvoker(QtCore.QObject):
         fn()
 
 
+def _is_async_bootstrap_supported():
+    """
+    Check whether the async bootstrap path is safe to use.
+
+    tk-core's async_bootstrap module defines Qt signals with Python
+    exception types (e.g. ``QtCore.Signal(Exception)``). Starting with
+    PySide6 6.8, this triggers a fatal C++ error that cannot be caught
+    from Python, preventing the engine from loading.
+
+    :returns: True if async bootstrap can be used safely.
+    """
+    try:
+        from PySide6 import __version__ as pyside6_version
+
+        version = tuple(int(x) for x in pyside6_version.split(".")[:2])
+        if version >= (6, 8):
+            return False
+    except (ImportError, ValueError):
+        pass
+    return True
+
+
 def _login_user():
     """
     Logs in the user to Shotgun and starts the engine.
@@ -280,12 +302,27 @@ def _login_user():
     # start engine
     sgtk_logger.info("Starting the 3dsmax engine.")
 
-    toolkit_mgr.bootstrap_engine_async(
-        "tk-3dsmax",
-        entity,
-        completed_callback=handle_bootstrap_completed,
-        failed_callback=handle_bootstrap_failed,
-    )
+    if _is_async_bootstrap_supported():
+        toolkit_mgr.bootstrap_engine_async(
+            "tk-3dsmax",
+            entity,
+            completed_callback=handle_bootstrap_completed,
+            failed_callback=handle_bootstrap_failed,
+        )
+    else:
+        sgtk_logger.info(
+            "Using synchronous bootstrap"
+            " (PySide6 Signal compatibility)."
+        )
+        try:
+            engine = toolkit_mgr.bootstrap_engine("tk-3dsmax", entity)
+        except Exception as exc:
+            handle_bootstrap_failed(
+                sgtk.bootstrap.ToolkitManager.TOOLKIT_BOOTSTRAP_PHASE,
+                exc,
+            )
+            return
+        handle_bootstrap_completed(engine)
 
 
 def _add_to_menu(menu, title, callback):
