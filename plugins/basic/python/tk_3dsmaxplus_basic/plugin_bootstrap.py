@@ -311,8 +311,7 @@ def _login_user():
         )
     else:
         sgtk_logger.info(
-            "Using synchronous bootstrap"
-            " (PySide6 Signal compatibility)."
+            "Using synchronous bootstrap" " (PySide6 Signal compatibility)."
         )
         try:
             engine = toolkit_mgr.bootstrap_engine("tk-3dsmax", entity)
