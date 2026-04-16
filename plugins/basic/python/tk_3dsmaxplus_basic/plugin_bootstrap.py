@@ -238,13 +238,17 @@ def _is_async_bootstrap_supported():
     """
     try:
         from PySide6 import __version__ as pyside6_version
+    except ImportError:
+        # PySide6 is not available - running on PySide2, which is not affected.
+        return True
 
+    try:
         version = tuple(int(x) for x in pyside6_version.split(".")[:2])
-        if version >= (6, 8):
-            return False
-    except (ImportError, ValueError):
-        pass
-    return True
+    except ValueError:
+        # Version string is unparseable - be conservative and skip async bootstrap.
+        return False
+
+    return version < (6, 8)
 
 
 def _login_user():
